@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <h2>Welcome to the Dashboard</h2>
+    <div class="stats">
+        <div class="card">
+            <h3>Total Inventory</h3>
+            <p id="total-inventory">Loading...</p>
+        </div>
+        <div class="card">
+            <h3>TotalRevenue</h3>
+            <p id="total-revenue">Loading...</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
