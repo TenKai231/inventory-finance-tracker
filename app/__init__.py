@@ -1,17 +1,27 @@
 from flask import Flask
-from .config import Config
-from .extensions import db, migrate
+from app.config import settings
+from app.extensions import db, jwt, cors, limiter
 
-def create_app(config_class=Config):
-    app = Flask(__name__, template_folder='../templates', static_folder='../static')
-    app.config.from_object(config_class)
-
-    # Initialize Flask extensions here
-    db.init_app(app)
-    migrate.init_app(app, db)
-
-    # Register blueprints here
-    from app.routes import main_bp
-    app.register_blueprint(main_bp)
-
+def create_app():
+    app = Flask(__name__)
+    
+    # JWT Config
+    app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = 900      # 15 menit
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = 604800  # 7 hari
+    
+    # Init Extensions
+    cors.init_app(app, origins=settings.CORS_ORIGINS)
+    jwt.init_app(app)
+    limiter.init_app(app)
+    
+    # Register Blueprints
+    from app.routes import register_routes
+    register_routes(app)
+    
+    # Health Check Route (minimal)
+    @app.route("/api/health")
+    def health():
+        return {"status": "ok", "service": "inventory-finance-tracker"}, 200
+    
     return app

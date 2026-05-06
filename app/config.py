@@ -1,6 +1,12 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import List
 
-class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key')
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+class Settings(BaseSettings):
+    FLASK_ENV: str = "development"
+    MONGO_URI: str
+    JWT_SECRET_KEY: str
+    CORS_ORIGINS: List[str] = ["http://localhost:5000"]
+    
+    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+
+settings = Settings()
