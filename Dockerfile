@@ -1,26 +1,43 @@
-# Dockerfile — Production Ready for Render/Railway
-FROM python:3.11-slim
-
-# Set environment variables
-ENV PYTHONDONTWRITEBYTECODE=1     PYTHONUNBUFFERED=1     PIP_NO_CACHE_DIR=1
-
-# Install system dependencies (if needed for pandas/openpyxl)
-RUN apt-get update && apt-get install -y --no-install-recommends     gcc     && rm -rf /var/lib/apt/lists/*
+# Multi-stage build — Python 3.12 + Debian Bookworm (stable)
+FROM python:3.12-slim as builder
 
 WORKDIR /app
 
-# Copy requirements first (cache layer)
+# ✅ Install build dependencies yang ADA di Bookworm
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    gfortran \
+    libblas-dev \
+    liblapack-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup virtualenv
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy app code
+# Install dengan preferensi binary wheel (hindari compile jika ada)
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir --prefer-binary -r requirements.txt
+
+# Stage 2: Production image (kecil)
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Copy virtualenv dari builder
+COPY --from=builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# Copy app code (exclude artifacts)
 COPY . .
-
-# Expose port (documentasi saja, Render pakai $PORT)
-EXPOSE 5000
+RUN rm -rf /app/.venv /app/__pycache__ /app/.pytest_cache /app/*.log 2>/dev/null || true
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3   CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')" || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')" || exit 1
 
-# Run with Gunicorn — dynamic port from env var $PORT
+# Dynamic port untuk Render/Railway
 CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 --timeout 60 run:app"]

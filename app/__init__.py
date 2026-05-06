@@ -3,7 +3,12 @@ from app.config import settings
 from app.extensions import db, jwt, cors, limiter
 
 def create_app():
-    app = Flask(__name__)
+    # Menentukan direktori templates dan static ke folder root
+    import os
+    base_dir = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    app = Flask(__name__, 
+                template_folder=os.path.join(base_dir, 'templates'),
+                static_folder=os.path.join(base_dir, 'static'))
     
     # JWT Config
     app.config["JWT_SECRET_KEY"] = settings.JWT_SECRET_KEY

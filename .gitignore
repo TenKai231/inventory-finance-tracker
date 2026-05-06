@@ -1,21 +1,31 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-dist/
-build/
+# Virtual environment
 .venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
 
-# Flask/Env
-instance/
-.env
-!.env.example
+# Git
+.git/
+.gitignore
 
-# OS/IDE
-.DS_Store
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
 
 # Testing
 .pytest_cache/
+.coverage
+htmlcov/
+
+# Docker
+Dockerfile
+docker-compose.yml
