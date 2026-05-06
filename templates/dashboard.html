@@ -1,19 +1,372 @@
 {% extends "base.html" %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Dasbor - InventoTrack{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <h2>Welcome to the Dashboard</h2>
-    <div class="stats">
-        <div class="card">
-            <h3>Total Inventory</h3>
-            <p id="total-inventory">Loading...</p>
+<style>
+    .sidebar-active {
+        background-color: #6063ee;
+        color: #fffbff;
+    }
+</style>
+
+<!-- Layout Wrapper dengan Alpine.js untuk state management -->
+<div x-data="dashboardData()" class="flex min-h-screen w-full">
+
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
+            <div>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
+            </div>
         </div>
-        <div class="card">
-            <h3>TotalRevenue</h3>
-            <p id="total-revenue">Loading...</p>
+        
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
+            </a>
+        </nav>
+        
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <button class="w-full flex items-center justify-center bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                Transaksi Baru
+            </button>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out" href="/login">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
         </div>
-    </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-64 flex flex-col min-h-screen w-full">
+        <!-- TopNavBar -->
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-12 pr-4 py-1.5 text-body-md focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all" placeholder="Cari inventaris, faktur, atau bantuan..." type="text">
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex space-x-4">
+                    <button class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+                    </button>
+                    <button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
+                </div>
+                <div class="h-8 w-[1px] bg-outline-variant"></div>
+                <div class="flex items-center space-x-2 cursor-pointer">
+                    <img alt="Foto profil pengguna" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfkeEN3J_Z8QKWYCMIAnHY0ItnVDnxJRlTo--3d2C2eJp2tobgvuMHNMFvKZj-vjCfkVG6fP8NaGpdHlGcbmeRKFyPoMoI04PNEP682SxdHOcehcqGu-f0nlcEnmkekyrdAojN1FcL5AQTF33oSgT_VckIN4oNHRyDUP4nCEMYQHNNk39Mz8hVjvEJSWsz-yEumiUBdBwl7DMliN5gEHFzy6IZaVcSzsIVxUL33tLW9UBK-Iu63TFwSxL8n9VDgulwM6KvaXAbRXg">
+                    <span class="font-label-md text-on-surface hidden lg:block" x-text="userName"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="p-10 space-y-6 max-w-[1280px] mx-auto w-full">
+            <!-- Header -->
+            <div class="flex justify-between items-end">
+                <div>
+                    <h2 class="font-h1 text-h1 text-primary">Dasbor</h2>
+                    <p class="text-on-surface-variant" x-text="todayDate"></p>
+                </div>
+                <div class="flex space-x-4">
+                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                        <span>30 Hari Terakhir</span>
+                    </button>
+                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-[18px]">download</span>
+                        <span>Ekspor Laporan</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Metrics Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                <!-- Total Items -->
+                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Total Barang</span>
+                        <div class="p-1 bg-secondary-fixed rounded-lg">
+                            <span class="material-symbols-outlined text-on-secondary-fixed">package</span>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="font-h2 text-h2 text-primary" x-text="metrics.totalItems"></span>
+                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
+                            <span class="material-symbols-outlined text-[14px]">trending_up</span> 8%
+                        </span>
+                    </div>
+                    <p class="text-on-surface-variant text-[11px] mt-1">+420 sejak bulan lalu</p>
+                </div>
+
+                <!-- Low Stock Alert -->
+                <div class="bg-red-50 p-6 rounded-xl border-l-4 border-l-error border border-outline-variant shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-error font-label-md uppercase tracking-wider">Stok Hampir Habis</span>
+                            <div class="p-1 bg-error-container rounded-lg">
+                                <span class="material-symbols-outlined text-error">warning</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="font-h2 text-h2 text-error" x-text="metrics.lowStock"></span>
+                            <span class="text-[12px] font-bold text-error bg-error-container px-1.5 py-0.5 rounded flex items-center">
+                                <span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                            </span>
+                        </div>
+                        <p class="text-error text-[11px] mt-1 opacity-80">Butuh perhatian segera</p>
+                    </div>
+                    <a class="text-error font-label-md hover:underline mt-2 inline-flex items-center" href="#">Lihat Detail <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span></a>
+                </div>
+
+                <!-- Monthly Revenue -->
+                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Pendapatan</span>
+                        <div class="p-1 bg-emerald-100 rounded-lg">
+                            <span class="material-symbols-outlined text-emerald-700">trending_up</span>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="font-h2 text-h2 text-primary" x-text="metrics.revenue"></span>
+                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
+                            <span class="material-symbols-outlined text-[14px]">trending_up</span> 24%
+                        </span>
+                    </div>
+                    <p class="text-on-surface-variant text-[11px] mt-1">Dibanding Rp 546JT bulan lalu</p>
+                </div>
+
+                <!-- Monthly Expense -->
+                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Pengeluaran</span>
+                        <div class="p-1 bg-orange-100 rounded-lg">
+                            <span class="material-symbols-outlined text-orange-700">trending_down</span>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="font-h2 text-h2 text-primary" x-text="metrics.expense"></span>
+                        <span class="text-[12px] font-bold text-error bg-error-container px-1.5 py-0.5 rounded flex items-center">
+                            <span class="material-symbols-outlined text-[14px]">trending_down</span> 5%
+                        </span>
+                    </div>
+                    <p class="text-on-surface-variant text-[11px] mt-1">Optimasi biaya aktif</p>
+                </div>
+
+                <!-- Net Profit -->
+                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                    <div class="flex justify-between items-start mb-2">
+                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Laba Bersih</span>
+                        <div class="p-1 bg-primary-container rounded-lg">
+                            <span class="material-symbols-outlined text-on-primary-container">savings</span>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline space-x-2">
+                        <span class="font-h2 text-h2 text-primary" x-text="metrics.profit"></span>
+                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
+                            Margin 58%
+                        </span>
+                    </div>
+                    <p class="text-on-surface-variant text-[11px] mt-1">Laba = Pendapatan - Pengeluaran</p>
+                </div>
+            </div>
+
+            <!-- Main Content Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
+                
+                <!-- Column 1: Chart.js Integration -->
+                <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="font-h3 text-h3 text-primary">Stok Masuk vs Keluar</h3>
+                            <p class="text-on-surface-variant text-body-md">Aliran inventaris selama 6 bulan terakhir</p>
+                        </div>
+                    </div>
+                    <!-- Chart.js Canvas -->
+                    <div class="h-64 relative w-full">
+                        <canvas id="inventoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Column 2: Recent Transactions Loop (Alpine) -->
+                <div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-h3 text-h3 text-primary">Transaksi Terbaru</h3>
+                        <a class="text-secondary font-label-md hover:underline" href="#">Lihat Semua</a>
+                    </div>
+                    
+                    <div class="flex space-x-2 mb-4 pb-4 border-b border-outline-variant">
+                        <button class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md transition-transform active:scale-95">Semua</button>
+                        <button class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Masuk</button>
+                        <button class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Keluar</button>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <!-- Iterasi data transaksi dengan Alpine -->
+                        <template x-for="trx in transactions" :key="trx.id">
+                            <div class="flex items-center justify-between p-2 hover:bg-surface transition-colors rounded-lg group cursor-pointer">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded bg-surface-container flex items-center justify-center group-hover:bg-secondary-fixed transition-colors">
+                                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary" x-text="trx.icon"></span>
+                                    </div>
+                                    <div>
+                                        <p class="font-label-md text-primary" x-text="trx.name"></p>
+                                        <p class="text-[11px] text-on-surface-variant" x-text="trx.date"></p>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end">
+                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                                          :class="trx.type === 'MASUK' ? 'bg-emerald-100 text-emerald-700' : 'bg-error-container text-error'"
+                                          x-text="trx.type"></span>
+                                    <span class="font-mono-data text-[12px] mt-1" x-text="trx.amount"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                            <span class="material-symbols-outlined text-secondary">local_shipping</span>
+                        </div>
+                        <div>
+                            <p class="font-h3 text-h3">18</p>
+                            <p class="text-on-surface-variant font-label-md">Pengiriman Tertunda</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="px-3 py-1 bg-secondary text-on-secondary font-label-md rounded-md hover:bg-secondary/90 transition-colors active:scale-95">Proses</button>
+                    </div>
+                </div>
+                
+                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                            <span class="material-symbols-outlined text-secondary">store</span>
+                        </div>
+                        <div>
+                            <p class="font-h3 text-h3">4</p>
+                            <p class="text-on-surface-variant font-label-md">Gudang Aktif</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+                </div>
+                
+                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                            <span class="material-symbols-outlined text-secondary">group</span>
+                        </div>
+                        <div>
+                            <p class="font-h3 text-h3">12</p>
+                            <p class="text-on-surface-variant font-label-md">Staf Aktif</p>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+                </div>
+            </div>
+        </div>
+    </main>
 </div>
+
+<!-- Script Inisialisasi Chart & Alpine -->
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('dashboardData', () => ({
+            userName: 'Rama Ferdiasnyah',
+            todayDate: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+            metrics: {
+                totalItems: '12.842',
+                lowStock: '24',
+                revenue: 'Rp 678JT',
+                expense: 'Rp 281JT',
+                profit: 'Rp 397JT'
+            },
+            transactions: [
+                { id: 1, name: 'MacBook Pro M2', date: 'Hari ini • 14:20', type: 'MASUK', amount: '+12 unit • Rp 288JT', icon: 'laptop_mac' },
+                { id: 2, name: 'iPhone 15 Pro', date: 'Hari ini • 11:05', type: 'KELUAR', amount: '-5 unit • Rp 105JT', icon: 'smartphone' },
+                { id: 3, name: 'Sony WH-1000XM5', date: 'Kemarin • 16:45', type: 'MASUK', amount: '+25 unit • Rp 125JT', icon: 'headphones' },
+                { id: 4, name: 'iPad Air M1', date: 'Kemarin • 09:30', type: 'KELUAR', amount: '-2 unit • Rp 24JT', icon: 'tablet_mac' }
+            ],
+            init() {
+                // Inisialisasi Chart.js setelah komponen Alpine siap
+                const ctx = document.getElementById('inventoryChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'],
+                        datasets: [
+                            {
+                                label: 'Barang Masuk',
+                                data: [150, 220, 180, 290, 210, 340],
+                                borderColor: '#6063ee', // Warna Secondary
+                                backgroundColor: 'rgba(96, 99, 238, 0.1)',
+                                tension: 0.4,
+                                fill: true
+                            },
+                            {
+                                label: 'Barang Keluar',
+                                data: [120, 190, 140, 260, 180, 300],
+                                borderColor: '#c6c6cd', // Warna Outline Variant
+                                borderDash: [5, 5],
+                                tension: 0.4,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }))
+    })
+</script>
 {% endblock %}

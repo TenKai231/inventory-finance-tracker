@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+
+{% block title %}Inventaris - InventoTrack{% endblock %}
+
+{% block content %}
+<style>
+    .thin-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+    .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .thin-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+</style>
+
+<!-- Layout Wrapper dengan Alpine.js untuk state management -->
+<div x-data="inventoryData()" class="flex min-h-screen w-full">
+
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
+            <div>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container leading-none">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70 uppercase tracking-widest mt-1">Management Console</p>
+            </div>
+        </div>
+        
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
+            </a>
+            <!-- Active State: Inventory -->
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
+            </a>
+        </nav>
+        
+        <div class="pt-4 border-t border-outline-variant/20 space-y-1">
+            <button class="w-full flex items-center justify-center space-x-2 bg-secondary hover:bg-secondary-container text-on-primary py-2 rounded-lg font-bold transition-colors shadow-sm mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                <span class="font-label-md">Transaksi Baru</span>
+            </button>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out" href="{{ url_for('ui.login') }}">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 ml-64 flex flex-col min-h-screen w-full">
+        <!-- TopNavBar -->
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors" placeholder="Cari barang..." type="text">
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex items-center space-x-4 text-on-surface-variant">
+                    <button class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</button>
+                    <button class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">help</button>
+                </div>
+                <div class="h-8 w-[1px] bg-outline-variant"></div>
+                <div class="flex items-center space-x-2 pl-2">
+                    <div class="text-right hidden sm:block">
+                        <p class="font-label-md text-primary" x-text="userName"></p>
+                        <p class="text-[10px] text-on-surface-variant" x-text="userRole"></p>
+                    </div>
+                    <img alt="User profile photo" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-Et8ASup_R4xPfSPEkKJzsl0tWJHB2l_1FvR1ya5sBnW8k0Mmz0WXrGPXvhaY8zleHdVZsqIKaqIUaBvr82vkhPHHENrdgtScLsVQtdiWH08akHMHNxfYRaj1KQj_4L52tPBXPKmlDsl-rJfffDcHJCjA6mwQgnLF8ne0oRU2rw4SsQnwrrpaPykCUBWx1iZQyysMiahJ2g6K6iIQRkpUuev4nNwXcXUYOoBGDySvQFMolZcffZO9KJmLGXgjNXRkpGZQcZyfOqA">
+                </div>
+            </div>
+        </header>
+
+        <!-- Inventory Content -->
+        <div class="p-10 flex-1 flex flex-col space-y-6 max-w-[1280px] mx-auto w-full">
+            
+            <!-- Page Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+                <div>
+                    <h2 class="font-h1 text-h1 text-primary">Inventaris</h2>
+                    <p class="text-on-surface-variant font-body-md">Kelola stok barang kamu</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <select class="bg-surface border border-outline-variant rounded-lg px-4 py-2 text-body-md focus:ring-0 focus:border-secondary outline-none cursor-pointer">
+                        <option>Semua Kategori</option>
+                        <option>Elektronik</option>
+                        <option>Pakaian</option>
+                        <option>Alat Kantor</option>
+                    </select>
+                    <button @click="showModal = true" class="bg-secondary text-on-primary px-6 py-2 rounded-lg font-semibold flex items-center space-x-1 hover:bg-secondary-container transition-colors shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                        <span>Tambah Barang</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bento Grid Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Total Barang</p>
+                    <p class="text-h1 font-h1 text-primary" x-text="metrics.totalItems"></p>
+                </div>
+                <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Nilai Aset</p>
+                    <p class="text-h1 font-h1 text-primary" x-text="metrics.assetValue"></p>
+                </div>
+                <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Stok Rendah</p>
+                    <p class="text-h1 font-h1 text-secondary" x-text="metrics.lowStock"></p>
+                </div>
+                <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+                    <p class="text-label-md text-on-surface-variant uppercase tracking-wider mb-1">Out of Stock</p>
+                    <p class="text-h1 font-h1 text-error" x-text="metrics.outOfStock"></p>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col">
+                <div class="overflow-x-auto thin-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-surface-container-low border-b border-outline-variant">
+                            <tr>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">SKU</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Nama Barang</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Kategori</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Stok</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Harga Beli</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Harga Jual</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Status</th>
+                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant text-center">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant">
+                            <template x-for="(item, index) in items" :key="item.sku">
+                                <tr :class="index % 2 === 0 ? 'bg-surface hover:bg-secondary-fixed/30 transition-colors' : 'bg-surface-container-lowest hover:bg-secondary-fixed/30 transition-colors'">
+                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="item.sku"></td>
+                                    <td class="px-4 py-3 font-semibold text-primary" x-text="item.name"></td>
+                                    <td class="px-4 py-3 text-on-surface-variant" x-text="item.category"></td>
+                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="item.stock"></td>
+                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="formatCurrency(item.buyPrice)"></td>
+                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="formatCurrency(item.sellPrice)"></td>
+                                    <td class="px-4 py-3">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full font-bold text-[12px]"
+                                              :class="{
+                                                  'bg-emerald-100 text-emerald-800': item.status === 'Aman',
+                                                  'bg-amber-100 text-amber-800': item.status === 'Stok Rendah',
+                                                  'bg-red-100 text-red-800': item.status === 'Habis'
+                                              }">
+                                            <span class="w-1.5 h-1.5 rounded-full mr-1.5"
+                                                  :class="{
+                                                      'bg-emerald-500': item.status === 'Aman',
+                                                      'bg-amber-500': item.status === 'Stok Rendah',
+                                                      'bg-red-500': item.status === 'Habis'
+                                                  }"></span>
+                                            <span x-text="item.status"></span>
+                                        </span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center justify-center space-x-1">
+                                            <button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" title="Edit">
+                                                <span class="material-symbols-outlined text-[20px]">edit</span>
+                                            </button>
+                                            <button class="p-1.5 rounded-lg text-error hover:bg-error-container/50 transition-colors" title="Hapus">
+                                                <span class="material-symbols-outlined text-[20px]">delete</span>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination Footer -->
+                <div class="p-4 bg-surface-container-low border-t border-outline-variant flex flex-col md:flex-row items-center justify-between gap-4 mt-auto">
+                    <p class="text-body-md text-on-surface-variant">Menampilkan 1 - 5 dari <span x-text="metrics.totalItems"></span> data</p>
+                    <div class="flex items-center space-x-1">
+                        <button class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant">Previous</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-secondary text-on-primary font-bold shadow-sm text-sm">1</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface transition-colors font-bold text-on-surface-variant text-sm">2</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface transition-colors font-bold text-on-surface-variant text-sm">3</button>
+                        <button class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant">Next</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer Copyright -->
+            <footer class="text-center text-on-surface-variant text-[12px] opacity-60 pt-4">
+                © 2024 InventoTrack. Precision Inventory Management Systems.
+            </footer>
+        </div>
+    </main>
+
+    <!-- ===== MODAL TAMBAH BARANG ===== -->
+    <div
+        x-show="showModal"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
+        class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+        @keydown.escape.window="showModal = false"
+        @click.self="showModal = false"
+    >
+        <div
+            x-show="showModal"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="bg-white w-full max-w-[480px] rounded-xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
+        >
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-6 border-b border-outline-variant bg-white z-10">
+                <h3 class="text-h3 font-bold text-primary">Tambah Barang</h3>
+                <button @click="showModal = false" class="text-on-surface-variant hover:text-primary transition-colors p-1 rounded-lg hover:bg-surface-variant">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto thin-scrollbar space-y-4">
+
+                <!-- SKU -->
+                <div class="space-y-1">
+                    <label class="block font-label-md font-semibold text-on-surface-variant">SKU</label>
+                    <input x-model="form.sku" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-body-md" placeholder="Contoh: IT-EL-001" type="text"/>
+                    <p class="text-[11px] text-on-surface-variant italic">SKU akan di-generate otomatis jika dikosongkan</p>
+                </div>
+
+                <!-- Nama Barang -->
+                <div class="space-y-1">
+                    <label class="block font-label-md font-semibold text-on-surface-variant">Nama Barang <span class="text-error">*</span></label>
+                    <input x-model="form.name" :class="formErrors.name ? 'border-error focus:ring-error focus:border-error' : 'border-outline-variant focus:ring-secondary focus:border-secondary'" class="w-full px-4 py-2 border rounded-lg outline-none transition-all text-body-md" placeholder="Masukkan nama barang" type="text"/>
+                    <p x-show="formErrors.name" class="text-[11px] text-error mt-1" x-text="formErrors.name"></p>
+                </div>
+
+                <!-- Kategori -->
+                <div class="space-y-1">
+                    <label class="block font-label-md font-semibold text-on-surface-variant">Kategori <span class="text-error">*</span></label>
+                    <select x-model="form.category" :class="formErrors.category ? 'border-error' : 'border-outline-variant focus:ring-secondary focus:border-secondary'" class="w-full px-4 py-2 border rounded-lg outline-none transition-all text-body-md bg-white cursor-pointer">
+                        <option value="">Pilih Kategori</option>
+                        <option>Elektronik</option>
+                        <option>Alat Kantor</option>
+                        <option>Pakaian</option>
+                        <option>Makanan</option>
+                    </select>
+                    <p x-show="formErrors.category" class="text-[11px] text-error mt-1" x-text="formErrors.category"></p>
+                </div>
+
+                <!-- Stok Awal -->
+                <div class="space-y-1">
+                    <label class="block font-label-md font-semibold text-on-surface-variant">Stok Awal</label>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center border border-outline-variant rounded-lg overflow-hidden bg-white w-32">
+                            <button @click="form.stock = Math.max(0, form.stock - 1)" class="px-2 py-2 hover:bg-surface-variant text-on-surface-variant transition-colors border-r border-outline-variant flex items-center justify-center" type="button">
+                                <span class="material-symbols-outlined text-[18px]">remove</span>
+                            </button>
+                            <input x-model.number="form.stock" class="w-full text-center py-2 focus:outline-none focus:ring-0 border-0 bg-transparent font-mono-data" type="number" min="0"/>
+                            <button @click="form.stock++" class="px-2 py-2 hover:bg-surface-variant text-on-surface-variant transition-colors border-l border-outline-variant flex items-center justify-center" type="button">
+                                <span class="material-symbols-outlined text-[18px]">add</span>
+                            </button>
+                        </div>
+                        <select x-model="form.unit" class="px-4 py-2 border border-outline-variant rounded-lg outline-none transition-all bg-white text-body-md flex-1 cursor-pointer focus:ring-2 focus:ring-secondary focus:border-secondary">
+                            <option>pcs</option>
+                            <option>unit</option>
+                            <option>kg</option>
+                            <option>box</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Harga Beli & Jual -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="block font-label-md font-semibold text-on-surface-variant">Harga Beli</label>
+                        <div class="flex border border-outline-variant rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-secondary focus-within:border-secondary transition-all bg-white">
+                            <span class="flex items-center px-3 bg-surface-variant text-on-surface-variant font-mono-data border-r border-outline-variant text-sm">Rp</span>
+                            <input x-model.number="form.buyPrice" class="w-full px-3 py-2 border-none focus:ring-0 outline-none font-mono-data text-sm" placeholder="0" type="number" min="0"/>
+                        </div>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block font-label-md font-semibold text-on-surface-variant">Harga Jual <span class="text-error">*</span></label>
+                        <div class="flex border rounded-lg overflow-hidden transition-all bg-white" :class="formErrors.sellPrice ? 'border-error focus-within:ring-2 focus-within:ring-error' : 'border-outline-variant focus-within:ring-2 focus-within:ring-secondary focus-within:border-secondary'">
+                            <span class="flex items-center px-3 bg-surface-variant text-on-surface-variant font-mono-data border-r border-outline-variant text-sm">Rp</span>
+                            <input x-model.number="form.sellPrice" class="w-full px-3 py-2 border-none focus:ring-0 outline-none font-mono-data text-sm" placeholder="0" type="number" min="0"/>
+                        </div>
+                        <p x-show="formErrors.sellPrice" class="text-[11px] text-error mt-1" x-text="formErrors.sellPrice"></p>
+                    </div>
+                </div>
+
+                <!-- Catatan -->
+                <div class="space-y-1">
+                    <label class="block font-label-md font-semibold text-on-surface-variant">Catatan (Opsional)</label>
+                    <textarea x-model="form.notes" class="w-full px-4 py-2 border border-outline-variant rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all text-body-md" placeholder="Tambahkan detail tambahan..." rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="flex flex-wrap items-center justify-end gap-2 p-6 bg-surface-container-low border-t border-outline-variant">
+                <button @click="showModal = false" class="px-4 py-2 border border-outline-variant rounded-lg text-on-surface-variant font-semibold hover:bg-surface-variant transition-colors text-sm">Batal</button>
+                <button @click="saveItem(true)" class="px-4 py-2 border border-secondary text-secondary rounded-lg font-semibold hover:bg-secondary-fixed transition-colors text-sm">Simpan &amp; Tambah Lagi</button>
+                <button @click="saveItem(false)" class="px-4 py-2 bg-secondary text-on-primary rounded-lg font-semibold hover:bg-secondary-container transition-colors shadow-sm text-sm">Simpan</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script Inisialisasi Alpine -->
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('inventoryData', () => ({
+            userName: 'Admin Store',
+            userRole: 'Manager',
+
+            // --- Modal State ---
+            showModal: false,
+            form: { sku: '', name: '', category: '', stock: 0, unit: 'pcs', buyPrice: 0, sellPrice: 0, notes: '' },
+            formErrors: {},
+
+            resetForm() {
+                this.form = { sku: '', name: '', category: '', stock: 0, unit: 'pcs', buyPrice: 0, sellPrice: 0, notes: '' };
+                this.formErrors = {};
+            },
+            validateForm() {
+                const errors = {};
+                if (!this.form.name.trim()) errors.name = 'Nama Barang tidak boleh kosong';
+                if (!this.form.category) errors.category = 'Kategori harus dipilih';
+                if (!this.form.sellPrice || this.form.sellPrice <= 0) errors.sellPrice = 'Harga Jual harus diisi';
+                this.formErrors = errors;
+                return Object.keys(errors).length === 0;
+            },
+            getStatus(stock) {
+                if (stock === 0) return 'Habis';
+                if (stock <= 5) return 'Stok Rendah';
+                return 'Aman';
+            },
+            saveItem(addAnother) {
+                if (!this.validateForm()) return;
+                const newItem = {
+                    sku: this.form.sku || 'IT-' + Date.now().toString().slice(-5),
+                    name: this.form.name,
+                    category: this.form.category,
+                    stock: this.form.stock,
+                    buyPrice: this.form.buyPrice,
+                    sellPrice: this.form.sellPrice,
+                    status: this.getStatus(this.form.stock)
+                };
+                this.items.push(newItem);
+                this.resetForm();
+                if (!addAnother) this.showModal = false;
+            },
+
+            // --- Metrics ---
+            metrics: {
+                totalItems: '1,248',
+                assetValue: 'Rp 42.5M',
+                lowStock: '12',
+                outOfStock: '4'
+            },
+
+            // --- Items ---
+            items: [
+                { sku: 'IT-EL-001', name: 'MacBook Pro M2 14"', category: 'Elektronik', stock: 24, buyPrice: 28500000, sellPrice: 32000000, status: 'Aman' },
+                { sku: 'IT-EL-002', name: 'Magic Mouse 2', category: 'Elektronik', stock: 5, buyPrice: 1100000, sellPrice: 1450000, status: 'Stok Rendah' },
+                { sku: 'IT-OF-042', name: 'Paper Clip XL', category: 'Alat Kantor', stock: 0, buyPrice: 12500, sellPrice: 18000, status: 'Habis' },
+                { sku: 'IT-EL-105', name: 'iPhone 15 Pro', category: 'Elektronik', stock: 12, buyPrice: 18200000, sellPrice: 20499000, status: 'Aman' },
+                { sku: 'IT-EL-109', name: 'AirPods Max Grey', category: 'Elektronik', stock: 3, buyPrice: 8500000, sellPrice: 9800000, status: 'Stok Rendah' }
+            ],
+
+            formatCurrency(value) {
+                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+        }))
+    });
+</script>
+{% endblock %}

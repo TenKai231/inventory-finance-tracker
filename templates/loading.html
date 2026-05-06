@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block title %}Memuat... - InventoTrack{% endblock %}
+
+{% block content %}
+<style>
+    @keyframes shimmer {
+        0% { opacity: 0.4; }
+        50% { opacity: 0.8; }
+        100% { opacity: 0.4; }
+    }
+    .animate-pulse { animation: shimmer 1.8s ease-in-out infinite; }
+</style>
+
+<!-- Layout Wrapper -->
+<div class="flex min-h-screen w-full overflow-hidden">
+
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <!-- Header -->
+        <div class="flex items-center gap-4 px-4 py-6 mb-2">
+            <div class="w-10 h-10 rounded-lg bg-surface flex items-center justify-center shrink-0 shadow-sm">
+                <span class="material-symbols-outlined text-primary text-[24px]">inventory_2</span>
+            </div>
+            <div>
+                <span class="font-h3 text-h3 font-bold text-on-primary-container block leading-none">InventoTrack</span>
+                <span class="text-[11px] text-on-primary-container opacity-70 tracking-widest uppercase">Management Console</span>
+            </div>
+        </div>
+
+        <!-- CTA (disabled during loading) -->
+        <div class="px-2 mb-4">
+            <button class="w-full bg-secondary text-on-primary rounded-lg py-2 px-4 flex items-center justify-center gap-1 font-label-md text-label-md shadow-sm opacity-50 cursor-not-allowed transition-opacity">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Transaksi Baru
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-1 space-y-1 overflow-y-auto">
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dasbor
+            </a>
+            <!-- Active: Inventory -->
+            <a class="flex items-center gap-4 px-4 py-2 bg-secondary-container text-on-secondary-container rounded-lg font-semibold font-label-md" href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                Inventaris
+            </a>
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+                <span class="material-symbols-outlined">receipt_long</span>
+                Transaksi
+            </a>
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+                <span class="material-symbols-outlined">payments</span>
+                Keuangan
+            </a>
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+                <span class="material-symbols-outlined">ios_share</span>
+                Ekspor
+            </a>
+        </nav>
+
+        <!-- Footer Links -->
+        <div class="pt-4 border-t border-outline-variant/20 space-y-1">
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+                <span class="material-symbols-outlined">settings</span>
+                Pengaturan
+            </a>
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                Dukungan
+            </a>
+            <a class="flex items-center gap-4 px-4 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 font-label-md" href="{{ url_for('ui.login') }}">
+                <span class="material-symbols-outlined">logout</span>
+                Keluar
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <div class="flex-1 flex flex-col ml-64 h-screen overflow-hidden bg-background">
+
+        <!-- TopNavBar (Loading State) -->
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 w-full bg-surface h-16 border-b border-outline-variant">
+            <!-- Search (disabled) -->
+            <div class="flex-1 max-w-md">
+                <div class="relative flex items-center w-full h-10 rounded-lg bg-surface-container border border-outline-variant opacity-60">
+                    <span class="material-symbols-outlined absolute left-3 text-outline text-[20px]">search</span>
+                    <div class="w-full h-full pl-10 pr-4 flex items-center">
+                        <div class="w-24 h-4 bg-outline-variant/30 rounded animate-pulse"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Right actions -->
+            <div class="flex items-center gap-4 ml-6">
+                <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-variant transition-colors">
+                    <span class="material-symbols-outlined">help</span>
+                </button>
+                <div class="w-8 h-8 rounded-full bg-surface-variant border border-outline-variant flex items-center justify-center ml-2">
+                    <span class="material-symbols-outlined text-outline">person</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Canvas -->
+        <main class="flex-1 overflow-y-auto p-10">
+            <div class="max-w-[1280px] mx-auto space-y-6">
+
+                <!-- Page Header Skeleton -->
+                <div class="flex justify-between items-end pb-2">
+                    <div class="space-y-2">
+                        <div class="w-40 h-9 bg-surface-variant rounded-lg animate-pulse"></div>
+                        <div class="w-56 h-5 bg-surface-variant/70 rounded animate-pulse"></div>
+                    </div>
+                    <div class="w-28 h-10 bg-surface-variant rounded-lg opacity-50 animate-pulse cursor-not-allowed"></div>
+                </div>
+
+                <!-- Stats Cards Skeleton -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <template x-for="i in [1,2,3,4]" :key="i">
+                        <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm">
+                            <div class="w-24 h-3 bg-surface-variant rounded animate-pulse mb-3"></div>
+                            <div class="w-20 h-9 bg-surface-variant rounded-lg animate-pulse"></div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- Controls Skeleton -->
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-container-lowest p-2 rounded-lg border border-outline-variant shadow-sm">
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <div class="w-20 h-8 bg-surface-variant rounded-md animate-pulse"></div>
+                        <div class="w-24 h-8 bg-surface-container rounded-md animate-pulse"></div>
+                        <div class="w-24 h-8 bg-surface-container rounded-md animate-pulse"></div>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto justify-end">
+                        <div class="w-24 h-8 bg-surface-variant rounded-md border border-outline-variant/50 animate-pulse"></div>
+                        <div class="w-10 h-8 bg-surface-variant rounded-md border border-outline-variant/50 animate-pulse"></div>
+                    </div>
+                </div>
+
+                <!-- Table Skeleton Card -->
+                <div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+
+                    <!-- Table Header Skeleton -->
+                    <div class="grid grid-cols-12 gap-4 px-6 py-3 border-b border-outline-variant bg-surface-container-low items-center">
+                        <div class="col-span-1"><div class="w-4 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                        <div class="col-span-4"><div class="w-24 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                        <div class="col-span-2"><div class="w-16 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                        <div class="col-span-2"><div class="w-20 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                        <div class="col-span-2 flex justify-end"><div class="w-16 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                        <div class="col-span-1 flex justify-end"><div class="w-6 h-4 bg-outline-variant/40 rounded animate-pulse"></div></div>
+                    </div>
+
+                    <!-- Skeleton Rows -->
+                    <div class="flex flex-col divide-y divide-outline-variant/50 bg-surface-container-lowest">
+                        {% for row in [
+                            {'w1':'3/4','w2':'1/2'},
+                            {'w1':'2/3','w2':'1/3'},
+                            {'w1':'4/5','w2':'2/5'},
+                            {'w1':'3/5','w2':'1/4'}
+                        ] %}
+                        <div class="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-surface-container transition-colors duration-150">
+                            <div class="col-span-1"><div class="w-4 h-4 bg-surface-variant rounded animate-pulse"></div></div>
+                            <div class="col-span-4 flex items-center gap-4">
+                                <div class="w-10 h-10 bg-surface-variant rounded-md border border-outline-variant/30 shrink-0 animate-pulse"></div>
+                                <div class="flex flex-col gap-1 w-full">
+                                    <div class="h-4 bg-surface-variant rounded animate-pulse" style="width: {{ row.w1 }};"></div>
+                                    <div class="h-3 bg-surface-variant/70 rounded animate-pulse" style="width: {{ row.w2 }};"></div>
+                                </div>
+                            </div>
+                            <div class="col-span-2"><div class="w-16 h-6 bg-surface-variant rounded-full animate-pulse"></div></div>
+                            <div class="col-span-2 flex flex-col gap-1">
+                                <div class="w-12 h-4 bg-surface-variant rounded animate-pulse"></div>
+                                <div class="w-20 h-3 bg-surface-variant/70 rounded animate-pulse"></div>
+                            </div>
+                            <div class="col-span-2 flex justify-end">
+                                <div class="w-20 h-5 bg-surface-variant rounded animate-pulse"></div>
+                            </div>
+                            <div class="col-span-1 flex justify-end">
+                                <div class="w-8 h-8 rounded-full bg-surface-variant animate-pulse"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination Skeleton -->
+                    <div class="px-6 py-3 border-t border-outline-variant bg-surface-container-lowest flex justify-between items-center">
+                        <div class="w-32 h-4 bg-surface-variant rounded animate-pulse"></div>
+                        <div class="flex gap-2">
+                            <div class="w-20 h-8 bg-surface-variant rounded-md animate-pulse"></div>
+                            <div class="w-20 h-8 bg-surface-variant rounded-md animate-pulse"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+    // Auto-redirect ke inventory setelah loading selesai
+    // Ganti dengan logika fetch asli saat terhubung ke backend
+    document.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            window.location.href = "{{ url_for('ui.inventory') }}";
+        }, 2000);
+    });
+</script>
+{% endblock %}
