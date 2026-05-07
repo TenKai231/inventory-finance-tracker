@@ -33,7 +33,24 @@ class LoginSchema(BaseModel):
 class RegisterSchema(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     password: str = Field(..., min_length=8, max_length=100)
+    confirm_password: str
     nama_toko: str = Field(..., min_length=2, max_length=100)
+
+    @field_validator('password')
+    @classmethod
+    def password_strength(cls, v):
+        if not any(c.isupper() for c in v):
+            raise ValueError('Password harus mengandung huruf kapital')
+        if not any(c.isdigit() for c in v):
+            raise ValueError('Password harus mengandung angka')
+        return v
+
+    @field_validator('confirm_password')
+    @classmethod
+    def passwords_match(cls, v, info):
+        if 'password' in info.data and v != info.data['password']:
+            raise ValueError('Password tidak cocok')
+        return v
 
     @field_validator("username", mode="before")
     @classmethod
@@ -60,7 +77,7 @@ def login():
     try:
         user = db.users.find_one({"username": payload.username})
         if not user or not bcrypt.checkpw(payload.password.encode('utf-8'), user["password"]):
-            return jsonify({"msg": "Invalid credentials"}), 401
+            return jsonify({"error": "Invalid credentials"}), 401
 
         # Generate tokens
         access_token = create_access_token(

@@ -228,7 +228,7 @@ def export_excel():
         docs = list(db.transactions.find({}, {"_id": 0}).sort('tanggal', -1))
 
         if not docs:
-            return jsonify({"msg": "No transactions to export"}), 200
+            return jsonify({"error": "No transactions to export"}), 200
 
         df = pd.DataFrame(docs)
         buf = BytesIO()

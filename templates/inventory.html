@@ -117,6 +117,23 @@
                 </div>
             </div>
 
+            <!-- Loading State -->
+            <div x-cloak x-show="loading" class="flex items-center justify-center h-64 w-full">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
+                <span class="ml-4 text-on-surface-variant font-label-md text-lg">Memuat data inventaris...</span>
+            </div>
+
+            <!-- Error State -->
+            <div x-cloak x-show="error && !loading" class="bg-error-container border border-error text-on-error-container p-6 rounded-xl mb-4 flex items-center shadow-sm" role="alert">
+                <span class="material-symbols-outlined mr-3 text-3xl">error</span>
+                <span x-text="error" class="flex-1 font-label-md text-lg"></span>
+                <button @click="fetchData()" class="bg-error text-on-error px-4 py-2 rounded-lg font-semibold hover:bg-error/90 transition-colors ml-4 shadow-sm active:scale-95">
+                    Coba Lagi
+                </button>
+            </div>
+
+            <!-- Hidden when loading/error -->
+            <div x-cloak x-show="!loading && !error" class="space-y-6 flex-1 flex flex-col">
             <!-- Bento Grid Stats -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="bg-surface border border-outline-variant p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -137,53 +154,76 @@
                 </div>
             </div>
 
-            <!-- Table Container -->
+            <!-- Table Container (Pattern Table + Pagination) -->
             <div class="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-sm flex-1 flex flex-col">
+                
+                <!-- 🔍 Toolbar: Search + Limit -->
+                <div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row gap-3 justify-between items-center bg-surface-container-lowest">
+                    <div class="relative w-full sm:w-72">
+                        <span class="material-symbols-outlined absolute left-3 top-2.5 text-on-surface-variant text-[20px]">search</span>
+                        <input type="text" x-model.debounce.500ms="search" placeholder="Cari SKU / Nama Barang..." 
+                               class="w-full pl-10 pr-4 py-2 border border-outline-variant rounded-lg text-body-md focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all bg-white">
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <select x-model="pagination.limit" @change="fetchData()" class="border border-outline-variant rounded-lg px-4 py-2 text-body-md bg-white focus:ring-2 focus:ring-secondary focus:border-secondary outline-none cursor-pointer">
+                            <option value="10">10 baris</option>
+                            <option value="25">25 baris</option>
+                            <option value="50">50 baris</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div class="overflow-x-auto thin-scrollbar">
-                    <table class="w-full text-left border-collapse">
+                    
+                    <!-- Empty State -->
+                    <div x-cloak x-show="!loading && !error && items.length === 0" class="p-12 text-center text-on-surface-variant flex flex-col items-center">
+                        <span class="material-symbols-outlined text-[48px] mb-3 opacity-50">inventory_2</span>
+                        <p class="font-label-md text-lg">Belum ada data barang.</p>
+                        <p class="text-body-md mt-1">Tambahkan barang baru untuk memulai.</p>
+                    </div>
+
+                    <table x-cloak x-show="!loading && !error && items.length > 0" class="w-full text-left border-collapse">
                         <thead class="bg-surface-container-low border-b border-outline-variant">
                             <tr>
-                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">SKU</th>
-                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Nama Barang</th>
-                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Kategori</th>
-                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Stok</th>
+                                <th @click="sort('sku')" class="px-4 py-3 text-label-md font-bold text-on-surface-variant cursor-pointer hover:bg-surface-variant select-none transition-colors group">
+                                    SKU <span class="material-symbols-outlined text-[14px] align-middle opacity-0 group-hover:opacity-100 transition-opacity" :class="{'opacity-100': sortCol==='sku'}" x-text="sortCol==='sku'?(sortDir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more'"></span>
+                                </th>
+                                <th @click="sort('nama')" class="px-4 py-3 text-label-md font-bold text-on-surface-variant cursor-pointer hover:bg-surface-variant select-none transition-colors group">
+                                    Nama Barang <span class="material-symbols-outlined text-[14px] align-middle opacity-0 group-hover:opacity-100 transition-opacity" :class="{'opacity-100': sortCol==='nama'}" x-text="sortCol==='nama'?(sortDir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more'"></span>
+                                </th>
+                                <th @click="sort('kategori')" class="px-4 py-3 text-label-md font-bold text-on-surface-variant cursor-pointer hover:bg-surface-variant select-none transition-colors group">
+                                    Kategori <span class="material-symbols-outlined text-[14px] align-middle opacity-0 group-hover:opacity-100 transition-opacity" :class="{'opacity-100': sortCol==='kategori'}" x-text="sortCol==='kategori'?(sortDir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more'"></span>
+                                </th>
+                                <th @click="sort('stok')" class="px-4 py-3 text-label-md font-bold text-on-surface-variant cursor-pointer hover:bg-surface-variant select-none transition-colors group">
+                                    Stok <span class="material-symbols-outlined text-[14px] align-middle opacity-0 group-hover:opacity-100 transition-opacity" :class="{'opacity-100': sortCol==='stok'}" x-text="sortCol==='stok'?(sortDir==='asc'?'arrow_upward':'arrow_downward'):'unfold_more'"></span>
+                                </th>
                                 <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Harga Beli</th>
                                 <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Harga Jual</th>
-                                <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant">Status</th>
                                 <th class="px-4 py-3 text-label-md font-bold text-on-surface-variant text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-outline-variant">
                             <template x-for="(item, index) in items" :key="item.sku">
-                                <tr :class="index % 2 === 0 ? 'bg-surface hover:bg-secondary-fixed/30 transition-colors' : 'bg-surface-container-lowest hover:bg-secondary-fixed/30 transition-colors'">
-                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="item.sku"></td>
-                                    <td class="px-4 py-3 font-semibold text-primary" x-text="item.name"></td>
-                                    <td class="px-4 py-3 text-on-surface-variant" x-text="item.category"></td>
-                                    <td class="px-4 py-3 font-mono-data text-body-md" x-text="item.stock"></td>
+                                <tr class="bg-surface hover:bg-secondary-fixed/30 transition-colors">
+                                    <td class="px-4 py-3 font-mono-data text-body-md text-primary font-medium" x-text="item.sku"></td>
+                                    <td class="px-4 py-3 font-semibold text-on-surface" x-text="item.name"></td>
+                                    <td class="px-4 py-3">
+                                        <span class="px-2.5 py-1 bg-primary-container text-on-primary-container rounded font-label-md text-[12px]" x-text="item.category"></span>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-mono-data text-body-md" :class="item.stock < 10 ? 'text-error font-bold' : 'text-on-surface'" x-text="item.stock"></span>
+                                            <span x-show="item.stock < 10" class="text-[10px] bg-error-container text-on-error-container px-1.5 rounded font-bold uppercase tracking-wider">Low</span>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3 font-mono-data text-body-md" x-text="formatCurrency(item.buyPrice)"></td>
                                     <td class="px-4 py-3 font-mono-data text-body-md" x-text="formatCurrency(item.sellPrice)"></td>
                                     <td class="px-4 py-3">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded-full font-bold text-[12px]"
-                                              :class="{
-                                                  'bg-emerald-100 text-emerald-800': item.status === 'Aman',
-                                                  'bg-amber-100 text-amber-800': item.status === 'Stok Rendah',
-                                                  'bg-red-100 text-red-800': item.status === 'Habis'
-                                              }">
-                                            <span class="w-1.5 h-1.5 rounded-full mr-1.5"
-                                                  :class="{
-                                                      'bg-emerald-500': item.status === 'Aman',
-                                                      'bg-amber-500': item.status === 'Stok Rendah',
-                                                      'bg-red-500': item.status === 'Habis'
-                                                  }"></span>
-                                            <span x-text="item.status"></span>
-                                        </span>
-                                    </td>
-                                    <td class="px-4 py-3">
                                         <div class="flex items-center justify-center space-x-1">
-                                            <button @click="editItem(item)" class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" title="Edit">
+                                            <button @click="editItem(item)" class="p-1.5 rounded-lg text-secondary hover:bg-secondary-container transition-colors" title="Edit">
                                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                                             </button>
-                                            <button @click="deleteItem(item.sku)" class="p-1.5 rounded-lg text-error hover:bg-error-container/50 transition-colors" title="Hapus">
+                                            <button x-show="userRole === 'owner'" @click="deleteItem(item.sku)" class="p-1.5 rounded-lg text-error hover:bg-error-container transition-colors" title="Hapus">
                                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                                             </button>
                                         </div>
@@ -194,17 +234,23 @@
                     </table>
                 </div>
                 
-                <!-- Pagination Footer -->
-                <div class="p-4 bg-surface-container-low border-t border-outline-variant flex flex-col md:flex-row items-center justify-between gap-4 mt-auto">
-                    <p class="text-body-md text-on-surface-variant">Menampilkan 1 - 5 dari <span x-text="metrics.totalItems"></span> data</p>
+                <!-- 📄 Pagination -->
+                <div x-cloak x-show="!loading && !error && pagination.total > 0" class="p-4 bg-surface-container-low border-t border-outline-variant flex flex-col md:flex-row items-center justify-between gap-4 mt-auto">
+                    <p class="text-body-md text-on-surface-variant">Menampilkan <span class="font-bold" x-text="((pagination.page - 1) * pagination.limit) + 1"></span> - <span class="font-bold" x-text="Math.min(pagination.page * pagination.limit, pagination.total)"></span> dari <span class="font-bold text-primary" x-text="pagination.total"></span> data</p>
                     <div class="flex items-center space-x-1">
-                        <button class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant">Previous</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-secondary text-on-primary font-bold shadow-sm text-sm">1</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface transition-colors font-bold text-on-surface-variant text-sm">2</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant hover:bg-surface transition-colors font-bold text-on-surface-variant text-sm">3</button>
-                        <button class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant">Next</button>
+                        <button @click="changePage(pagination.page - 1)" :disabled="pagination.page === 1" class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant disabled:opacity-40 disabled:cursor-not-allowed">Previous</button>
+                        
+                        <template x-for="p in totalPages()" :key="p">
+                            <button @click="changePage(p)" 
+                                    :class="p === pagination.page ? 'bg-secondary text-on-primary shadow-sm border-transparent' : 'border-outline-variant hover:bg-surface text-on-surface-variant'" 
+                                    class="w-8 h-8 flex items-center justify-center rounded-lg border transition-colors font-bold text-sm" 
+                                    x-text="p"></button>
+                        </template>
+
+                        <button @click="changePage(pagination.page + 1)" :disabled="pagination.page >= totalPages()" class="px-3 py-1.5 rounded-lg border border-outline-variant hover:bg-surface transition-colors font-label-md text-on-surface-variant disabled:opacity-40 disabled:cursor-not-allowed">Next</button>
                     </div>
                 </div>
+            </div>
             </div>
             
             <!-- Footer Copyright -->
@@ -337,8 +383,20 @@
 <script>
     document.addEventListener('alpine:init', () => {
         Alpine.data('inventoryData', () => ({
-            userName: 'Admin Store',
-            userRole: 'Manager',
+            userName: '',
+            userRole: '',
+
+            // --- UI & Data State ---
+            loading: true,
+            error: null,
+            items: [],
+            metrics: { totalItems: 0, assetValue: 'Rp 0', lowStock: 0, outOfStock: 0 },
+            
+            // --- Table Pagination & Filter ---
+            pagination: { page: 1, limit: 10, total: 0 },
+            search: '',
+            sortCol: 'created_at',
+            sortDir: 'desc',
 
             // --- Modal State ---
             showModal: false,
@@ -347,47 +405,85 @@
             editMode: false,
 
             async init() {
+                // Ambil data user terlebih dahulu untuk RBAC
+                try {
+                    const userRes = await fetch('/api/auth/me', { credentials: 'include' });
+                    if (userRes.ok) {
+                        const user = await userRes.json();
+                        this.userName = user.username;
+                        this.userRole = user.role || 'member';
+                    }
+                } catch (e) {}
+
+                // Trigger re-fetch otomatis kalau search berubah
+                this.$watch('search', () => { this.pagination.page = 1; this.fetchData(); });
+
                 await this.fetchData();
             },
 
-            async apiFetch(url, options = {}) {
-                const token = localStorage.getItem('access_token');
-                const res = await fetch(url, {
-                    ...options,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                        ...options.headers
-                    }
-                });
-                
-                if (res.status === 401) {
-                    localStorage.removeItem('access_token');
-                    window.location.href = '/api/auth/login';
-                    return null;
-                }
-                return res;
-            },
-
             async fetchData() {
-                const res = await this.apiFetch('/api/items?page=1&limit=20');
-                if (res && res.ok) {
+                this.loading = true;
+                this.error = null;
+                
+                try {
+                    const params = new URLSearchParams({
+                        page: this.pagination.page, limit: this.pagination.limit,
+                        search: this.search, sort: this.sortCol, dir: this.sortDir
+                    });
+                    const res = await fetch(`/api/items?${params}`, { credentials: 'include' });
+                    
+                    if (res.status === 401) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    if (!res.ok) throw new Error('Gagal mengambil data inventaris dari server');
+                    
                     const data = await res.json();
                     
-                    // Maps backend schema back to frontend names
                     this.items = data.data.map(d => ({
+                        _id: d._id,
                         sku: d.sku,
                         name: d.nama,
                         category: d.kategori,
                         stock: d.stok,
                         buyPrice: d.harga_beli,
-                        sellPrice: d.harga_jual,
-                        status: this.getStatus(d.stok)
+                        sellPrice: d.harga_jual
                     }));
-                    this.metrics.totalItems = data.total;
+                    
+                    this.pagination.total = data.total || 0;
+                    this.metrics.totalItems = data.total || 0;
+
+                    // Update local metrics estimate if dashboard API isn't called here
+                    this.metrics.lowStock = this.items.filter(i => i.stock > 0 && i.stock < 10).length;
+                    this.metrics.outOfStock = this.items.filter(i => i.stock === 0).length;
+                    
+                    const asset = this.items.reduce((sum, item) => sum + (item.stock * item.buyPrice), 0);
+                    this.metrics.assetValue = this.formatCurrency(asset);
+
+                } catch (err) {
+                    this.error = err.message || 'Terjadi kesalahan jaringan';
+                    Alpine.store('toast').trigger(this.error, 'error');
+                } finally {
+                    this.loading = false;
                 }
             },
 
+            // --- Pagination & Sorting Handlers ---
+            changePage(p) { 
+                if (p < 1 || p > this.totalPages()) return; 
+                this.pagination.page = p; 
+                this.fetchData(); 
+            },
+            totalPages() { 
+                return Math.ceil(this.pagination.total / this.pagination.limit) || 1; 
+            },
+            sort(col) { 
+                this.sortDir = (this.sortCol === col && this.sortDir === 'asc') ? 'desc' : 'asc'; 
+                this.sortCol = col; 
+                this.fetchData(); 
+            },
+
+            // --- Form / CRUD Handlers ---
             resetForm() {
                 this.form = { sku: '', name: '', category: '', stock: 0, unit: 'pcs', buyPrice: 0, sellPrice: 0, notes: '' };
                 this.formErrors = {};
@@ -401,10 +497,15 @@
             },
 
             async deleteItem(sku) {
-                if (!confirm(`Hapus item ${sku}?`)) return;
-                // Asumsi ada endpoint delete
-                // await this.apiFetch(`/api/items/${sku}`, {method: 'DELETE'});
-                await this.fetchData();
+                if (!confirm(`Hapus item ${sku}? Data yang dihapus tidak bisa dikembalikan.`)) return;
+                try {
+                    const res = await fetch(`/api/items/${sku}`, { method: 'DELETE', credentials: 'include' });
+                    if (!res.ok) throw new Error('Gagal menghapus data');
+                    Alpine.store('toast').trigger(`Item ${sku} berhasil dihapus`);
+                    this.fetchData();
+                } catch (err) {
+                    Alpine.store('toast').trigger(err.message, 'error');
+                }
             },
 
             validateForm() {
@@ -415,13 +516,12 @@
                 this.formErrors = errors;
                 return Object.keys(errors).length === 0;
             },
-            getStatus(stock) {
-                if (stock === 0) return 'Habis';
-                if (stock <= 5) return 'Stok Rendah';
-                return 'Aman';
-            },
+
             async saveItem(addAnother) {
-                if (!this.validateForm()) return;
+                if (!this.validateForm()) {
+                    Alpine.store('toast').trigger('Mohon periksa kembali form anda', 'error');
+                    return;
+                }
                 
                 const bodyPayload = {
                     sku: this.form.sku || 'IT-' + Date.now().toString().slice(-5),
@@ -432,32 +532,31 @@
                     harga_jual: this.form.sellPrice
                 };
 
-                const res = await this.apiFetch('/api/items', {
-                    method: this.editMode ? 'PUT' : 'POST', // mock PUT
-                    body: JSON.stringify(bodyPayload)
-                });
+                try {
+                    const res = await fetch('/api/items', {
+                        method: this.editMode ? 'PUT' : 'POST',
+                        credentials: 'include',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(bodyPayload)
+                    });
+                    
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || 'Gagal menyimpan item');
 
-                if (res && res.ok) {
+                    Alpine.store('toast').trigger(`Barang ${bodyPayload.nama} berhasil ${this.editMode ? 'diperbarui' : 'ditambahkan'}`);
+                    
                     await this.fetchData();
                     this.resetForm();
                     if (!addAnother) this.showModal = false;
+                } catch (err) {
+                    Alpine.store('toast').trigger(err.message, 'error');
                 }
             },
 
-            // --- Metrics ---
-            metrics: {
-                totalItems: '0',
-                assetValue: 'Rp 42.5M',
-                lowStock: '12',
-                outOfStock: '4'
-            },
-
-            // --- Items ---
-            items: [],
-
+            // --- Formatting Helpers ---
             formatCurrency(value) {
-                if(value == null) return "0";
-                return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                if(value == null || isNaN(value)) return "Rp 0";
+                return "Rp " + Number(value).toLocaleString('id-ID');
             }
         }))
     });

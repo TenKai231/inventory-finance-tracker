@@ -331,138 +331,137 @@
 <script>
 document.addEventListener('alpine:init', () => {
   Alpine.data('dashboardData', () => ({
-    // State
-    userName: '',
-    todayDate: new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+    // 🔄 Lifecycle State
     loading: true,
     error: null,
-    
-    // Data dari API
+    lastUpdated: null,
+
+    // 📊 Metrics (harus 0 di awal)
     metrics: { totalItems: 0, lowStock: 0, revenue: 0, expense: 0, profit: 0 },
-    transactions: [],
-    chartLabels: [],
-    chartMasuk: [],
-    chartKeluar: [],
     
-    // Auth & Init
+    // 📋 Recent Transactions (array kosong)
+    transactions: [],
+    
+    // 📈 Chart Data (kosong, nanti diisi API)
+    chart: { labels: [], masuk: [], keluar: [] },
+    
+    // User Data
+    userName: '',
+    todayDate: new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+
+    // ⚙️ Methods
     async init() {
-      const token = localStorage.getItem('access_token');
-      if (!token) { window.location.href = '/login'; return; }
-      
+      this.loading = true;
+      this.error = null;
+
       try {
-        // Fetch dashboard summary
-        const res = await fetch('/api/dashboard/summary', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!res.ok) throw new Error('Gagal load data dashboard dari server.');
-        
-        const data = await res.json();
-        
-        // Transform API response → UI format
+        // 1. Fetch semua data paralel (lebih cepat)
+        const [summaryRes, transRes, userRes] = await Promise.all([
+          fetch('/api/dashboard/summary', { credentials: 'include' }),
+          fetch('/api/transactions?page=1&limit=4', { credentials: 'include' }),
+          fetch('/api/auth/me', { credentials: 'include' })
+        ]);
+
+        // 2. Validasi response
+        if (summaryRes.status === 401 || transRes.status === 401 || userRes.status === 401) {
+            window.location.href = '/login';
+            return;
+        }
+        if (!summaryRes.ok || !transRes.ok || !userRes.ok) {
+          throw new Error('Gagal memuat data dari server');
+        }
+
+        const summary = await summaryRes.json();
+        const transData = await transRes.json();
+        const user = await userRes.json();
+
+        // 3. Mapping data API → State Alpine
         this.metrics = {
-          totalItems: data.stock_by_category.reduce((sum, c) => sum + c.total_stok, 0),
-          lowStock: data.stock_by_category.filter(c => c.total_stok < 10).length,
-          revenue: data.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0), // contoh harga rata-rata
-          expense: data.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0),
+          totalItems: summary.stock_by_category.reduce((sum, c) => sum + c.total_stok, 0),
+          lowStock: summary.stock_by_category.filter(c => c.total_stok < 10).length,
+          revenue: summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0),
+          expense: summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0),
           profit: 0
         };
         this.metrics.profit = this.metrics.revenue - this.metrics.expense;
-        
-        // Chart data
-        this.chartLabels = data.transactions_by_month.map(m => m._id);
-        this.chartMasuk = data.transactions_by_month.map(m => m.masuk);
-        this.chartKeluar = data.transactions_by_month.map(m => m.keluar);
-        
-        // Fetch recent transactions
-        const transRes = await fetch('/api/transactions?page=1&limit=4', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (transRes.ok) {
-          const transData = await transRes.json();
-          this.transactions = transData.data.map(t => ({
-            id: t._id,
-            name: t.item_sku,
-            date: new Date(t.tanggal).toLocaleString('id-ID'),
-            type: t.tipe.toUpperCase(),
-            amount: `${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah} unit`,
-            icon: t.tipe === 'masuk' ? 'arrow_upward' : 'arrow_downward'
-          }));
-        }
-        
-        // Get user info
-        const userRes = await fetch('/api/auth/me', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (userRes.ok) {
-          const user = await userRes.json();
-          this.userName = user.username;
-        }
-        
-        // Render chart setelah data siap di DOM
+
+        this.transactions = transData.data.map(t => ({
+          id: t._id,
+          name: t.item_sku,
+          date: new Date(t.tanggal).toLocaleString('id-ID'),
+          type: t.tipe.toUpperCase(),
+          amount: `${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah} unit`,
+          icon: t.tipe === 'masuk' ? 'arrow_upward' : 'arrow_downward'
+        }));
+
+        this.chart.labels = summary.transactions_by_month.map(m => m._id);
+        this.chart.masuk = summary.transactions_by_month.map(m => m.masuk);
+        this.chart.keluar = summary.transactions_by_month.map(m => m.keluar);
+
+        this.userName = user.username;
+        this.lastUpdated = new Date().toLocaleTimeString('id-ID');
+
+        // 4. Render chart hanya setelah DOM siap
         this.$nextTick(() => this.renderChart());
-        
-      } catch (e) {
-        this.error = 'Gagal memuat data. Silakan coba muat ulang atau login kembali.';
-        console.error(e);
+
+      } catch (err) {
+        this.error = err.message || 'Terjadi kesalahan jaringan';
       } finally {
         this.loading = false;
       }
     },
-    
+
     renderChart() {
-      const ctxElement = document.getElementById('inventoryChart');
-      if (!ctxElement) return;
-      const ctx = ctxElement.getContext('2d');
-      if (window.inventoryChart) window.inventoryChart.destroy();
-      
-      window.inventoryChart = new Chart(ctx, {
+      const ctx = document.getElementById('inventoryChart');
+      if (!ctx) return;
+
+      // Hapus instance lama jika ada
+      if (window._dashboardChart) {
+        window._dashboardChart.destroy();
+      }
+
+      window._dashboardChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: this.chartLabels,
+          labels: this.chart.labels,
           datasets: [
-            { 
-              label: 'Barang Masuk', 
-              data: this.chartMasuk, 
-              borderColor: '#6063ee', 
-              backgroundColor: 'rgba(96, 99, 238, 0.1)', 
-              tension: 0.4, 
-              fill: true 
+            {
+              label: 'Barang Masuk',
+              data: this.chart.masuk,
+              borderColor: '#6063ee',
+              backgroundColor: 'rgba(96, 99, 238, 0.1)',
+              tension: 0.4, fill: true
             },
-            { 
-              label: 'Barang Keluar', 
-              data: this.chartKeluar, 
-              borderColor: '#c6c6cd', 
-              borderDash: [5,5], 
-              tension: 0.4, 
-              fill: false 
+            {
+              label: 'Barang Keluar',
+              data: this.chart.keluar,
+              borderColor: '#c6c6cd',
+              borderDash: [5, 5],
+              tension: 0.4, fill: false
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: true, position: 'top' } },
+          plugins: { legend: { position: 'top' } },
           scales: {
-            y: { beginAtZero: true, grid: { borderDash: [2,4] }},
-            x: { grid: { display: false }}
+            y: { beginAtZero: true, grid: { borderDash: [2,4] } },
+            x: { grid: { display: false } }
           }
         }
       });
     },
-    
+
     // Helper: format currency
     formatRupiah(num) {
       if(isNaN(num)) return num;
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
     },
-    
-    // Export trigger
+
     async exportData() {
-      const token = localStorage.getItem('access_token');
       try {
-        const res = await fetch('/api/export/transactions', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch('/api/export/transactions', { credentials: 'include' });
         if (!res.ok) throw new Error('Export gagal karena akses ditolak atau server error.');
         const blob = await res.blob();
         const a = document.createElement('a');
