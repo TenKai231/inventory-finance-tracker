@@ -180,10 +180,10 @@
                                     </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center justify-center space-x-1">
-                                            <button class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" title="Edit">
+                                            <button @click="editItem(item)" class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-variant transition-colors" title="Edit">
                                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                                             </button>
-                                            <button class="p-1.5 rounded-lg text-error hover:bg-error-container/50 transition-colors" title="Hapus">
+                                            <button @click="deleteItem(item.sku)" class="p-1.5 rounded-lg text-error hover:bg-error-container/50 transition-colors" title="Hapus">
                                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                                             </button>
                                         </div>
@@ -344,14 +344,72 @@
             showModal: false,
             form: { sku: '', name: '', category: '', stock: 0, unit: 'pcs', buyPrice: 0, sellPrice: 0, notes: '' },
             formErrors: {},
+            editMode: false,
+
+            async init() {
+                await this.fetchData();
+            },
+
+            async apiFetch(url, options = {}) {
+                const token = localStorage.getItem('access_token');
+                const res = await fetch(url, {
+                    ...options,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`,
+                        ...options.headers
+                    }
+                });
+                
+                if (res.status === 401) {
+                    localStorage.removeItem('access_token');
+                    window.location.href = '/api/auth/login';
+                    return null;
+                }
+                return res;
+            },
+
+            async fetchData() {
+                const res = await this.apiFetch('/api/items?page=1&limit=20');
+                if (res && res.ok) {
+                    const data = await res.json();
+                    
+                    // Maps backend schema back to frontend names
+                    this.items = data.data.map(d => ({
+                        sku: d.sku,
+                        name: d.nama,
+                        category: d.kategori,
+                        stock: d.stok,
+                        buyPrice: d.harga_beli,
+                        sellPrice: d.harga_jual,
+                        status: this.getStatus(d.stok)
+                    }));
+                    this.metrics.totalItems = data.total;
+                }
+            },
 
             resetForm() {
                 this.form = { sku: '', name: '', category: '', stock: 0, unit: 'pcs', buyPrice: 0, sellPrice: 0, notes: '' };
                 this.formErrors = {};
+                this.editMode = false;
             },
+            
+            editItem(item) {
+                this.form = { ...item };
+                this.editMode = true;
+                this.showModal = true;
+            },
+
+            async deleteItem(sku) {
+                if (!confirm(`Hapus item ${sku}?`)) return;
+                // Asumsi ada endpoint delete
+                // await this.apiFetch(`/api/items/${sku}`, {method: 'DELETE'});
+                await this.fetchData();
+            },
+
             validateForm() {
                 const errors = {};
-                if (!this.form.name.trim()) errors.name = 'Nama Barang tidak boleh kosong';
+                if (!this.form.name) errors.name = 'Nama Barang tidak boleh kosong';
                 if (!this.form.category) errors.category = 'Kategori harus dipilih';
                 if (!this.form.sellPrice || this.form.sellPrice <= 0) errors.sellPrice = 'Harga Jual harus diisi';
                 this.formErrors = errors;
@@ -362,40 +420,43 @@
                 if (stock <= 5) return 'Stok Rendah';
                 return 'Aman';
             },
-            saveItem(addAnother) {
+            async saveItem(addAnother) {
                 if (!this.validateForm()) return;
-                const newItem = {
+                
+                const bodyPayload = {
                     sku: this.form.sku || 'IT-' + Date.now().toString().slice(-5),
-                    name: this.form.name,
-                    category: this.form.category,
-                    stock: this.form.stock,
-                    buyPrice: this.form.buyPrice,
-                    sellPrice: this.form.sellPrice,
-                    status: this.getStatus(this.form.stock)
+                    nama: this.form.name,
+                    kategori: this.form.category,
+                    stok: this.form.stock,
+                    harga_beli: this.form.buyPrice,
+                    harga_jual: this.form.sellPrice
                 };
-                this.items.push(newItem);
-                this.resetForm();
-                if (!addAnother) this.showModal = false;
+
+                const res = await this.apiFetch('/api/items', {
+                    method: this.editMode ? 'PUT' : 'POST', // mock PUT
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if (res && res.ok) {
+                    await this.fetchData();
+                    this.resetForm();
+                    if (!addAnother) this.showModal = false;
+                }
             },
 
             // --- Metrics ---
             metrics: {
-                totalItems: '1,248',
+                totalItems: '0',
                 assetValue: 'Rp 42.5M',
                 lowStock: '12',
                 outOfStock: '4'
             },
 
             // --- Items ---
-            items: [
-                { sku: 'IT-EL-001', name: 'MacBook Pro M2 14"', category: 'Elektronik', stock: 24, buyPrice: 28500000, sellPrice: 32000000, status: 'Aman' },
-                { sku: 'IT-EL-002', name: 'Magic Mouse 2', category: 'Elektronik', stock: 5, buyPrice: 1100000, sellPrice: 1450000, status: 'Stok Rendah' },
-                { sku: 'IT-OF-042', name: 'Paper Clip XL', category: 'Alat Kantor', stock: 0, buyPrice: 12500, sellPrice: 18000, status: 'Habis' },
-                { sku: 'IT-EL-105', name: 'iPhone 15 Pro', category: 'Elektronik', stock: 12, buyPrice: 18200000, sellPrice: 20499000, status: 'Aman' },
-                { sku: 'IT-EL-109', name: 'AirPods Max Grey', category: 'Elektronik', stock: 3, buyPrice: 8500000, sellPrice: 9800000, status: 'Stok Rendah' }
-            ],
+            items: [],
 
             formatCurrency(value) {
+                if(value == null) return "0";
                 return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
         }))

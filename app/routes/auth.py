@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from app.extensions import limiter, db
 from pydantic import BaseModel, Field, field_validator
 from datetime import datetime
+import bcrypt
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
@@ -22,8 +23,14 @@ class LoginSchema(BaseModel):
 
 # Mock user database (ganti dengan MongoDB users collection untuk production)
 MOCK_USERS = {
-    "admin": {"password": "secure123", "role": "owner"},
-    "kasir": {"password": "kasir123", "role": "cashier"}
+    "admin": {
+        "password": bcrypt.hashpw(b"secure123", bcrypt.gensalt()),
+        "role": "owner"
+    },
+    "kasir": {
+        "password": bcrypt.hashpw(b"kasir123", bcrypt.gensalt()),
+        "role": "cashier"
+    }
 }
 
 @auth_bp.route("/login", methods=["POST"])
@@ -35,7 +42,7 @@ def login():
         return jsonify({"error": str(e)}), 400
     
     user = MOCK_USERS.get(payload.username)
-    if not user or user["password"] != payload.password:
+    if not user or not bcrypt.checkpw(payload.password.encode(), user["password"]):
         return jsonify({"msg": "Invalid credentials"}), 401
     
     # Generate tokens

@@ -1,26 +1,48 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect, url_for
+from flask_jwt_extended import verify_jwt_in_request
+from functools import wraps
 
 ui_bp = Blueprint('ui', __name__)
 
+def login_required_ui(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            # Proteksi dashboard: Cek JWT di cookies atau headers.
+            # Jika user belum login, lempar kembali ke halaman login.
+            verify_jwt_in_request(locations=["cookies", "headers"])
+        except:
+            return redirect(url_for('ui.login'))
+        return f(*args, **kwargs)
+    return decorated
+
 @ui_bp.route('/')
+@login_required_ui
 def dashboard():
     return render_template('dashboard.html')
 
 @ui_bp.route('/inventory')
+@login_required_ui
 def inventory():
     return render_template('inventory.html')
 
 @ui_bp.route('/inventory/empty')
+@login_required_ui
 def inventory_empty():
     return render_template('inventory_empty.html')
 
 @ui_bp.route('/inventory/loading')
+@login_required_ui
 def inventory_loading():
     return render_template('loading.html')
 
 @ui_bp.route('/login')
 def login():
     return render_template('login.html')
+
+@ui_bp.route('/register')
+def register():
+    return render_template('register.html')
 
 @ui_bp.app_errorhandler(404)
 def page_not_found(e):

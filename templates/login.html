@@ -3,7 +3,37 @@
 {% block title %}Login - InventoTrack{% endblock %}
 
 {% block content %}
-<main class="flex min-h-screen w-full" x-data="{ email: '', password: '', remember: false }">
+<main class="flex min-h-screen w-full" x-data="{ 
+    username: '', 
+    password: '', 
+    remember: false, 
+    error: '',
+    isLoading: false,
+    async handleLogin() {
+        this.error = '';
+        this.isLoading = true;
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({username: this.username, password: this.password})
+            });
+            const data = await res.json();
+            
+            if (res.ok) {
+                document.cookie = `access_token_cookie=${data.access_token}; path=/`;
+                localStorage.setItem('access_token', data.access_token);
+                window.location.href = '/';
+            } else {
+                this.error = data.msg || data.error || 'Login gagal. Periksa kembali username dan password.';
+            }
+        } catch (err) {
+            this.error = 'Terjadi kesalahan koneksi. Silakan coba lagi.';
+        } finally {
+            this.isLoading = false;
+        }
+    }
+}">
     <!-- Left Branding Side -->
     <section class="hidden lg:flex lg:w-1/2 bg-primary flex-col justify-center items-center p-8 relative overflow-hidden">
         <!-- Decorative structural elements -->
@@ -13,7 +43,7 @@
         </div>
         <div class="z-10 max-w-md text-center">
             <div class="flex items-center justify-center mb-4 gap-2">
-                <span class="material-symbols-outlined text-on-primary text-[48px]">inventory_2</span>
+                <span class="material-symbols-outlined text-on-primary text-[48px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
                 <h1 class="font-h1 text-h1 text-on-primary tracking-tight">InventoTrack</h1>
             </div>
             <p class="text-body-lg text-gray-300 mb-10">
@@ -24,7 +54,7 @@
             <div class="grid grid-cols-1 gap-4 text-left w-full">
                 <div class="flex items-center gap-4 bg-primary-container p-4 rounded-lg border border-on-primary-fixed-variant/20 transition-all hover:translate-x-1">
                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-on-primary">
-                        <span class="material-symbols-outlined">package_2</span>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">package_2</span>
                     </div>
                     <div>
                         <p class="font-h3 text-body-lg text-on-primary">📦 Inventori</p>
@@ -34,7 +64,7 @@
                 
                 <div class="flex items-center gap-4 bg-primary-container p-4 rounded-lg border border-on-primary-fixed-variant/20 transition-all hover:translate-x-1">
                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-on-primary">
-                        <span class="material-symbols-outlined">monitoring</span>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">monitoring</span>
                     </div>
                     <div>
                         <p class="font-h3 text-body-lg text-on-primary">📊 Keuangan</p>
@@ -44,7 +74,7 @@
                 
                 <div class="flex items-center gap-4 bg-primary-container p-4 rounded-lg border border-on-primary-fixed-variant/20 transition-all hover:translate-x-1">
                     <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-on-primary">
-                        <span class="material-symbols-outlined">file_export</span>
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">table_view</span>
                     </div>
                     <div>
                         <p class="font-h3 text-body-lg text-on-primary">📥 Ekspor Excel</p>
@@ -60,7 +90,7 @@
         <div class="w-full max-w-[440px]">
             <!-- Mobile Logo -->
             <div class="flex lg:hidden items-center justify-center mb-10 gap-2">
-                <span class="material-symbols-outlined text-primary text-[32px]">inventory_2</span>
+                <span class="material-symbols-outlined text-primary text-[32px]" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
                 <h2 class="font-h1 text-h2 text-primary">InventoTrack</h2>
             </div>
             
@@ -71,13 +101,18 @@
                     <p class="text-body-md text-on-surface-variant leading-relaxed">Silakan masuk ke akun Anda untuk melanjutkan.</p>
                 </div>
                 
-                <form action="#" @submit.prevent="console.log('Login diproses:', email)" class="space-y-4">
-                    <!-- Email Input -->
+                <form action="#" @submit.prevent="handleLogin" class="space-y-4">
+                    <!-- Error Message -->
+                    <template x-if="error">
+                        <div class="p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm mb-4" x-text="error"></div>
+                    </template>
+
+                    <!-- Username Input -->
                     <div class="space-y-1">
-                        <label class="block font-label-md text-label-md text-on-surface-variant" for="email">Email</label>
+                        <label class="block font-label-md text-label-md text-on-surface-variant" for="username">Username</label>
                         <div class="relative">
-                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">mail</span>
-                            <input x-model="email" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-[#9CA3AF] text-body-md" id="email" name="email" placeholder="nama@perusahaan.com" required type="email"/>
+                            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">person</span>
+                            <input x-model="username" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline text-on-surface rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-gray-400 text-body-md" id="username" name="username" placeholder="Masukkan username" required type="text"/>
                         </div>
                     </div>
                     
@@ -88,7 +123,7 @@
                         </div>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">lock</span>
-                            <input x-model="password" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-[#9CA3AF] text-body-md" id="password" name="password" placeholder="••••••••" required type="password"/>
+                            <input x-model="password" class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline text-on-surface rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none transition-all placeholder:text-gray-400 text-body-md" id="password" name="password" placeholder="••••••••" required type="password"/>
                         </div>
                         <div class="text-right mt-1">
                             <a class="text-label-md text-secondary hover:underline transition-colors font-semibold" href="#">Lupa Password?</a>
@@ -102,9 +137,11 @@
                     </div>
                     
                     <!-- Action Button -->
-                    <button class="w-full bg-gradient-to-r from-secondary to-[#4F46E5] hover:from-[#4F46E5] hover:to-[#4338ca] text-on-secondary font-h3 text-body-lg py-2 px-4 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-6 shadow-[0_4px_12px_rgba(99,102,241,0.3)]" type="submit">
-                        Masuk
-                        <span class="material-symbols-outlined text-[20px]">login</span>
+                    <button :disabled="isLoading" class="w-full bg-secondary hover:bg-secondary/90 disabled:opacity-50 text-on-secondary font-h3 text-body-lg py-3 px-4 rounded-lg transition-all active:scale-[0.98] flex items-center justify-center gap-2 mt-6 shadow-md" type="submit">
+                        <span x-show="!isLoading">Masuk</span>
+                        <span x-show="!isLoading" class="material-symbols-outlined text-[20px]">login</span>
+                        <span x-show="isLoading" class="material-symbols-outlined animate-spin text-[20px] hidden" :class="{'hidden': !isLoading}">progress_activity</span>
+                        <span x-show="isLoading" class="hidden" :class="{'hidden': !isLoading}">Memproses...</span>
                     </button>
                 </form>
                 
@@ -120,14 +157,19 @@
                 
                 <!-- Social Login Mock -->
                 <div class="grid grid-cols-1 gap-2">
-                    <button class="flex items-center justify-center gap-2 w-full py-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors text-body-md font-semibold text-primary">
-                        <img alt="Google" class="w-5 h-5" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGjQz5McJm_YJr1dE1TM0zag7-Tjcmo44l7OFch1A9cLEeSWknpTnNeMdF2FqqP8hkMYkwkpkIzQEmCdSPop2T1MxFlso0ViohibrhQj-NDXbdRIQBY_F7F0peECAQoLn_t2RSOKA3GVG76nm3Ovf0HX3Jj3fN2vnGYLYSAlvtKJFXTHEswlSuqRwfFwptwx7ypr31o6z30N89RqiuKgetXY2ONZOALf7gMDTz-bqfv7CIhgbz8aKb04SD9D6o1Ijcd6JKdWNrmBQ"/>
+                    <button type="button" class="flex items-center justify-center gap-2 w-full py-2 border border-outline rounded-lg bg-surface-container-lowest hover:bg-surface-container transition-colors text-body-md font-semibold text-primary">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" class="w-5 h-5">
+                            <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                            <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                            <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                            <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                        </svg>
                         Google
                     </button>
                 </div>
                 
                 <p class="mt-8 text-center text-body-md text-on-surface-variant">
-                    Belum punya akun? <a class="text-secondary font-bold hover:underline" href="#">Daftar Sekarang</a>
+                    Belum punya akun? <a class="text-secondary font-bold hover:underline" href="/register">Daftar Sekarang</a>
                 </p>
             </div>
             

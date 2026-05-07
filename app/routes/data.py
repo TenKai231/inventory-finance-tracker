@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, send_file
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.extensions import limiter, db
 from pydantic import BaseModel, Field, field_validator
-from datetime import datetime
+from datetime import datetime, timezone
 import pandas as pd
 from io import BytesIO
 from bson import ObjectId
@@ -44,8 +44,11 @@ def serialize_doc(doc):
 @jwt_required()
 @limiter.limit("30 per minute")
 def get_items():
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 20))
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+        limit = min(100, max(1, int(request.args.get('limit', 20))))
+    except (ValueError, TypeError):
+        return jsonify({"error": "page dan limit harus berupa angka"}), 400
     skip = (page - 1) * limit
     
     cursor = db.items.find().skip(skip).limit(limit)
@@ -63,7 +66,7 @@ def create_item():
     try:
         payload = ItemSchema(**request.json)
         doc = payload.model_dump()
-        doc['created_at'] = datetime.utcnow()
+        doc['created_at'] = datetime.now(timezone.utc)
         result = db.items.insert_one(doc)
         doc['_id'] = str(result.inserted_id)
         return jsonify(doc), 201
@@ -75,8 +78,11 @@ def create_item():
 @jwt_required()
 @limiter.limit("30 per minute")
 def get_transactions():
-    page = int(request.args.get('page', 1))
-    limit = int(request.args.get('limit', 20))
+    try:
+        page = max(1, int(request.args.get('page', 1)))
+        limit = min(100, max(1, int(request.args.get('limit', 20))))
+    except (ValueError, TypeError):
+        return jsonify({"error": "page dan limit harus berupa angka"}), 400
     skip = (page - 1) * limit
     
     cursor = db.transactions.find().sort('tanggal', -1).skip(skip).limit(limit)
@@ -94,22 +100,36 @@ def create_transaction():
     try:
         payload = TransactionSchema(**request.json)
         doc = payload.model_dump()
-        doc['tanggal'] = datetime.utcnow()
+        doc['tanggal'] = datetime.now(timezone.utc)
         doc['user'] = get_jwt_identity()
         
-        # Update stok otomatis
-        item = db.items.find_one({"sku": payload.item_sku})
-        if not item:
-            return jsonify({"error": "Item not found"}), 404
+        # Update stok otomatis pakai find_one_and_update (Atomic Operation)
+        from pymongo import ReturnDocument
         
-        new_stok = item['stok'] + (payload.jumlah if payload.tipe == 'masuk' else -payload.jumlah)
-        if new_stok < 0:
-            return jsonify({"error": "Stok tidak cukup"}), 400
+        if payload.tipe == 'masuk':
+            result = db.items.find_one_and_update(
+                {"sku": payload.item_sku},
+                {"$inc": {"stok": payload.jumlah}},
+                return_document=ReturnDocument.AFTER
+            )
+            if not result:
+                return jsonify({"error": "Item not found"}), 404
+        else:
+            result = db.items.find_one_and_update(
+                {"sku": payload.item_sku, "stok": {"$gte": payload.jumlah}},
+                {"$inc": {"stok": -payload.jumlah}},
+                return_document=ReturnDocument.AFTER
+            )
+            if not result:
+                # Cek dulu apakah item-nya ada tapi stok kurang, atau item benar-benar tidak ada
+                item_exists = db.items.count_documents({"sku": payload.item_sku}) > 0
+                if item_exists:
+                    return jsonify({"error": "Stok tidak cukup"}), 400
+                else:
+                    return jsonify({"error": "Item not found"}), 404
         
-        db.items.update_one({"sku": payload.item_sku}, {"$set": {"stok": new_stok}})
-        
-        result = db.transactions.insert_one(doc)
-        doc['_id'] = str(result.inserted_id)
+        result_trans = db.transactions.insert_one(doc)
+        doc['_id'] = str(result_trans.inserted_id)
         return jsonify(doc), 201
     except Exception as e:
         return jsonify({"error": str(e)}), 400
@@ -142,7 +162,7 @@ def dashboard_summary():
     return jsonify({
         "stock_by_category": [{**doc, "_id": doc.pop("_id")} for doc in stock_by_category],
         "transactions_by_month": [{**doc, "_id": doc.pop("_id")} for doc in transactions_by_month],
-        "generated_at": datetime.utcnow().isoformat()
+        "generated_at": datetime.now(timezone.utc).isoformat()
     }), 200
 
 # ===== EXPORT EXCEL (PROTECTED) =====
@@ -173,7 +193,7 @@ def export_excel():
     buf.seek(0)
     
     # Generate filename dengan timestamp
-    filename = f'laporan_transaksi_{datetime.utcnow().strftime("%Y%m%d_%H%M")}.xlsx'
+    filename = f'laporan_transaksi_{datetime.now(timezone.utc).strftime("%Y%m%d_%H%M")}.xlsx'
     
     return send_file(
         buf,
