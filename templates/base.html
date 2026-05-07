@@ -121,6 +121,44 @@
             min-height: max(884px, 100dvh);
         }
     </style>
+
+    <script>
+    // Auto-attach token ke setiap fetch
+    const originalFetch = window.fetch;
+    window.fetch = async function(url, options = {}) {
+      const token = localStorage.getItem('access_token');
+      if (token && !options.headers?.Authorization) {
+        options.headers = {
+          ...options.headers,
+          'Authorization': `Bearer ${token}`
+        };
+      }
+      
+      const res = await originalFetch(url, options);
+      
+      // Handle 401 → auto refresh token
+      if (res.status === 401) {
+        const refresh = localStorage.getItem('refresh_token');
+        if (refresh) {
+          const refreshRes = await originalFetch('/api/auth/refresh', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${refresh}` }
+          });
+          if (refreshRes.ok) {
+            const {access_token} = await refreshRes.json();
+            localStorage.setItem('access_token', access_token);
+            // Retry request asli
+            return window.fetch(url, options);
+          }
+        }
+        // Refresh gagal → logout
+        localStorage.clear();
+        window.location.href = '/login';
+      }
+      
+      return res;
+    };
+    </script>
 </head>
 <body class="bg-background font-sans antialiased text-on-background">
     <!-- Area ini akan diisi oleh halaman spesifik (seperti login, dashboard, dll) -->

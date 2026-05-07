@@ -44,18 +44,6 @@ class RegisterSchema(BaseModel):
             raise ValueError("Username hanya boleh alphanumeric, underscore, atau dash")
         return v.lower()
 
-# Mock user database (ganti dengan MongoDB users collection untuk production)
-MOCK_USERS = {
-    "admin": {
-        "password": bcrypt.hashpw(b"secure123", bcrypt.gensalt()),
-        "role": "owner"
-    },
-    "kasir": {
-        "password": bcrypt.hashpw(b"kasir123", bcrypt.gensalt()),
-        "role": "cashier"
-    }
-}
-
 @auth_bp.route("/login", methods=["POST"])
 @limiter.limit("5 per minute")
 def login():
@@ -70,21 +58,21 @@ def login():
 
     # Cek kredensial
     try:
-        user = MOCK_USERS.get(payload.username)
-        if not user or not bcrypt.checkpw(payload.password.encode(), user["password"]):
+        user = db.users.find_one({"username": payload.username})
+        if not user or not bcrypt.checkpw(payload.password.encode('utf-8'), user["password"]):
             return jsonify({"msg": "Invalid credentials"}), 401
 
         # Generate tokens
         access_token = create_access_token(
-            identity=payload.username,
+            identity=user["username"],
             additional_claims={"role": user["role"]}
         )
-        refresh_token = create_refresh_token(identity=payload.username)
+        refresh_token = create_refresh_token(identity=user["username"])
 
         resp = make_response(jsonify({
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "user": {"username": payload.username, "role": user["role"]}
+            "user": {"username": user["username"], "role": user["role"]}
         }), 200)
         set_access_cookies(resp, access_token)
         set_refresh_cookies(resp, refresh_token)
@@ -100,7 +88,8 @@ def login():
 def refresh():
     try:
         current_user = get_jwt_identity()
-        role = MOCK_USERS.get(current_user, {}).get("role", "user")
+        user = db.users.find_one({"username": current_user})
+        role = user["role"] if user else "user"
         new_token = create_access_token(identity=current_user, additional_claims={"role": role})
         return jsonify(access_token=new_token), 200
     except Exception:
@@ -113,10 +102,11 @@ def refresh():
 def get_current_user():
     try:
         current_user = get_jwt_identity()
-        claims = MOCK_USERS.get(current_user, {})
+        user = db.users.find_one({"username": current_user})
+        role = user["role"] if user else "user"
         return jsonify({
             "username": current_user,
-            "role": claims.get("role", "user")
+            "role": role
         }), 200
     except Exception:
         logger.exception("Unexpected error in get_current_user")

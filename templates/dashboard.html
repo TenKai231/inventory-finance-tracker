@@ -96,19 +96,37 @@
         </header>
 
         <!-- Dashboard Content -->
-        <div class="p-10 space-y-6 max-w-[1280px] mx-auto w-full">
-            <!-- Header -->
+        <div class="p-10 max-w-[1280px] mx-auto w-full">
+            
+            <!-- Loading State -->
+            <div x-show="loading" class="flex items-center justify-center h-64 w-full">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
+                <span class="ml-4 text-on-surface-variant font-label-md text-lg">Memuat data dashboard...</span>
+            </div>
+
+            <!-- Error State -->
+            <div x-show="error && !loading" style="display:none" class="bg-error-container border border-error text-on-error-container p-6 rounded-xl mb-4 flex items-center shadow-sm" role="alert">
+                <span class="material-symbols-outlined mr-3 text-3xl">error</span>
+                <span x-text="error" class="flex-1 font-label-md text-lg"></span>
+                <button @click="window.location.reload()" class="bg-error text-on-error px-4 py-2 rounded-lg font-semibold hover:bg-error/90 transition-colors ml-4 shadow-sm active:scale-95">
+                    Coba Lagi
+                </button>
+            </div>
+
+            <!-- Main Content Wrapper (Hidden when loading/error) -->
+            <div x-show="!loading && !error" style="display:none" class="space-y-6">
+                <!-- Header -->
             <div class="flex justify-between items-end">
                 <div>
                     <h2 class="font-h1 text-h1 text-primary">Dasbor</h2>
                     <p class="text-on-surface-variant" x-text="todayDate"></p>
                 </div>
                 <div class="flex space-x-4">
-                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm">
+                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
                         <span class="material-symbols-outlined text-[18px]">calendar_today</span>
                         <span>30 Hari Terakhir</span>
                     </button>
-                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm">
+                    <button @click="exportData" class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
                         <span class="material-symbols-outlined text-[18px]">download</span>
                         <span>Ekspor Laporan</span>
                     </button>
@@ -163,7 +181,7 @@
                         </div>
                     </div>
                     <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="metrics.revenue"></span>
+                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.revenue)"></span>
                         <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
                             <span class="material-symbols-outlined text-[14px]">trending_up</span> 24%
                         </span>
@@ -180,7 +198,7 @@
                         </div>
                     </div>
                     <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="metrics.expense"></span>
+                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.expense)"></span>
                         <span class="text-[12px] font-bold text-error bg-error-container px-1.5 py-0.5 rounded flex items-center">
                             <span class="material-symbols-outlined text-[14px]">trending_down</span> 5%
                         </span>
@@ -197,7 +215,7 @@
                         </div>
                     </div>
                     <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="metrics.profit"></span>
+                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.profit)"></span>
                         <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
                             Margin 58%
                         </span>
@@ -304,69 +322,158 @@
                     <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
                 </div>
             </div>
+            </div> <!-- Tutup Wrapper Main Content -->
         </div>
     </main>
 </div>
 
 <!-- Script Inisialisasi Chart & Alpine -->
 <script>
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('dashboardData', () => ({
-            userName: 'Rama Ferdiasnyah',
-            todayDate: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-            metrics: {
-                totalItems: '12.842',
-                lowStock: '24',
-                revenue: 'Rp 678JT',
-                expense: 'Rp 281JT',
-                profit: 'Rp 397JT'
+document.addEventListener('alpine:init', () => {
+  Alpine.data('dashboardData', () => ({
+    // State
+    userName: '',
+    todayDate: new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+    loading: true,
+    error: null,
+    
+    // Data dari API
+    metrics: { totalItems: 0, lowStock: 0, revenue: 0, expense: 0, profit: 0 },
+    transactions: [],
+    chartLabels: [],
+    chartMasuk: [],
+    chartKeluar: [],
+    
+    // Auth & Init
+    async init() {
+      const token = localStorage.getItem('access_token');
+      if (!token) { window.location.href = '/login'; return; }
+      
+      try {
+        // Fetch dashboard summary
+        const res = await fetch('/api/dashboard/summary', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Gagal load data dashboard dari server.');
+        
+        const data = await res.json();
+        
+        // Transform API response → UI format
+        this.metrics = {
+          totalItems: data.stock_by_category.reduce((sum, c) => sum + c.total_stok, 0),
+          lowStock: data.stock_by_category.filter(c => c.total_stok < 10).length,
+          revenue: data.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0), // contoh harga rata-rata
+          expense: data.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0),
+          profit: 0
+        };
+        this.metrics.profit = this.metrics.revenue - this.metrics.expense;
+        
+        // Chart data
+        this.chartLabels = data.transactions_by_month.map(m => m._id);
+        this.chartMasuk = data.transactions_by_month.map(m => m.masuk);
+        this.chartKeluar = data.transactions_by_month.map(m => m.keluar);
+        
+        // Fetch recent transactions
+        const transRes = await fetch('/api/transactions?page=1&limit=4', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (transRes.ok) {
+          const transData = await transRes.json();
+          this.transactions = transData.data.map(t => ({
+            id: t._id,
+            name: t.item_sku,
+            date: new Date(t.tanggal).toLocaleString('id-ID'),
+            type: t.tipe.toUpperCase(),
+            amount: `${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah} unit`,
+            icon: t.tipe === 'masuk' ? 'arrow_upward' : 'arrow_downward'
+          }));
+        }
+        
+        // Get user info
+        const userRes = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (userRes.ok) {
+          const user = await userRes.json();
+          this.userName = user.username;
+        }
+        
+        // Render chart setelah data siap di DOM
+        this.$nextTick(() => this.renderChart());
+        
+      } catch (e) {
+        this.error = 'Gagal memuat data. Silakan coba muat ulang atau login kembali.';
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
+    },
+    
+    renderChart() {
+      const ctxElement = document.getElementById('inventoryChart');
+      if (!ctxElement) return;
+      const ctx = ctxElement.getContext('2d');
+      if (window.inventoryChart) window.inventoryChart.destroy();
+      
+      window.inventoryChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: this.chartLabels,
+          datasets: [
+            { 
+              label: 'Barang Masuk', 
+              data: this.chartMasuk, 
+              borderColor: '#6063ee', 
+              backgroundColor: 'rgba(96, 99, 238, 0.1)', 
+              tension: 0.4, 
+              fill: true 
             },
-            transactions: [
-                { id: 1, name: 'MacBook Pro M2', date: 'Hari ini • 14:20', type: 'MASUK', amount: '+12 unit • Rp 288JT', icon: 'laptop_mac' },
-                { id: 2, name: 'iPhone 15 Pro', date: 'Hari ini • 11:05', type: 'KELUAR', amount: '-5 unit • Rp 105JT', icon: 'smartphone' },
-                { id: 3, name: 'Sony WH-1000XM5', date: 'Kemarin • 16:45', type: 'MASUK', amount: '+25 unit • Rp 125JT', icon: 'headphones' },
-                { id: 4, name: 'iPad Air M1', date: 'Kemarin • 09:30', type: 'KELUAR', amount: '-2 unit • Rp 24JT', icon: 'tablet_mac' }
-            ],
-            init() {
-                // Inisialisasi Chart.js setelah komponen Alpine siap
-                const ctx = document.getElementById('inventoryChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt'],
-                        datasets: [
-                            {
-                                label: 'Barang Masuk',
-                                data: [150, 220, 180, 290, 210, 340],
-                                borderColor: '#6063ee', // Warna Secondary
-                                backgroundColor: 'rgba(96, 99, 238, 0.1)',
-                                tension: 0.4,
-                                fill: true
-                            },
-                            {
-                                label: 'Barang Keluar',
-                                data: [120, 190, 140, 260, 180, 300],
-                                borderColor: '#c6c6cd', // Warna Outline Variant
-                                borderDash: [5, 5],
-                                tension: 0.4,
-                                fill: false
-                            }
-                        ]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false }
-                        },
-                        scales: {
-                            y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
-                            x: { grid: { display: false } }
-                        }
-                    }
-                });
+            { 
+              label: 'Barang Keluar', 
+              data: this.chartKeluar, 
+              borderColor: '#c6c6cd', 
+              borderDash: [5,5], 
+              tension: 0.4, 
+              fill: false 
             }
-        }))
-    })
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: 'top' } },
+          scales: {
+            y: { beginAtZero: true, grid: { borderDash: [2,4] }},
+            x: { grid: { display: false }}
+          }
+        }
+      });
+    },
+    
+    // Helper: format currency
+    formatRupiah(num) {
+      if(isNaN(num)) return num;
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+    },
+    
+    // Export trigger
+    async exportData() {
+      const token = localStorage.getItem('access_token');
+      try {
+        const res = await fetch('/api/export/transactions', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!res.ok) throw new Error('Export gagal karena akses ditolak atau server error.');
+        const blob = await res.blob();
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `laporan_${new Date().toISOString().slice(0,10)}.xlsx`;
+        a.click();
+      } catch (e) {
+        alert('Gagal export: ' + e.message);
+      }
+    }
+  }));
+});
 </script>
 {% endblock %}
