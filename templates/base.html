@@ -6,25 +6,19 @@
     <title>{% block title %}InventoTrack{% endblock %}</title>
 
     <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     
-    <!-- Alpine.js (Harus defer agar dieksekusi setelah halaman dimuat) -->
+    <!-- Alpine.js (defer agar dieksekusi setelah halaman dimuat) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Local Tailwind CSS Output -->
-    <link href="{{ url_for('static', filename='css/output.css') }}" rel="stylesheet"/>
-    
-    <!-- Custom CSS -->
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
-
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Konfigurasi Tema Tailwind bawaan dari Google Stitch -->
+    <!-- 
+        PENTING: tailwind.config HARUS didefinisikan SEBELUM script Tailwind CDN dimuat
+        agar konfigurasi tema (warna, font, dsb) terbaca dengan benar.
+    -->
     <script id="tailwind-config">
       tailwind.config = {
         darkMode: "class",
@@ -90,15 +84,38 @@
               "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
               "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
               "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
+            },
+            fontWeight: {
+              "h1": "700",
+              "h2": "600",
+              "h3": "600",
+              "label-md": "600",
+              "body-lg": "400",
+              "body-md": "400",
             }
           }
         }
       }
     </script>
+
+    <!-- Tailwind CSS CDN — dimuat SETELAH tailwind.config didefinisikan -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <!-- Custom CSS — dimuat setelah Tailwind agar bisa override bila perlu -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+
     <style>
+        /* Sembunyikan elemen Alpine hingga inisialisasi selesai (cegah flash of unstyled content) */
+        [x-cloak] { display: none !important; }
+
+        /* Pastikan Material Icons tidak pernah italic/bold dari font browser */
         .material-symbols-outlined {
+            font-style: normal !important;
+            font-weight: normal !important;
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
             vertical-align: middle;
+            display: inline-flex;
+            align-items: center;
         }
         body {
             min-height: max(884px, 100dvh);
