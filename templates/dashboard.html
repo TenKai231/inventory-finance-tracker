@@ -14,7 +14,8 @@
 <div x-data="dashboardData()" class="flex min-h-screen w-full">
 
     <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+    <aside
+        class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
         <div class="flex items-center space-x-2 mb-10">
             <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
@@ -24,43 +25,52 @@
                 <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
             </div>
         </div>
-        
+
         <nav class="flex-1 space-y-1">
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out"
+                href="{{ url_for('ui.dashboard') }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-label-md">Dasbor</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.inventory') }}">
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span class="font-label-md">Inventaris</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span class="font-label-md">Transaksi</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">ios_share</span>
                 <span class="font-label-md">Ekspor</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="font-label-md">Pengaturan</span>
             </a>
         </nav>
-        
+
         <div class="pt-4 border-t border-outline-variant space-y-1">
-            <button class="w-full flex items-center justify-center bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+            <button
+                class="w-full flex items-center justify-center bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
                 Transaksi Baru
             </button>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">contact_support</span>
                 <span class="font-label-md">Dukungan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out" href="/login">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out"
+                href="/login">
                 <span class="material-symbols-outlined">logout</span>
                 <span class="font-label-md">Keluar</span>
             </a>
@@ -70,26 +80,33 @@
     <!-- Main Content Area -->
     <main class="flex-1 ml-64 flex flex-col min-h-screen w-full">
         <!-- TopNavBar -->
-        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+        <header
+            class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
             <div class="flex items-center flex-1 max-w-xl">
                 <div class="relative w-full">
-                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
-                    <input class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-12 pr-4 py-1.5 text-body-md focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all" placeholder="Cari inventaris, faktur, atau bantuan..." type="text">
+                    <span
+                        class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-outline">search</span>
+                    <input
+                        class="w-full bg-surface-container-low border border-outline-variant rounded-full pl-12 pr-4 py-1.5 text-body-md focus:ring-2 focus:ring-secondary focus:border-transparent outline-none transition-all"
+                        placeholder="Cari inventaris, faktur, atau bantuan..." type="text">
                 </div>
             </div>
             <div class="flex items-center space-x-6 ml-6">
                 <div class="flex space-x-4">
-                    <button class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                    <button
+                        class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
                         <span class="material-symbols-outlined">notifications</span>
                         <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
                     </button>
-                    <button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                    <button
+                        class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
                         <span class="material-symbols-outlined">help</span>
                     </button>
                 </div>
                 <div class="h-8 w-[1px] bg-outline-variant"></div>
                 <div class="flex items-center space-x-2 cursor-pointer">
-                    <img alt="Foto profil pengguna" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfkeEN3J_Z8QKWYCMIAnHY0ItnVDnxJRlTo--3d2C2eJp2tobgvuMHNMFvKZj-vjCfkVG6fP8NaGpdHlGcbmeRKFyPoMoI04PNEP682SxdHOcehcqGu-f0nlcEnmkekyrdAojN1FcL5AQTF33oSgT_VckIN4oNHRyDUP4nCEMYQHNNk39Mz8hVjvEJSWsz-yEumiUBdBwl7DMliN5gEHFzy6IZaVcSzsIVxUL33tLW9UBK-Iu63TFwSxL8n9VDgulwM6KvaXAbRXg">
+                    <img alt="Foto profil pengguna" class="w-8 h-8 rounded-full border border-outline-variant"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfkeEN3J_Z8QKWYCMIAnHY0ItnVDnxJRlTo--3d2C2eJp2tobgvuMHNMFvKZj-vjCfkVG6fP8NaGpdHlGcbmeRKFyPoMoI04PNEP682SxdHOcehcqGu-f0nlcEnmkekyrdAojN1FcL5AQTF33oSgT_VckIN4oNHRyDUP4nCEMYQHNNk39Mz8hVjvEJSWsz-yEumiUBdBwl7DMliN5gEHFzy6IZaVcSzsIVxUL33tLW9UBK-Iu63TFwSxL8n9VDgulwM6KvaXAbRXg">
                     <span class="font-label-md text-on-surface hidden lg:block" x-text="userName"></span>
                 </div>
             </div>
@@ -97,7 +114,7 @@
 
         <!-- Dashboard Content -->
         <div class="p-10 max-w-[1280px] mx-auto w-full">
-            
+
             <!-- Loading State -->
             <div x-show="loading" class="flex items-center justify-center h-64 w-full">
                 <div class="animate-spin rounded-full h-12 w-12 border-b-4 border-primary"></div>
@@ -105,10 +122,13 @@
             </div>
 
             <!-- Error State -->
-            <div x-show="error && !loading" style="display:none" class="bg-error-container border border-error text-on-error-container p-6 rounded-xl mb-4 flex items-center shadow-sm" role="alert">
+            <div x-show="error && !loading" style="display:none"
+                class="bg-error-container border border-error text-on-error-container p-6 rounded-xl mb-4 flex items-center shadow-sm"
+                role="alert">
                 <span class="material-symbols-outlined mr-3 text-3xl">error</span>
                 <span x-text="error" class="flex-1 font-label-md text-lg"></span>
-                <button @click="window.location.reload()" class="bg-error text-on-error px-4 py-2 rounded-lg font-semibold hover:bg-error/90 transition-colors ml-4 shadow-sm active:scale-95">
+                <button @click="window.location.reload()"
+                    class="bg-error text-on-error px-4 py-2 rounded-lg font-semibold hover:bg-error/90 transition-colors ml-4 shadow-sm active:scale-95">
                     Coba Lagi
                 </button>
             </div>
@@ -116,212 +136,234 @@
             <!-- Main Content Wrapper (Hidden when loading/error) -->
             <div x-show="!loading && !error" style="display:none" class="space-y-6">
                 <!-- Header -->
-            <div class="flex justify-between items-end">
-                <div>
-                    <h2 class="font-h1 text-h1 text-primary">Dasbor</h2>
-                    <p class="text-on-surface-variant" x-text="todayDate"></p>
-                </div>
-                <div class="flex space-x-4">
-                    <button class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
-                        <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-                        <span>30 Hari Terakhir</span>
-                    </button>
-                    <button @click="exportData" class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
-                        <span class="material-symbols-outlined text-[18px]">download</span>
-                        <span>Ekspor Laporan</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Metrics Row -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                <!-- Total Items -->
-                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Total Barang</span>
-                        <div class="p-1 bg-secondary-fixed rounded-lg">
-                            <span class="material-symbols-outlined text-on-secondary-fixed">package</span>
-                        </div>
-                    </div>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="metrics.totalItems"></span>
-                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
-                            <span class="material-symbols-outlined text-[14px]">trending_up</span> 8%
-                        </span>
-                    </div>
-                    <p class="text-on-surface-variant text-[11px] mt-1">+420 sejak bulan lalu</p>
-                </div>
-
-                <!-- Low Stock Alert -->
-                <div class="bg-red-50 p-6 rounded-xl border-l-4 border-l-error border border-outline-variant shadow-sm flex flex-col justify-between">
+                <div class="flex justify-between items-end">
                     <div>
+                        <h2 class="font-h1 text-h1 text-primary">Dasbor</h2>
+                        <p class="text-on-surface-variant" x-text="todayDate"></p>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button
+                            class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+                            <span>30 Hari Terakhir</span>
+                        </button>
+                        <button @click="exportData"
+                            class="flex items-center space-x-2 px-4 py-2 bg-surface-container-lowest text-on-surface border border-outline-variant rounded-lg font-label-md hover:bg-surface-container transition-all shadow-sm active:scale-95">
+                            <span class="material-symbols-outlined text-[18px]">download</span>
+                            <span>Ekspor Laporan</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Metrics Row -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <!-- Total Items -->
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="text-error font-label-md uppercase tracking-wider">Stok Hampir Habis</span>
-                            <div class="p-1 bg-error-container rounded-lg">
-                                <span class="material-symbols-outlined text-error">warning</span>
+                            <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Total
+                                Barang</span>
+                            <div class="p-1 bg-secondary-fixed rounded-lg">
+                                <span class="material-symbols-outlined text-on-secondary-fixed">package</span>
                             </div>
                         </div>
                         <div class="flex items-baseline space-x-2">
-                            <span class="font-h2 text-h2 text-error" x-text="metrics.lowStock"></span>
-                            <span class="text-[12px] font-bold text-error bg-error-container px-1.5 py-0.5 rounded flex items-center">
-                                <span class="material-symbols-outlined text-[14px]">trending_up</span> 12%
+                            <span class="font-h2 text-h2 text-primary" x-text="metrics.totalItems"></span>
+                            <span
+                                class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
+                                Real-time
                             </span>
                         </div>
-                        <p class="text-error text-[11px] mt-1 opacity-80">Butuh perhatian segera</p>
+                        <p class="text-on-surface-variant text-[11px] mt-1">Data sinkron dari inventaris</p>
                     </div>
-                    <a class="text-error font-label-md hover:underline mt-2 inline-flex items-center" href="#">Lihat Detail <span class="material-symbols-outlined text-[14px] ml-1">arrow_forward</span></a>
-                </div>
 
-                <!-- Monthly Revenue -->
-                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Pendapatan</span>
-                        <div class="p-1 bg-emerald-100 rounded-lg">
-                            <span class="material-symbols-outlined text-emerald-700">trending_up</span>
+                    <!-- Nilai Aset -->
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Nilai Aset</span>
+                            <div class="p-1 bg-primary-container rounded-lg">
+                                <span class="material-symbols-outlined text-on-primary-container">account_balance</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.revenue)"></span>
-                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
-                            <span class="material-symbols-outlined text-[14px]">trending_up</span> 24%
-                        </span>
-                    </div>
-                    <p class="text-on-surface-variant text-[11px] mt-1">Dibanding Rp 546JT bulan lalu</p>
-                </div>
-
-                <!-- Monthly Expense -->
-                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Pengeluaran</span>
-                        <div class="p-1 bg-orange-100 rounded-lg">
-                            <span class="material-symbols-outlined text-orange-700">trending_down</span>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.totalAssetValue)"></span>
                         </div>
+                        <p class="text-on-surface-variant text-[11px] mt-1">Total harga beli × stok</p>
                     </div>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.expense)"></span>
-                        <span class="text-[12px] font-bold text-error bg-error-container px-1.5 py-0.5 rounded flex items-center">
-                            <span class="material-symbols-outlined text-[14px]">trending_down</span> 5%
-                        </span>
-                    </div>
-                    <p class="text-on-surface-variant text-[11px] mt-1">Optimasi biaya aktif</p>
-                </div>
 
-                <!-- Net Profit -->
-                <div class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
-                    <div class="flex justify-between items-start mb-2">
-                        <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Laba Bersih</span>
-                        <div class="p-1 bg-primary-container rounded-lg">
-                            <span class="material-symbols-outlined text-on-primary-container">savings</span>
-                        </div>
-                    </div>
-                    <div class="flex items-baseline space-x-2">
-                        <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.profit)"></span>
-                        <span class="text-[12px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded flex items-center">
-                            Margin 58%
-                        </span>
-                    </div>
-                    <p class="text-on-surface-variant text-[11px] mt-1">Laba = Pendapatan - Pengeluaran</p>
-                </div>
-            </div>
-
-            <!-- Main Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
-                
-                <!-- Column 1: Chart.js Integration -->
-                <div class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-6">
+                    <!-- Low Stock Alert -->
+                    <div
+                        class="p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between"
+                        :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'bg-red-50 border-error' : 'bg-surface-container-lowest'">
                         <div>
-                            <h3 class="font-h3 text-h3 text-primary">Stok Masuk vs Keluar</h3>
-                            <p class="text-on-surface-variant text-body-md">Aliran inventaris selama 6 bulan terakhir</p>
-                        </div>
-                    </div>
-                    <!-- Chart.js Canvas -->
-                    <div class="h-64 relative w-full">
-                        <canvas id="inventoryChart"></canvas>
-                    </div>
-                </div>
-
-                <!-- Column 2: Recent Transactions Loop (Alpine) -->
-                <div class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="font-h3 text-h3 text-primary">Transaksi Terbaru</h3>
-                        <a class="text-secondary font-label-md hover:underline" href="#">Lihat Semua</a>
-                    </div>
-                    
-                    <div class="flex space-x-2 mb-4 pb-4 border-b border-outline-variant">
-                        <button class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md transition-transform active:scale-95">Semua</button>
-                        <button class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Masuk</button>
-                        <button class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Keluar</button>
-                    </div>
-                    
-                    <div class="space-y-2">
-                        <!-- Iterasi data transaksi dengan Alpine -->
-                        <template x-for="trx in transactions" :key="trx.id">
-                            <div class="flex items-center justify-between p-2 hover:bg-surface transition-colors rounded-lg group cursor-pointer">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded bg-surface-container flex items-center justify-center group-hover:bg-secondary-fixed transition-colors">
-                                        <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary" x-text="trx.icon"></span>
-                                    </div>
-                                    <div>
-                                        <p class="font-label-md text-primary" x-text="trx.name"></p>
-                                        <p class="text-[11px] text-on-surface-variant" x-text="trx.date"></p>
-                                    </div>
-                                </div>
-                                <div class="flex flex-col items-end">
-                                    <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
-                                          :class="trx.type === 'MASUK' ? 'bg-emerald-100 text-emerald-700' : 'bg-error-container text-error'"
-                                          x-text="trx.type"></span>
-                                    <span class="font-mono-data text-[12px] mt-1" x-text="trx.amount"></span>
+                            <div class="flex justify-between items-start mb-2">
+                                <span class="font-label-md uppercase tracking-wider"
+                                      :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">Peringatan Stok</span>
+                                <div class="p-1 rounded-lg" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'bg-error-container' : 'bg-surface-variant'">
+                                    <span class="material-symbols-outlined" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">warning</span>
                                 </div>
                             </div>
-                        </template>
+                            <div class="flex items-baseline space-x-2">
+                                <span class="font-h2 text-h2" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-primary'" x-text="metrics.lowStock + metrics.outOfStock"></span>
+                                <span class="text-[12px] font-bold px-1.5 py-0.5 rounded flex items-center" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error bg-error-container' : 'text-emerald-600 bg-emerald-50'">
+                                    <span x-text="metrics.outOfStock > 0 ? metrics.outOfStock + ' Habis' : 'Stok Aman'"></span>
+                                </span>
+                            </div>
+                            <p class="text-[11px] mt-1 opacity-80" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'" x-text="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'Butuh perhatian segera' : 'Semua item memiliki stok cukup'"></p>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Footer Stats Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
-                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
-                            <span class="material-symbols-outlined text-secondary">local_shipping</span>
+                    <!-- Monthly Revenue -->
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <span
+                                class="text-on-surface-variant font-label-md uppercase tracking-wider">Pendapatan</span>
+                            <div class="p-1 bg-emerald-100 rounded-lg">
+                                <span class="material-symbols-outlined text-emerald-700">trending_up</span>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-h3 text-h3">18</p>
-                            <p class="text-on-surface-variant font-label-md">Pengiriman Tertunda</p>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.revenue)"></span>
                         </div>
+                        <p class="text-on-surface-variant text-[11px] mt-1">Berdasarkan data transaksi</p>
                     </div>
-                    <div class="flex items-center space-x-4">
-                        <button class="px-3 py-1 bg-secondary text-on-secondary font-label-md rounded-md hover:bg-secondary/90 transition-colors active:scale-95">Proses</button>
+
+                    <!-- Net Profit -->
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Laba
+                                Bersih</span>
+                            <div class="p-1 bg-primary-container rounded-lg">
+                                <span class="material-symbols-outlined text-on-primary-container">savings</span>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline space-x-2">
+                            <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.profit)"></span>
+                        </div>
+                        <p class="text-on-surface-variant text-[11px] mt-1">Laba = Pendapatan - Pengeluaran</p>
                     </div>
                 </div>
-                
-                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
-                            <span class="material-symbols-outlined text-secondary">store</span>
+
+                <!-- Main Content Grid -->
+                <div class="grid grid-cols-1 lg:grid-cols-10 gap-6">
+
+                    <!-- Column 1: Chart.js Integration -->
+                    <div
+                        class="lg:col-span-6 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                        <div class="flex justify-between items-center mb-6">
+                            <div>
+                                <h3 class="font-h3 text-h3 text-primary">Stok Masuk vs Keluar</h3>
+                                <p class="text-on-surface-variant text-body-md">Aliran inventaris selama 6 bulan
+                                    terakhir</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="font-h3 text-h3">4</p>
-                            <p class="text-on-surface-variant font-label-md">Gudang Aktif</p>
-                        </div>
-                    </div>
-                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
-                </div>
-                
-                <div class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
-                    <div class="flex items-center space-x-4">
-                        <div class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
-                            <span class="material-symbols-outlined text-secondary">group</span>
-                        </div>
-                        <div>
-                            <p class="font-h3 text-h3">12</p>
-                            <p class="text-on-surface-variant font-label-md">Staf Aktif</p>
+                        <!-- Chart.js Canvas -->
+                        <div class="h-64 relative w-full">
+                            <canvas id="inventoryChart"></canvas>
                         </div>
                     </div>
-                    <span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+
+                    <!-- Column 2: Recent Transactions Loop (Alpine) -->
+                    <div
+                        class="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 shadow-sm">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-h3 text-h3 text-primary">Transaksi Terbaru</h3>
+                            <a class="text-secondary font-label-md hover:underline" href="#">Lihat Semua</a>
+                        </div>
+
+                        <div class="flex space-x-2 mb-4 pb-4 border-b border-outline-variant">
+                            <button
+                                class="px-3 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md transition-transform active:scale-95">Semua</button>
+                            <button
+                                class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Masuk</button>
+                            <button
+                                class="px-3 py-1 rounded-full bg-surface text-on-surface-variant border border-outline-variant hover:bg-surface-variant transition-colors font-label-md transition-transform active:scale-95">Keluar</button>
+                        </div>
+
+                        <div class="space-y-2">
+                            <!-- Iterasi data transaksi dengan Alpine -->
+                            <template x-for="trx in transactions" :key="trx.id">
+                                <div
+                                    class="flex items-center justify-between p-2 hover:bg-surface transition-colors rounded-lg group cursor-pointer">
+                                    <div class="flex items-center space-x-4">
+                                        <div
+                                            class="w-10 h-10 rounded bg-surface-container flex items-center justify-center group-hover:bg-secondary-fixed transition-colors">
+                                            <span
+                                                class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary"
+                                                x-text="trx.icon"></span>
+                                        </div>
+                                        <div>
+                                            <p class="font-label-md text-primary" x-text="trx.name"></p>
+                                            <p class="text-[11px] text-on-surface-variant" x-text="trx.date"></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col items-end">
+                                        <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded"
+                                            :class="trx.type === 'MASUK' ? 'bg-emerald-100 text-emerald-700' : 'bg-error-container text-error'"
+                                            x-text="trx.type"></span>
+                                        <span class="font-mono-data text-[12px] mt-1" x-text="trx.amount"></span>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <!-- Footer Stats Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                                <span class="material-symbols-outlined text-secondary">local_shipping</span>
+                            </div>
+                            <div>
+                                <p class="font-h3 text-h3">18</p>
+                                <p class="text-on-surface-variant font-label-md">Pengiriman Tertunda</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <button
+                                class="px-3 py-1 bg-secondary text-on-secondary font-label-md rounded-md hover:bg-secondary/90 transition-colors active:scale-95">Proses</button>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                                <span class="material-symbols-outlined text-secondary">store</span>
+                            </div>
+                            <div>
+                                <p class="font-h3 text-h3">4</p>
+                                <p class="text-on-surface-variant font-label-md">Gudang Aktif</p>
+                            </div>
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+                    </div>
+
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl flex items-center justify-between border border-outline-variant shadow-sm cursor-pointer hover:bg-surface transition-all hover:shadow-md group">
+                        <div class="flex items-center space-x-4">
+                            <div
+                                class="w-12 h-12 bg-surface rounded-full flex items-center justify-center border border-outline-variant group-hover:bg-secondary-fixed transition-colors">
+                                <span class="material-symbols-outlined text-secondary">group</span>
+                            </div>
+                            <div>
+                                <p class="font-h3 text-h3">12</p>
+                                <p class="text-on-surface-variant font-label-md">Staf Aktif</p>
+                            </div>
+                        </div>
+                        <span
+                            class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">chevron_right</span>
+                    </div>
+                </div>
             </div> <!-- Tutup Wrapper Main Content -->
         </div>
     </main>
@@ -329,150 +371,165 @@
 
 <!-- Script Inisialisasi Chart & Alpine -->
 <script>
-document.addEventListener('alpine:init', () => {
-  Alpine.data('dashboardData', () => ({
-    // 🔄 Lifecycle State
-    loading: true,
-    error: null,
-    lastUpdated: null,
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('dashboardData', () => ({
+            // 🔄 Lifecycle State
+            loading: true,
+            error: null,
+            lastUpdated: null,
 
-    // 📊 Metrics (harus 0 di awal)
-    metrics: { totalItems: 0, lowStock: 0, revenue: 0, expense: 0, profit: 0 },
-    
-    // 📋 Recent Transactions (array kosong)
-    transactions: [],
-    
-    // 📈 Chart Data (kosong, nanti diisi API)
-    chart: { labels: [], masuk: [], keluar: [] },
-    
-    // User Data
-    userName: '',
-    todayDate: new Date().toLocaleDateString('id-ID', {weekday:'long',year:'numeric',month:'long',day:'numeric'}),
+            // Data Mentah dari API
+            items: [],
+            transactions: [],
+            summary: { stock_by_category: [], transactions_by_month: [] },
 
-    // ⚙️ Methods
-    async init() {
-      this.loading = true;
-      this.error = null;
+            // 📊 Metrics Kalkulasi Real-time
+            metrics: { totalItems: 0, totalAssetValue: 0, lowStock: 0, outOfStock: 0, revenue: 0, expense: 0, profit: 0 },
 
-      try {
-        // 1. Fetch semua data paralel (lebih cepat)
-        const [summaryRes, transRes, userRes] = await Promise.all([
-          fetch('/api/dashboard/summary', { credentials: 'include' }),
-          fetch('/api/transactions?page=1&limit=4', { credentials: 'include' }),
-          fetch('/api/auth/me', { credentials: 'include' })
-        ]);
+            // 📈 Chart Data
+            chart: { labels: [], masuk: [], keluar: [] },
 
-        // 2. Validasi response
-        if (summaryRes.status === 401 || transRes.status === 401 || userRes.status === 401) {
-            window.location.href = '/login';
-            return;
-        }
-        if (!summaryRes.ok || !transRes.ok || !userRes.ok) {
-          throw new Error('Gagal memuat data dari server');
-        }
+            // User Data
+            userName: '',
+            todayDate: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
 
-        const summary = await summaryRes.json();
-        const transData = await transRes.json();
-        const user = await userRes.json();
+            // ⚙️ Methods
+            async init() {
+                this.loading = true;
+                this.error = null;
 
-        // 3. Mapping data API → State Alpine
-        this.metrics = {
-          totalItems: summary.stock_by_category.reduce((sum, c) => sum + c.total_stok, 0),
-          lowStock: summary.stock_by_category.filter(c => c.total_stok < 10).length,
-          revenue: summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0),
-          expense: summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0),
-          profit: 0
-        };
-        this.metrics.profit = this.metrics.revenue - this.metrics.expense;
+                try {
+                    // 1. Fetch semua data paralel
+                    const [itemsRes, summaryRes, transRes, userRes] = await Promise.all([
+                        fetch('/api/items?limit=1000', { credentials: 'include' }),
+                        fetch('/api/dashboard/summary', { credentials: 'include' }),
+                        fetch('/api/transactions?page=1&limit=4', { credentials: 'include' }),
+                        fetch('/api/auth/me', { credentials: 'include' })
+                    ]);
 
-        this.transactions = transData.data.map(t => ({
-          id: t._id,
-          name: t.item_sku,
-          date: new Date(t.tanggal).toLocaleString('id-ID'),
-          type: t.tipe.toUpperCase(),
-          amount: `${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah} unit`,
-          icon: t.tipe === 'masuk' ? 'arrow_upward' : 'arrow_downward'
-        }));
+                    // 2. Validasi response
+                    if (summaryRes.status === 401 || transRes.status === 401 || userRes.status === 401) {
+                        window.location.href = '/login';
+                        return;
+                    }
+                    if (!itemsRes.ok || !summaryRes.ok || !transRes.ok || !userRes.ok) {
+                        throw new Error('Gagal memuat data dari server');
+                    }
 
-        this.chart.labels = summary.transactions_by_month.map(m => m._id);
-        this.chart.masuk = summary.transactions_by_month.map(m => m.masuk);
-        this.chart.keluar = summary.transactions_by_month.map(m => m.keluar);
+                    this.items = (await itemsRes.json()).data || [];
+                    this.summary = await summaryRes.json();
+                    const transData = await transRes.json();
+                    const user = await userRes.json();
 
-        this.userName = user.username;
-        this.lastUpdated = new Date().toLocaleTimeString('id-ID');
+                    // 3. Kalkulasi metrics real-time
+                    this.calculateMetrics();
 
-        // 4. Render chart hanya setelah DOM siap
-        this.$nextTick(() => this.renderChart());
+                    // Map Transactions
+                    this.transactions = transData.data.map(t => ({
+                        id: t._id,
+                        name: t.item_sku,
+                        date: new Date(t.tanggal).toLocaleString('id-ID'),
+                        type: t.tipe.toUpperCase(),
+                        amount: `${t.tipe === 'masuk' ? '+' : '-'}${t.jumlah} unit`,
+                        icon: t.tipe === 'masuk' ? 'arrow_upward' : 'arrow_downward'
+                    }));
 
-      } catch (err) {
-        this.error = err.message || 'Terjadi kesalahan jaringan';
-      } finally {
-        this.loading = false;
-      }
-    },
+                    // Prepare Chart Data
+                    this.chart.labels = this.summary.transactions_by_month.map(m => m._id);
+                    this.chart.masuk = this.summary.transactions_by_month.map(m => m.masuk);
+                    this.chart.keluar = this.summary.transactions_by_month.map(m => m.keluar);
 
-    renderChart() {
-      const ctx = document.getElementById('inventoryChart');
-      if (!ctx) return;
+                    this.userName = user.username;
+                    this.lastUpdated = new Date().toLocaleTimeString('id-ID');
 
-      // Hapus instance lama jika ada
-      if (window._dashboardChart) {
-        window._dashboardChart.destroy();
-      }
+                    // 4. Render chart
+                    this.$nextTick(() => this.renderChart());
 
-      window._dashboardChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: this.chart.labels,
-          datasets: [
-            {
-              label: 'Barang Masuk',
-              data: this.chart.masuk,
-              borderColor: '#6063ee',
-              backgroundColor: 'rgba(96, 99, 238, 0.1)',
-              tension: 0.4, fill: true
+                } catch (err) {
+                    this.error = err.message || 'Terjadi kesalahan jaringan';
+                } finally {
+                    this.loading = false;
+                }
             },
-            {
-              label: 'Barang Keluar',
-              data: this.chart.keluar,
-              borderColor: '#c6c6cd',
-              borderDash: [5, 5],
-              tension: 0.4, fill: false
+
+            calculateMetrics() {
+                this.metrics.totalItems = this.items.length;
+                this.metrics.totalAssetValue = this.items.reduce((sum, item) => sum + (item.stok * item.harga_beli), 0);
+                this.metrics.lowStock = this.items.filter(i => i.stok > 0 && i.stok < 10).length;
+                this.metrics.outOfStock = this.items.filter(i => i.stok === 0).length;
+                
+                // Asumsi pendapatan & pengeluaran pakai harga rata-rata jika data riil harga transaksi belum dicatat di API
+                this.metrics.revenue = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0);
+                this.metrics.expense = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0);
+                this.metrics.profit = this.metrics.revenue - this.metrics.expense;
+            },
+
+            formatRupiah(n) { 
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n); 
+            },
+
+            renderChart() {
+                const ctx = document.getElementById('inventoryChart');
+                if (!ctx) return;
+
+                // Hapus instance lama jika ada
+                if (window._dashboardChart) {
+                    window._dashboardChart.destroy();
+                }
+
+                window._dashboardChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: this.chart.labels,
+                        datasets: [
+                            {
+                                label: 'Barang Masuk',
+                                data: this.chart.masuk,
+                                borderColor: '#6063ee',
+                                backgroundColor: 'rgba(96, 99, 238, 0.1)',
+                                tension: 0.4, fill: true
+                            },
+                            {
+                                label: 'Barang Keluar',
+                                data: this.chart.keluar,
+                                borderColor: '#c6c6cd',
+                                borderDash: [5, 5],
+                                tension: 0.4, fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'top' } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            },
+
+            // Helper: format currency
+            formatRupiah(num) {
+                if (isNaN(num)) return num;
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
+            },
+
+            async exportData() {
+                try {
+                    const res = await fetch('/api/export/transactions', { credentials: 'include' });
+                    if (!res.ok) throw new Error('Export gagal karena akses ditolak atau server error.');
+                    const blob = await res.blob();
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `laporan_${new Date().toISOString().slice(0, 10)}.xlsx`;
+                    a.click();
+                } catch (e) {
+                    alert('Gagal export: ' + e.message);
+                }
             }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { position: 'top' } },
-          scales: {
-            y: { beginAtZero: true, grid: { borderDash: [2,4] } },
-            x: { grid: { display: false } }
-          }
-        }
-      });
-    },
-
-    // Helper: format currency
-    formatRupiah(num) {
-      if(isNaN(num)) return num;
-      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
-    },
-
-    async exportData() {
-      try {
-        const res = await fetch('/api/export/transactions', { credentials: 'include' });
-        if (!res.ok) throw new Error('Export gagal karena akses ditolak atau server error.');
-        const blob = await res.blob();
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `laporan_${new Date().toISOString().slice(0,10)}.xlsx`;
-        a.click();
-      } catch (e) {
-        alert('Gagal export: ' + e.message);
-      }
-    }
-  }));
-});
+        }));
+    });
 </script>
 {% endblock %}

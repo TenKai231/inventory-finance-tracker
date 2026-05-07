@@ -101,6 +101,47 @@ def create_item():
         return jsonify({"error": "Internal server error"}), 500
 
 
+@data_bp.route('/items', methods=['PUT'])
+@jwt_required()
+def update_item():
+    if not request.is_json or not request.json:
+        return jsonify({"error": "Request harus berupa JSON"}), 400
+
+    try:
+        payload = ItemSchema(**request.json)
+    except ValidationError as e:
+        return jsonify({"error": e.errors()}), 400
+
+    try:
+        doc = payload.model_dump()
+        doc['updated_at'] = datetime.now(timezone.utc)
+        result = db.items.update_one({"sku": payload.sku}, {"$set": doc})
+        if result.matched_count == 0:
+            return jsonify({"error": "Item tidak ditemukan"}), 404
+        return jsonify({"message": "Item berhasil diupdate"}), 200
+    except Exception:
+        logger.exception("Unexpected error in update_item")
+        return jsonify({"error": "Internal server error"}), 500
+
+
+@data_bp.route('/items/<sku>', methods=['DELETE'])
+@jwt_required()
+def delete_item(sku):
+    try:
+        # Cek role user, hanya owner yang boleh hapus
+        claims = get_jwt()
+        if claims.get("role") != "owner":
+            return jsonify({"error": "Unauthorized. Hanya owner yang dapat menghapus item."}), 403
+
+        result = db.items.delete_one({"sku": sku})
+        if result.deleted_count == 0:
+            return jsonify({"error": "Item tidak ditemukan"}), 404
+        return jsonify({"message": "Item berhasil dihapus"}), 200
+    except Exception:
+        logger.exception("Unexpected error in delete_item")
+        return jsonify({"error": "Internal server error"}), 500
+
+
 # ===== TRANSACTION ENDPOINTS =====
 @data_bp.route('/transactions', methods=['GET'])
 @jwt_required()

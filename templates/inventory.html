@@ -499,8 +499,11 @@
             async deleteItem(sku) {
                 if (!confirm(`Hapus item ${sku}? Data yang dihapus tidak bisa dikembalikan.`)) return;
                 try {
-                    const res = await fetch(`/api/items/${sku}`, { method: 'DELETE', credentials: 'include' });
-                    if (!res.ok) throw new Error('Gagal menghapus data');
+                    const res = await fetch(`/api/items/${encodeURIComponent(sku)}`, { method: 'DELETE', credentials: 'include' });
+                    if (!res.ok) {
+                        const errorData = await res.json().catch(() => ({}));
+                        throw new Error(errorData.error || 'Gagal menghapus data (Status: ' + res.status + ')');
+                    }
                     Alpine.store('toast').trigger(`Item ${sku} berhasil dihapus`);
                     this.fetchData();
                 } catch (err) {
