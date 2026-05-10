@@ -124,7 +124,7 @@ def update_item():
         return jsonify({"error": "Internal server error"}), 500
 
 
-@data_bp.route('/items/<sku>', methods=['DELETE'])
+@data_bp.route('/items/<path:sku>', methods=['DELETE'])
 @jwt_required()
 def delete_item(sku):
     try:
