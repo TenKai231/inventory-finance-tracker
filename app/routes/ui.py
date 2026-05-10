@@ -17,6 +17,11 @@ def login_required_ui(f):
     return decorated
 
 @ui_bp.route('/')
+def index():
+    """Landing page publik — tidak memerlukan login."""
+    return render_template('index.html')
+
+@ui_bp.route('/dashboard')
 @login_required_ui
 def dashboard():
     return render_template('dashboard.html')
@@ -40,6 +45,11 @@ def finance_page():
 @login_required_ui
 def export_page():
     return render_template('export.html')
+
+@ui_bp.route('/settings')
+@login_required_ui
+def settings_page():
+    return render_template('settings.html')
 
 @ui_bp.route('/inventory/empty')
 @login_required_ui

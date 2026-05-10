@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InventoTrack - Kelola Stok & Keuangan Bisnis dalam Satu Platform</title>
+    <meta name="description"
+        content="Solusi manajemen inventaris modern untuk UMKM Indonesia. Pantau pergerakan barang, catat transaksi, dan hasilkan laporan akurat tanpa ribet.">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4f46e5',
+                        secondary: '#7c3aed',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        [x-cloak] {
+            display: none !important;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+        }
+
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="font-sans antialiased" x-data="landingPage()">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/90 backdrop-blur-md border-b border-gray-200" x-cloak>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <span class="material-icons text-white text-sm">inventory_2</span>
+                    </div>
+                    <span class="font-bold text-xl text-gray-900">InventoTrack</span>
+                </div>
+
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#fitur" class="text-gray-600 hover:text-indigo-600 transition font-medium">Fitur</a>
+                    <a href="#cara-kerja" class="text-gray-600 hover:text-indigo-600 transition font-medium">Cara
+                        Kerja</a>
+                    <a href="#testimoni"
+                        class="text-gray-600 hover:text-indigo-600 transition font-medium">Testimoni</a>
+                    <a href="#harga" class="text-gray-600 hover:text-indigo-600 transition font-medium">Harga</a>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <a href="/login"
+                        class="px-4 py-2 text-gray-700 hover:text-indigo-600 font-medium transition">Masuk</a>
+                    <a href="/register"
+                        class="px-5 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium shadow-lg shadow-indigo-200">Daftar
+                        Sekarang</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg min-h-screen flex items-center pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="text-center max-w-4xl mx-auto">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 rounded-full text-white/90 text-sm mb-6 backdrop-blur-sm">
+                    <span class="material-icons text-sm">star</span>
+                    <span>Trust untuk lebih dari 500+ UMKM Indonesia</span>
+                </div>
+
+                <h1 class="text-4xl md:text-6xl font-bold text-white leading-tight mb-6">
+                    Kelola Stok & Keuangan Bisnis Kamu dalam Satu Platform
+                </h1>
+
+                <p class="text-xl text-gray-300 mb-10 max-w-2xl mx-auto">
+                    Solusi manajemen inventaris modern untuk UMKM Indonesia. Pantau pergerakan barang, catat transaksi,
+                    dan hasilkan laporan akurat tanpa ribet.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+                    <a href="/register"
+                        class="px-8 py-4 bg-white text-indigo-900 rounded-xl hover:bg-gray-100 transition font-bold text-lg shadow-2xl flex items-center justify-center gap-2">
+                        Mulai Gratis
+                        <span class="material-icons">arrow_forward</span>
+                    </a>
+                    <a href="#demo"
+                        class="px-8 py-4 bg-white/10 text-white border-2 border-white/30 rounded-xl hover:bg-white/20 transition font-bold text-lg backdrop-blur-sm flex items-center justify-center gap-2">
+                        <span class="material-icons">play_circle</span>
+                        Lihat Demo
+                    </a>
+                </div>
+
+                <div class="flex items-center justify-center gap-6 text-white/70 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-green-400">check_circle</span>
+                        <span>Tanpa Kartu Kredit</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-green-400">check_circle</span>
+                        <span>Gratis Selamanya</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons text-green-400">check_circle</span>
+                        <span>Setup 5 Menit</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Preview -->
+            <div class="mt-20 relative">
+                <div class="absolute inset-0 bg-gradient-to-t from-indigo-950 to-transparent z-10 h-32 bottom-0"></div>
+                <div class="bg-gray-900 rounded-2xl shadow-2xl overflow-hidden border border-gray-700">
+                    <div class="bg-gray-800 px-4 py-3 flex items-center gap-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <div class="ml-4 px-3 py-1 bg-gray-700 rounded text-xs text-gray-400 flex-1 text-center">
+                            app.inventotrack.id/dashboard</div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=600&fit=crop"
+                        alt="Dashboard Preview" class="w-full h-auto opacity-90">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="fitur" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Semua yang kamu butuhkan, dalam satu
+                    tempat</h2>
+                <p class="text-xl text-gray-600">Tinggalkan pencatatan manual yang membingungkan</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div
+                    class="p-8 rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-xl transition group">
+                    <div
+                        class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                        <span class="material-icons text-3xl text-blue-600">inventory_2</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Inventaris Real-time</h3>
+                    <p class="text-gray-600 leading-relaxed">Pantau stok masuk keluar secara otomatis dan akurat. Tidak
+                        ada lagi kehilangan barang.</p>
+                </div>
+
+                <div
+                    class="p-8 rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-xl transition group">
+                    <div
+                        class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                        <span class="material-icons text-3xl text-green-600">account_balance_wallet</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Laporan Keuangan</h3>
+                    <p class="text-gray-600 leading-relaxed">Lacak pemasukan, pengeluaran, dan profit dengan grafik
+                        visual yang mudah dipahami.</p>
+                </div>
+
+                <div
+                    class="p-8 rounded-2xl border border-gray-200 hover:border-indigo-300 hover:shadow-xl transition group">
+                    <div
+                        class="w-14 h-14 bg-purple-50 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition">
+                        <span class="material-icons text-3xl text-purple-600">file_download</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Ekspor Excel</h3>
+                    <p class="text-gray-600 leading-relaxed">Generate laporan siap pakai dalam satu klik untuk analisis
+                        dan pencadangan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="cara-kerja" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Cara Kerja InventoTrack</h2>
+                <p class="text-xl text-gray-600">Mulai mengelola bisnis dalam 3 langkah mudah</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 relative">
+                <!-- Connecting Line -->
+                <div class="hidden md:block absolute top-24 left-1/3 right-1/3 h-0.5 bg-indigo-200"></div>
+
+                <div class="text-center relative">
+                    <div
+                        class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 relative z-10 shadow-lg">
+                        1</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Daftar Akun</h3>
+                    <p class="text-gray-600">Buat akun gratis dalam 1 menit, tanpa perlu kartu kredit atau informasi
+                        berlebihan.</p>
+                </div>
+
+                <div class="text-center relative">
+                    <div
+                        class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 relative z-10 shadow-lg">
+                        2</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Input Data</h3>
+                    <p class="text-gray-600">Tambahkan barang, atur kategori, dan mulai catat setiap transaksi masuk dan
+                        keluar secara terstruktur.</p>
+                </div>
+
+                <div class="text-center relative">
+                    <div
+                        class="w-16 h-16 bg-indigo-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6 relative z-10 shadow-lg">
+                        3</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-3">Pantau & Ekspor</h3>
+                    <p class="text-gray-600">Lihat perkembangan bisnis melalui dashboard interaktif dan ekspor laporan
+                        sesuai kebutuhan.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section id="testimoni" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Apa Kata Mereka?</h2>
+                <p class="text-xl text-gray-600">Kisah sukses UMKM yang telah menggunakan InventoTrack</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-8 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg transition">
+                    <div class="flex gap-1 mb-4">
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"Sangat membantu! Dulu sering kehilangan stok barang
+                        karena manual, sekarang semua tercatat. Laporan keuangannya juga gampang sekali dipakai."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?img=1" alt="Rudi Santoso" class="w-12 h-12 rounded-full">
+                        <div>
+                            <p class="font-semibold text-gray-900">Rudi Santoso</p>
+                            <p class="text-sm text-gray-500">Pemilik Toko Kelontong</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg transition">
+                    <div class="flex gap-1 mb-4">
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"Aplikasinya ringan dan gampang dipakai. Pegawai saya
+                        yang gaptek saja bisa langsung pakai. Recommended buat usaha kecil."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?img=5" alt="Siti Aminah" class="w-12 h-12 rounded-full">
+                        <div>
+                            <p class="font-semibold text-gray-900">Siti Aminah</p>
+                            <p class="text-sm text-gray-500">Owner Kedai Kopi</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-8 rounded-2xl border border-gray-200 bg-white shadow-sm hover:shadow-lg transition">
+                    <div class="flex gap-1 mb-4">
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                        <span class="material-icons text-yellow-400 text-sm">star</span>
+                    </div>
+                    <p class="text-gray-700 mb-6 leading-relaxed">"Fitur ekspor excelnya juara. Akhir bulan gak perlu
+                        lembur lagi buat rekap laporan. Semua sudah tersedia dan tinggal download."</p>
+                    <div class="flex items-center gap-3">
+                        <img src="https://i.pravatar.cc/150?img=3" alt="Andi Pratama" class="w-12 h-12 rounded-full">
+                        <div>
+                            <p class="font-semibold text-gray-900">Andi Pratama</p>
+                            <p class="text-sm text-gray-500">Distributor Makanan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="harga" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Harga yang Transparan</h2>
+                <p class="text-xl text-gray-600">Mulai gratis, upgrade kapan saja sesuai kebutuhan bisnismu</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Free Plan -->
+                <div class="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+                    <h3 class="text-2xl font-bold text-gray-900 mb-2">Gratis Selamanya</h3>
+                    <p class="text-gray-600 mb-6">Cocok untuk bisnis yang baru mulai</p>
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold text-gray-900">Rp 0</span>
+                        <span class="text-gray-600">/bulan</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3 text-gray-700">
+                            <span class="material-icons text-green-500 text-sm">check</span>
+                            <span>Maksimal 100 produk</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-700">
+                            <span class="material-icons text-green-500 text-sm">check</span>
+                            <span>1 User Admin</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-700">
+                            <span class="material-icons text-green-500 text-sm">check</span>
+                            <span>Laporan Standar</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-700">
+                            <span class="material-icons text-green-500 text-sm">check</span>
+                            <span>Support Email</span>
+                        </li>
+                    </ul>
+                    <a href="/register"
+                        class="block w-full py-3 border-2 border-indigo-600 text-indigo-600 rounded-xl text-center font-bold hover:bg-indigo-50 transition">Daftar
+                        Gratis</a>
+                </div>
+
+                <!-- Pro Plan -->
+                <div
+                    class="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 text-white shadow-2xl relative overflow-hidden">
+                    <div
+                        class="absolute top-4 right-4 bg-white text-indigo-600 px-3 py-1 rounded-full text-xs font-bold">
+                        PALING POPULER</div>
+                    <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                    <p class="text-indigo-100 mb-6">Untuk bisnis yang sedang berkembang</p>
+                    <div class="mb-6">
+                        <span class="text-5xl font-bold">Rp 99.000</span>
+                        <span class="text-indigo-200">/bulan</span>
+                    </div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>Produk Tidak Terbatas</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>5 User Akses</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>Laporan Lengkap & Kustom</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>Ekspor Excel/PDF</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>Priority Support</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <span class="material-icons text-green-300 text-sm">check</span>
+                            <span>API Access</span>
+                        </li>
+                    </ul>
+                    <a href="/register?plan=pro"
+                        class="block w-full py-3 bg-white text-indigo-600 rounded-xl text-center font-bold hover:bg-gray-100 transition shadow-lg">Mulai
+                        Trial 14 Hari</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 bg-gradient-to-br from-indigo-600 to-purple-700">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6">Siap mengelola bisnis lebih baik?</h2>
+            <p class="text-xl text-indigo-100 mb-10">Mulai gratis hari ini. Tanpa kartu kredit, batal kapan saja.</p>
+            <a href="/register"
+                class="inline-block px-10 py-4 bg-white text-indigo-600 rounded-xl hover:bg-gray-100 transition font-bold text-lg shadow-2xl">
+                Daftar Sekarang
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-300 py-12 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                            <span class="material-icons text-white text-sm">inventory_2</span>
+                        </div>
+                        <span class="font-bold text-xl text-white">InventoTrack</span>
+                    </div>
+                    <p class="text-sm leading-relaxed">Solusi manajemen inventaris yang dirancang khusus untuk kebutuhan
+                        operasional UMKM di Indonesia.</p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Produk</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#fitur" class="hover:text-white transition">Fitur Utama</a></li>
+                        <li><a href="#harga" class="hover:text-white transition">Cara Kerja</a></li>
+                        <li><a href="#" class="hover:text-white transition">Integrasi</a></li>
+                        <li><a href="#" class="hover:text-white transition">Pricing</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Perusahaan</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Tentang Kami</a></li>
+                        <li><a href="#" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" class="hover:text-white transition">Karir</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kontak</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Dukungan</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="hover:text-white transition">Pusat Bantuan</a></li>
+                        <li><a href="#" class="hover:text-white transition">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white transition">Terms of Service</a></li>
+                        <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="pt-8 border-t border-gray-800 text-sm text-center">
+                <p>&copy; 2026 InventoTrack. Dibuat dengan ❤️ untuk UMKM Indonesia.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function landingPage() {
+            return {
+                // Alpine.js state jika diperlukan untuk interaktivitas
+            }
+        }
+    </script>
+</body>
+
+</html>

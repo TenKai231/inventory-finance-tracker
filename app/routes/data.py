@@ -1,5 +1,5 @@
 import logging
-from flask import Blueprint, request, jsonify, send_file
+from flask import Blueprint, request, jsonify, send_file, make_response
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.extensions import limiter, db
 from pydantic import BaseModel, Field, field_validator, ValidationError
@@ -16,8 +16,12 @@ data_bp = Blueprint('data', __name__, url_prefix='/api')
 # Pastikan unique index pada SKU dibuat sekali saat app startup.
 # Ini mencegah duplikat pada level database (atomic, aman dari race condition).
 def ensure_indexes():
-    db.items.create_index("sku", unique=True, background=True)
-    logger.info("MongoDB index ensured: items.sku (unique)")
+    try:
+        db.items.drop_index("sku_1")
+    except Exception:
+        pass
+    db.items.create_index([("user", 1), ("sku", 1)], unique=True, background=True)
+    logger.info("MongoDB index ensured: items user+sku (unique)")
 
 # Pydantic schemas
 class ItemSchema(BaseModel):
@@ -63,8 +67,9 @@ def get_items():
     skip = (page - 1) * limit
 
     try:
-        cursor = db.items.find().skip(skip).limit(limit)
-        total = db.items.count_documents({})
+        user = get_jwt_identity()
+        cursor = db.items.find({"user": user}).skip(skip).limit(limit)
+        total = db.items.count_documents({"user": user})
         return jsonify({
             "page": page, "limit": limit, "total": total,
             "data": [serialize_doc(doc) for doc in cursor]
@@ -91,6 +96,7 @@ def create_item():
     try:
         doc = payload.model_dump()
         doc['created_at'] = datetime.now(timezone.utc)
+        doc['user'] = get_jwt_identity()
         result = db.items.insert_one(doc)
         doc['_id'] = str(result.inserted_id)
         return jsonify(doc), 201
@@ -115,7 +121,8 @@ def update_item():
     try:
         doc = payload.model_dump()
         doc['updated_at'] = datetime.now(timezone.utc)
-        result = db.items.update_one({"sku": payload.sku}, {"$set": doc})
+        user = get_jwt_identity()
+        result = db.items.update_one({"sku": payload.sku, "user": user}, {"$set": doc})
         if result.matched_count == 0:
             return jsonify({"error": "Item tidak ditemukan"}), 404
         return jsonify({"message": "Item berhasil diupdate"}), 200
@@ -133,7 +140,8 @@ def delete_item(sku):
         if claims.get("role") != "owner":
             return jsonify({"error": "Unauthorized. Hanya owner yang dapat menghapus item."}), 403
 
-        result = db.items.delete_one({"sku": sku})
+        user = get_jwt_identity()
+        result = db.items.delete_one({"sku": sku, "user": user})
         if result.deleted_count == 0:
             return jsonify({"error": "Item tidak ditemukan"}), 404
         return jsonify({"message": "Item berhasil dihapus"}), 200
@@ -156,8 +164,9 @@ def get_transactions():
     skip = (page - 1) * limit
 
     try:
-        cursor = db.transactions.find().sort('tanggal', -1).skip(skip).limit(limit)
-        total = db.transactions.count_documents({})
+        user = get_jwt_identity()
+        cursor = db.transactions.find({"user": user}).sort('tanggal', -1).skip(skip).limit(limit)
+        total = db.transactions.count_documents({"user": user})
         return jsonify({
             "page": page, "limit": limit, "total": total,
             "data": [serialize_doc(doc) for doc in cursor]
@@ -186,12 +195,13 @@ def create_transaction():
 
         doc = payload.model_dump()
         doc['tanggal'] = datetime.now(timezone.utc)
-        doc['user'] = get_jwt_identity()
+        user = get_jwt_identity()
+        doc['user'] = user
 
         # Update stok otomatis pakai find_one_and_update (Atomic Operation)
         if payload.tipe == 'masuk':
             result = db.items.find_one_and_update(
-                {"sku": payload.item_sku},
+                {"sku": payload.item_sku, "user": user},
                 {"$inc": {"stok": payload.jumlah}},
                 return_document=ReturnDocument.AFTER
             )
@@ -199,13 +209,13 @@ def create_transaction():
                 return jsonify({"error": "Item not found"}), 404
         else:
             result = db.items.find_one_and_update(
-                {"sku": payload.item_sku, "stok": {"$gte": payload.jumlah}},
+                {"sku": payload.item_sku, "user": user, "stok": {"$gte": payload.jumlah}},
                 {"$inc": {"stok": -payload.jumlah}},
                 return_document=ReturnDocument.AFTER
             )
             if not result:
                 # Bedakan: item tidak ada vs stok kurang
-                item_exists = db.items.count_documents({"sku": payload.item_sku}) > 0
+                item_exists = db.items.count_documents({"sku": payload.item_sku, "user": user}) > 0
                 if item_exists:
                     return jsonify({"error": "Stok tidak cukup"}), 400
                 else:
@@ -226,7 +236,10 @@ def create_transaction():
 @limiter.limit("10 per minute")
 def dashboard_summary():
     try:
+        user = get_jwt_identity()
+        
         stock_by_category = list(db.items.aggregate([
+            {"$match": {"user": user}},
             {"$group": {
                 "_id": "$kategori",
                 "total_stok": {"$sum": "$stok"},
@@ -236,6 +249,7 @@ def dashboard_summary():
         ]))
 
         transactions_by_month = list(db.transactions.aggregate([
+            {"$match": {"user": user}},
             {"$group": {
                 "_id": {"$dateToString": {"format": "%Y-%m", "date": "$tanggal"}},
                 "masuk": {"$sum": {"$cond": [{"$eq": ["$tipe", "masuk"]}, "$jumlah", 0]}},
@@ -261,12 +275,13 @@ def dashboard_summary():
 @limiter.limit("10 per minute")
 def finance_summary():
     try:
-        transactions = list(db.transactions.find().sort('tanggal', -1))
+        user = get_jwt_identity()
+        transactions = list(db.transactions.find({"user": user}).sort('tanggal', -1))
 
         # Ambil map SKU -> harga dari collection items (akurat, bukan hardcode)
         items_map = {
             item['sku']: item
-            for item in db.items.find({}, {'sku': 1, 'harga_beli': 1, 'harga_jual': 1, 'nama': 1})
+            for item in db.items.find({"user": user}, {'sku': 1, 'harga_beli': 1, 'harga_jual': 1, 'nama': 1})
         }
 
         pemasukan = 0
@@ -284,6 +299,7 @@ def finance_summary():
 
         # Tren 6 bulan terakhir menggunakan aggregation
         trend_pipeline = [
+            {"$match": {"user": user}},
             {"$group": {
                 "_id": {"$dateToString": {"format": "%b", "date": "$tanggal"}},
                 "masuk_qty": {"$sum": {"$cond": [{"$eq": ["$tipe", "masuk"]}, "$jumlah", 0]}},
@@ -355,7 +371,8 @@ def log_export(user, type, format):
 def export_inventory():
     """Export inventory data ke Excel."""
     try:
-        items = list(db.items.find({}, {"_id": 0}).sort('sku', 1))
+        user = get_jwt_identity()
+        items = list(db.items.find({"user": user}, {"_id": 0}).sort('sku', 1))
         if not items:
             return jsonify({"error": "No data to export"}), 404
 
@@ -396,7 +413,8 @@ def export_transactions():
         if format_type not in ('xlsx', 'csv'):
             return jsonify({"error": "Format harus 'xlsx' atau 'csv'"}), 400
 
-        query = {}
+        user = get_jwt_identity()
+        query = {"user": user}
         if date_from_str and date_to_str:
             try:
                 query['tanggal'] = {
@@ -467,14 +485,16 @@ def export_finance():
         else:
             return jsonify({"error": "period tidak valid"}), 400
 
+        user = get_jwt_identity()
         transactions = list(db.transactions.find({
+            'user': user,
             'tanggal': {'$gte': date_from, '$lte': date_to}
         }))
 
         # Ambil harga aktual dari items (lebih akurat dari hardcode)
         items_map = {
             item['sku']: item
-            for item in db.items.find({}, {'sku': 1, 'harga_beli': 1, 'harga_jual': 1})
+            for item in db.items.find({"user": user}, {'sku': 1, 'harga_beli': 1, 'harga_jual': 1})
         }
 
         pemasukan   = sum(t['jumlah'] * items_map.get(t.get('item_sku', ''), {}).get('harga_jual', 0)
@@ -531,3 +551,69 @@ def get_export_history():
     except Exception:
         logger.exception("Unexpected error in get_export_history")
         return jsonify({"error": "Internal server error"}), 500
+
+
+# ===== SETTINGS ENDPOINTS =====
+@data_bp.route('/settings/profile', methods=['GET', 'PUT'])
+@jwt_required()
+def manage_profile():
+    current_user = get_jwt_identity()
+    user = db.users.find_one({"username": current_user})
+    if not user: return jsonify({"error": "User not found"}), 404
+
+    if request.method == 'GET':
+        business = db.business.find_one({"owner": current_user}) or {}
+        return jsonify({
+            "profile": {
+                "namaLengkap": user.get("full_name", ""),
+                "username": user["username"],
+                "email": user.get("email", ""),
+                "role": user.get("role", "user"),
+                "photoUrl": user.get("photo_url", "")
+            },
+            "business": {
+                "nama": business.get("name", ""),
+                "alamat": business.get("address", ""),
+                "telepon": business.get("phone", "")
+            }
+        })
+
+    elif request.method == 'PUT':
+        payload = request.json
+        db.users.update_one({"username": current_user}, {"$set": {
+            "full_name": payload.get("namaLengkap"),
+            "email": payload.get("email"),
+            "photo_url": payload.get("photoUrl")
+        }})
+        return jsonify({"msg": "Profile updated"}), 200
+
+@data_bp.route('/settings/business', methods=['PUT'])
+@jwt_required()
+def manage_business():
+    current_user = get_jwt_identity()
+    payload = request.json
+    db.business.update_one(
+        {"owner": current_user}, 
+        {"$set": {
+            "name": payload.get("nama"),
+            "address": payload.get("alamat"),
+            "phone": payload.get("telepon")
+        }}, 
+        upsert=True
+    )
+    return jsonify({"msg": "Business updated"}), 200
+
+@data_bp.route('/settings/account', methods=['DELETE'])
+@jwt_required()
+def delete_account():
+    current_user = get_jwt_identity()
+    db.users.delete_one({"username": current_user})
+    db.business.delete_one({"owner": current_user})
+    # Pastikan pakai field "user" sesuai pembaruan multi-tenant yang telah dibuat
+    db.items.delete_many({"user": current_user})
+    db.transactions.delete_many({"user": current_user})
+    
+    resp = make_response(jsonify({"msg": "Account deleted"}), 200)
+    resp.set_cookie('access_token_cookie', '', expires=0)
+    resp.set_cookie('refresh_token_cookie', '', expires=0)
+    return resp

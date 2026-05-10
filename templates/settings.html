@@ -1,0 +1,482 @@
+{% extends "base.html" %}
+{% block title %}Pengaturan - InventoTrack{% endblock %}
+
+{% block content %}
+<div class="flex h-screen bg-gray-50" x-data="settingsApp()" x-init="init()">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden lg:flex flex-col">
+        <div class="p-6 border-b border-slate-700">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                    <span class="material-icons text-white text-sm">inventory_2</span>
+                </div>
+                <span class="font-bold text-lg">InventoTrack</span>
+            </div>
+            <p class="text-xs text-slate-400 mt-1">Precision Management</p>
+        </div>
+        <nav class="flex-1 p-4 space-y-1">
+            <a href="/"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
+                <span class="material-icons text-lg">dashboard</span><span>Dashboard</span>
+            </a>
+            <a href="/inventory"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
+                <span class="material-icons text-lg">inventory_2</span><span>Inventaris</span>
+            </a>
+            <a href="/transactions"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
+                <span class="material-icons text-lg">receipt_long</span><span>Transaksi</span>
+            </a>
+            <a href="/finance"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
+                <span class="material-icons text-lg">account_balance_wallet</span><span>Keuangan</span>
+            </a>
+            <a href="/export"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
+                <span class="material-icons text-lg">upload_file</span><span>Ekspor</span>
+            </a>
+            <a href="/settings"
+                class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition shadow-md">
+                <span class="material-icons text-lg">settings</span><span>Pengaturan</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-indigo-500 rounded-full flex items-center justify-center text-xs font-bold">A
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate" x-text="profile.namaLengkap || 'Admin'"></p>
+                    <p class="text-xs text-slate-400 truncate" x-text="profile.email"></p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 overflow-y-auto">
+        <!-- Top Bar -->
+        <header class="bg-white border-b px-6 py-4 sticky top-0 z-20">
+            <div class="flex justify-between items-center">
+                <div class="relative w-96">
+                    <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
+                    <input type="text" placeholder="Cari pengaturan..."
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="p-2 hover:bg-gray-100 rounded-full transition"><span
+                            class="material-icons text-gray-600">notifications_none</span></button>
+                    <div
+                        class="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm border-2 border-white shadow-sm">
+                        A</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-5xl mx-auto">
+            <!-- Header -->
+            <div class="mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Pengaturan</h2>
+                <p class="text-gray-500 mt-1">Kelola preferensi akun dan detail bisnis Anda.</p>
+            </div>
+
+            <!-- Tabs -->
+            <div class="border-b border-gray-200 mb-8">
+                <nav class="flex gap-6">
+                    <button @click="activeTab = 'profil'"
+                        :class="activeTab === 'profil' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        class="pb-3 px-1 border-b-2 font-medium text-sm transition">Profil</button>
+                    <button @click="activeTab = 'keamanan'"
+                        :class="activeTab === 'keamanan' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        class="pb-3 px-1 border-b-2 font-medium text-sm transition">Keamanan</button>
+                    <button @click="activeTab = 'notifikasi'"
+                        :class="activeTab === 'notifikasi' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        class="pb-3 px-1 border-b-2 font-medium text-sm transition">Notifikasi</button>
+                    <button @click="activeTab = 'tampilan'"
+                        :class="activeTab === 'tampilan' ? 'border-indigo-600 text-indigo-600' : 'border-transparent text-gray-500 hover:text-gray-700'"
+                        class="pb-3 px-1 border-b-2 font-medium text-sm transition">Tampilan</button>
+                </nav>
+            </div>
+
+            <!-- Profil Tab Content -->
+            <div x-show="activeTab === 'profil'" x-transition>
+
+                <!-- Informasi Profil -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-icons text-indigo-600">person_outline</span>
+                        <h3 class="font-bold text-gray-900 text-lg">Informasi Profil</h3>
+                    </div>
+
+                    <div class="flex items-start gap-6 mb-8">
+                        <div class="relative group">
+                            <img :src="profile.photoUrl || 'https://ui-avatars.com/api/?name=Admin&background=4f46e5&color=fff'"
+                                class="w-20 h-20 rounded-full object-cover border-4 border-white shadow-md">
+                            <label
+                                class="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer">
+                                <span class="material-icons text-white">photo_camera</span>
+                                <input type="file" class="hidden" @change="handlePhotoUpload($event)">
+                            </label>
+                        </div>
+                        <div class="flex-1 pt-2">
+                            <h4 class="font-semibold text-gray-900">Foto Profil</h4>
+                            <p class="text-sm text-gray-500">Gunakan foto formal untuk identitas bisnis Anda.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <!-- Nama Lengkap -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                            <input type="text" x-model="profile.namaLengkap"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        </div>
+
+                        <!-- Username -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <div class="relative">
+                                <input type="text" x-model="profile.username" @input.debounce.500ms="checkUsername()"
+                                    class="w-full px-4 py-2.5 border rounded-lg outline-none focus:ring-2 transition"
+                                    :class="usernameStatus === 'valid' ? 'border-green-500 focus:ring-green-500' : usernameStatus === 'error' ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'">
+                                <span class="absolute right-3 top-3 material-icons text-sm" x-show="usernameChecking"
+                                    x-cloak>hourglass_empty</span>
+                                <span class="absolute right-3 top-3 material-icons text-sm text-green-600"
+                                    x-show="usernameStatus === 'valid'" x-cloak>check_circle</span>
+                                <span class="absolute right-3 top-3 material-icons text-sm text-red-600"
+                                    x-show="usernameStatus === 'error'" x-cloak>error</span>
+                            </div>
+                            <p class="text-xs mt-1.5"
+                                :class="usernameStatus === 'valid' ? 'text-green-600' : usernameStatus === 'error' ? 'text-red-600' : 'text-gray-400'"
+                                x-text="usernameMessage"></p>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <div class="relative">
+                                <input type="email" x-model="profile.email"
+                                    class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition pr-10">
+                                <span class="absolute right-3 top-3 material-icons text-sm text-blue-500 cursor-pointer"
+                                    title="Email sudah terverifikasi">verified</span>
+                            </div>
+                        </div>
+
+                        <!-- Role (Read Only) -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                            <div class="relative">
+                                <input type="text" :value="profile.role" readonly
+                                    class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-gray-600 cursor-not-allowed pr-10">
+                                <span class="absolute right-3 top-3 material-icons text-sm text-gray-400">lock</span>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1.5">Role hanya dapat diubah oleh Admin Utama</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button
+                            class="px-5 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg font-medium transition">Batal</button>
+                        <button @click="saveProfile()" :disabled="savingProfile"
+                            class="px-6 py-2.5 bg-gray-900 text-white rounded-lg hover:bg-gray-800 font-medium transition disabled:opacity-50 flex items-center gap-2">
+                            <span x-show="!savingProfile">Simpan Perubahan</span>
+                            <span x-show="savingProfile" class="flex items-center gap-2">
+                                <span
+                                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Menyimpan...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Informasi Bisnis -->
+                <div class="bg-white rounded-xl border border-gray-200 shadow-sm p-6 mb-6">
+                    <div class="flex items-center gap-2 mb-6">
+                        <span class="material-icons text-indigo-600">business</span>
+                        <h3 class="font-bold text-gray-900 text-lg">Informasi Bisnis</h3>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nama Bisnis</label>
+                            <input type="text" x-model="business.nama"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition">
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat</label>
+                            <textarea x-model="business.alamat" rows="3"
+                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="flex items-center px-3 py-2.5 border border-gray-300 rounded-l-lg bg-gray-50 text-sm text-gray-600">
+                                    <span class="mr-2">🇮🇩</span>+62
+                                </div>
+                                <div class="relative flex-1">
+                                    <input type="text" x-model="business.telepon" @input="validatePhone()"
+                                        placeholder="812-987-xxxx"
+                                        class="w-full px-4 py-2.5 border border-r-0 rounded-none rounded-r-lg outline-none focus:ring-2 transition pr-10"
+                                        :class="phoneError ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-indigo-500'">
+                                    <span class="absolute right-3 top-3 material-icons text-sm text-red-600"
+                                        x-show="phoneError" x-cloak>warning</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-red-600 mt-1.5" x-show="phoneError" x-text="phoneError" x-cloak></p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3 pt-6 border-t border-gray-100">
+                        <button
+                            class="px-5 py-2.5 text-gray-700 hover:bg-gray-50 rounded-lg font-medium transition">Batal</button>
+                        <button @click="saveBusiness()" :disabled="savingBusiness"
+                            class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition disabled:opacity-50 flex items-center gap-2">
+                            <span x-show="!savingBusiness">Simpan Bisnis</span>
+                            <span x-show="savingBusiness" class="flex items-center gap-2">
+                                <span
+                                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                Menyimpan...
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Danger Zone -->
+                <div class="bg-red-50 border-2 border-red-200 rounded-xl p-6">
+                    <div class="flex items-start gap-3 mb-2">
+                        <span class="material-icons text-red-600">warning</span>
+                        <div>
+                            <h3 class="font-bold text-red-700 text-lg">Area Berbahaya (Danger Zone)</h3>
+                            <p class="text-sm text-red-600/80 mt-1">Tindakan berikut bersifat permanen dan tidak dapat
+                                dibatalkan. Mohon berhati-hati.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <button @click="logout()"
+                            class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 font-medium transition flex items-center gap-2">
+                            <span class="material-icons text-lg">logout</span>
+                            Keluar dari Akun
+                        </button>
+                        <button @click="showDeleteModal = true"
+                            class="px-5 py-2.5 bg-white border-2 border-red-300 text-red-700 rounded-lg hover:bg-red-50 font-medium transition flex items-center gap-2">
+                            <span class="material-icons text-lg">delete_forever</span>
+                            Hapus Akun
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Placeholder untuk tab lain -->
+            <div x-show="activeTab !== 'profil'"
+                class="bg-white rounded-xl border border-gray-200 p-12 text-center text-gray-500" x-cloak>
+                <span class="material-icons text-4xl mb-3 text-gray-300">construction</span>
+                <p>Halaman <span class="font-semibold capitalize" x-text="activeTab"></span> sedang dalam pengembangan.
+                </p>
+            </div>
+
+        </div>
+    </main>
+</div>
+
+<!-- Modal Konfirmasi Hapus Akun -->
+<div x-show="showDeleteModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" x-cloak
+    @click.self="showDeleteModal = false">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-md" x-transition>
+        <div class="flex items-center gap-3 mb-4 text-red-600">
+            <span class="material-icons text-3xl">warning</span>
+            <h3 class="text-xl font-bold">Hapus Akun?</h3>
+        </div>
+        <p class="text-gray-600 mb-6">Semua data inventaris, transaksi, dan keuangan akan dihapus permanen. Tindakan ini
+            tidak dapat dibatalkan.</p>
+        <div class="flex gap-3 justify-end">
+            <button @click="showDeleteModal = false"
+                class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 font-medium transition">Batal</button>
+            <button @click="deleteAccount()" :disabled="deleting"
+                class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 font-medium transition disabled:opacity-50 flex items-center gap-2">
+                <span x-show="!deleting">Ya, Hapus Akun</span>
+                <span x-show="deleting"
+                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function settingsApp() {
+        return {
+            activeTab: 'profil',
+            savingProfile: false,
+            savingBusiness: false,
+            deleting: false,
+            showDeleteModal: false,
+
+            profile: {
+                namaLengkap: '',
+                username: '',
+                email: '',
+                role: 'Manager Inventaris',
+                photoUrl: ''
+            },
+
+            business: {
+                nama: '',
+                alamat: '',
+                telepon: ''
+            },
+
+            usernameStatus: '', // '', 'checking', 'valid', 'error'
+            usernameMessage: '',
+            usernameChecking: false,
+            phoneError: '',
+
+            async init() {
+                // Load data dari API saat halaman dibuka
+                try {
+                    const res = await fetch('/api/settings/profile', { credentials: 'include' });
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.profile = { ...this.profile, ...data.profile };
+                        this.business = { ...this.business, ...data.business };
+                    }
+                } catch (e) {
+                    console.warn('Gagal load settings, pakai data lokal/demo');
+                }
+            },
+
+            async checkUsername() {
+                const val = this.profile.username.trim();
+                if (val.length < 3) {
+                    this.usernameStatus = '';
+                    this.usernameMessage = '';
+                    return;
+                }
+
+                this.usernameChecking = true;
+                this.usernameStatus = 'checking';
+                this.usernameMessage = 'Mengecek ketersediaan...';
+
+                // Simulasi delay API
+                await new Promise(r => setTimeout(r, 800));
+
+                // Mock validation (ganti dengan fetch('/api/check-username') nanti)
+                const taken = ['admin', 'budi_inventotrack', 'test'];
+                if (taken.includes(val.toLowerCase())) {
+                    this.usernameStatus = 'error';
+                    this.usernameMessage = 'Username sudah digunakan.';
+                } else {
+                    this.usernameStatus = 'valid';
+                    this.usernameMessage = 'Username tersedia dan valid.';
+                }
+                this.usernameChecking = false;
+            },
+
+            validatePhone() {
+                const val = this.business.telepon.replace(/[^0-9]/g, '');
+                this.business.telepon = val;
+
+                if (val.length === 0) {
+                    this.phoneError = '';
+                    return;
+                }
+                if (val.length < 9 || val.length > 13) {
+                    this.phoneError = 'Format nomor telepon tidak valid. Gunakan 9-13 angka saja.';
+                } else {
+                    this.phoneError = '';
+                }
+            },
+
+            async saveProfile() {
+                this.savingProfile = true;
+                try {
+                    const res = await fetch('/api/settings/profile', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(this.profile)
+                    });
+                    if (!res.ok) throw new Error('Gagal menyimpan');
+                    alert('✅ Profil berhasil diperbarui!');
+                } catch (e) {
+                    alert('❌ ' + e.message);
+                } finally {
+                    this.savingProfile = false;
+                }
+            },
+
+            async saveBusiness() {
+                if (this.phoneError) {
+                    alert('⚠️ Perbaiki format nomor telepon terlebih dahulu.');
+                    return;
+                }
+                this.savingBusiness = true;
+                try {
+                    const res = await fetch('/api/settings/business', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(this.business)
+                    });
+                    if (!res.ok) throw new Error('Gagal menyimpan');
+                    alert('✅ Data bisnis berhasil diperbarui!');
+                } catch (e) {
+                    alert('❌ ' + e.message);
+                } finally {
+                    this.savingBusiness = false;
+                }
+            },
+
+            async logout() {
+                if (!confirm('Yakin ingin keluar dari akun?')) return;
+                try {
+                    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+                    window.location.href = '/login';
+                } catch (e) {
+                    alert('Gagal logout. Silakan coba lagi.');
+                }
+            },
+
+            async deleteAccount() {
+                this.deleting = true;
+                try {
+                    const res = await fetch('/api/settings/account', { method: 'DELETE', credentials: 'include' });
+                    if (res.ok) {
+                        alert('Akun berhasil dihapus. Terima kasih telah menggunakan InventoTrack.');
+                        window.location.href = '/';
+                    } else {
+                        throw new Error('Gagal menghapus akun');
+                    }
+                } catch (e) {
+                    alert('❌ ' + e.message);
+                } finally {
+                    this.deleting = false;
+                    this.showDeleteModal = false;
+                }
+            },
+
+            handlePhotoUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('Ukuran foto maksimal 2MB');
+                    return;
+                }
+                // Preview lokal (ganti dengan upload ke server/cloud nanti)
+                const reader = new FileReader();
+                reader.onload = e => this.profile.photoUrl = e.target.result;
+                reader.readAsDataURL(file);
+            }
+        }
+    }
+</script>
+
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>
+
+{% endblock %}
