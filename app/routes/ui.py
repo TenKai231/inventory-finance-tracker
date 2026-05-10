@@ -26,6 +26,21 @@ def dashboard():
 def inventory():
     return render_template('inventory.html')
 
+@ui_bp.route('/transactions')
+@login_required_ui
+def transactions():
+    return render_template('transactions.html')
+
+@ui_bp.route('/finance')
+@login_required_ui
+def finance_page():
+    return render_template('finance.html')
+
+@ui_bp.route('/export')
+@login_required_ui
+def export_page():
+    return render_template('export.html')
+
 @ui_bp.route('/inventory/empty')
 @login_required_ui
 def inventory_empty():
