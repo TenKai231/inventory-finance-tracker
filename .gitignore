@@ -1,31 +1,15 @@
-# Virtual environment
-.venv/
-venv/
+```gitignore
+# Python cache
 __pycache__/
 *.pyc
 *.pyo
 *.pyd
-.Python
 
-# Git
-.git/
-.gitignore
+# Logs
+*.log
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Environment
+# Environment variables
 .env
 .env.local
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Docker
-Dockerfile
-docker-compose.yml
+*.env.*
+```
