@@ -1,299 +1,344 @@
 {% extends "base.html" %}
 
-{% block title %}Transaksi - StockFlow{% endblock %}
+{% block title %}Transaksi - InventoTrack{% endblock %}
 
 {% block content %}
-<div class="flex h-screen bg-gray-50" x-data="transactionsApp()" x-init="init()">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900 text-white flex-shrink-0">
-        <div class="p-4 flex items-center gap-3 border-b border-slate-700">
-            <div class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <span class="material-icons text-white">inventory_2</span>
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--md-sys-color-outline-variant, #e2e8f0);
+        border-radius: 10px;
+    }
+</style>
+
+<div x-data="transactionsApp()" x-init="init()" class="flex min-h-screen w-full bg-background">
+
+    <aside
+        class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
             </div>
             <div>
-                <h1 class="font-bold text-lg leading-tight">StockFlow</h1>
-                <p class="text-xs text-gray-400">Global Logistics</p>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
             </div>
         </div>
 
-        <nav class="p-4 space-y-2">
-            <a href="/"
-                class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-slate-800 rounded-lg transition">
-                <span class="material-icons">dashboard</span>
-                <span>Dashboard</span>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
             </a>
-            <a href="/inventory"
-                class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-slate-800 rounded-lg transition">
-                <span class="material-icons">inventory</span>
-                <span>Inventory</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
             </a>
-            <a href="/transactions"
-                class="flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-lg transition">
-                <span class="material-icons">receipt_long</span>
-                <span>Transactions</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out"
+                href="{{ url_for('ui.transactions') }}">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.finance_page') }}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.export_page') }}">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.settings_page') }}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
             </a>
         </nav>
 
-        <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-700">
-            <a href="/settings"
-                class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-slate-800 rounded-lg transition">
-                <span class="material-icons">settings</span>
-                <span>Settings</span>
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <a href="/transactions/new"
+                class="w-full flex items-center justify-center bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                Transaksi Baru
             </a>
-            <a href="/support"
-                class="flex items-center gap-3 px-4 py-3 text-gray-300 hover:bg-slate-800 rounded-lg transition">
-                <span class="material-icons">help_outline</span>
-                <span>Support</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-error hover:text-error transition-all duration-200 ease-in-out"
+                href="#" @click.prevent="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
             </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto">
-        <!-- Header -->
-        <div class="p-8">
-            <div class="flex justify-between items-center mb-6">
+    <main class="flex-1 ml-64 min-h-screen text-on-background">
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input x-model="search"
+                        class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors"
+                        placeholder="Cari transaksi..." type="text">
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex items-center space-x-4 text-on-surface-variant">
+                    <button class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">notifications</button>
+                    <button class="material-symbols-outlined cursor-pointer hover:text-primary transition-colors">help</button>
+                </div>
+                <div class="h-8 w-[1px] bg-outline-variant"></div>
+                <div class="flex items-center space-x-2 cursor-pointer pl-2" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <div class="text-right hidden sm:block">
+                        <p class="font-label-md text-primary" x-text="userName"></p>
+                        <p class="text-[10px] text-on-surface-variant">Transaksi</p>
+                    </div>
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant"
+                            x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
+                </div>
+            </div>
+        </header>
+        <div class="p-6 md:p-10">
+            <div class="flex justify-between items-center mb-8">
                 <div>
-                    <h2 class="text-3xl font-bold text-gray-900">Transaksi</h2>
-                    <p class="text-gray-600 mt-1">Riwayat semua transaksi barang</p>
+                    <h2 class="text-3xl font-bold text-on-background tracking-tight">Transaksi</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Keluar masuk barang dan riwayat gudang</p>
                 </div>
                 <div class="flex gap-3">
                     <button
-                        class="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition">
-                        <span class="material-icons text-gray-600 text-sm">download</span>
-                        <span>Export</span>
-                        <span class="material-icons text-xs">expand_more</span>
+                        class="flex items-center gap-2 px-5 py-2.5 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">download</span>
+                        <span>Ekspor CSV</span>
                     </button>
-                    <button @click="openModal()"
-                        class="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium">
-                        <span class="material-icons text-sm">add</span>
-                        <span>Tambah Transaksi</span>
-                    </button>
+                    <a href="/transactions/new"
+                        class="flex items-center gap-2 px-6 py-2.5 bg-primary text-on-primary rounded-full hover:bg-primary/90 transition-colors font-label-md font-medium shadow-md">
+                        <span class="material-symbols-outlined text-[20px]">add</span>
+                        <span>Catat Transaksi</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                            <span class="material-icons text-gray-600">show_chart</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Total Transaksi</p>
-                            <p class="text-2xl font-bold text-gray-900" x-text="stats.total"></p>
-                        </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                    <div class="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-secondary-container text-3xl">receipt_long</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-label-md text-on-surface-variant">Total Transaksi</p>
+                        <p class="text-2xl font-bold text-on-surface mt-1" x-text="stats.total"></p>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <span class="material-icons text-green-600">arrow_downward</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Barang Masuk</p>
-                            <p class="text-2xl font-bold text-gray-900" x-text="stats.masuk"></p>
-                        </div>
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                    <div class="w-14 h-14 bg-tertiary-container rounded-2xl flex items-center justify-center">
+                        <span
+                            class="material-symbols-outlined text-on-tertiary-container text-3xl">arrow_downward</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-label-md text-on-surface-variant">Barang Masuk</p>
+                        <p class="text-2xl font-bold text-on-surface mt-1" x-text="stats.masuk"></p>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-                            <span class="material-icons text-red-600">arrow_upward</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Barang Keluar</p>
-                            <p class="text-2xl font-bold text-gray-900" x-text="stats.keluar"></p>
-                        </div>
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                    <div class="w-14 h-14 bg-error-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-error-container text-3xl">arrow_upward</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-label-md text-on-surface-variant">Barang Keluar</p>
+                        <p class="text-2xl font-bold text-on-surface mt-1" x-text="stats.keluar"></p>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-xl border border-gray-200 shadow-sm">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
-                            <span class="material-icons text-indigo-600">today</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-600">Transaksi Hari Ini</p>
-                            <p class="text-2xl font-bold text-gray-900" x-text="stats.hariIni"></p>
-                        </div>
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4 transition hover:shadow-md">
+                    <div class="w-14 h-14 bg-primary-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-on-primary-container text-3xl">today</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-label-md text-on-surface-variant">Transaksi Hari Ini</p>
+                        <p class="text-2xl font-bold text-on-surface mt-1" x-text="stats.hariIni"></p>
                     </div>
                 </div>
             </div>
 
-            <!-- Filters -->
-            <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm mb-6">
-                <div class="flex flex-col lg:flex-row gap-4 justify-between items-center">
-                    <div class="flex gap-2 flex-wrap">
-                        <button @click="filterType = 'all'"
-                            :class="filterType === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition">Semua</button>
-                        <button @click="filterType = 'masuk'"
-                            :class="filterType === 'masuk' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700'"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition">Masuk</button>
-                        <button @click="filterType = 'keluar'"
-                            :class="filterType === 'keluar' ? 'bg-red-600 text-white' : 'bg-gray-100 text-gray-700'"
-                            class="px-4 py-2 rounded-lg text-sm font-medium transition">Keluar</button>
+            <div
+                class="bg-surface rounded-3xl p-5 border border-outline-variant shadow-sm mb-6 flex flex-col lg:flex-row gap-4 justify-between items-center">
+                <div class="flex gap-2">
+                    <button @click="filterType = 'all'"
+                        :class="filterType === 'all' ? 'bg-secondary-container text-on-secondary-container border-transparent' : 'border border-outline text-on-surface hover:bg-surface-variant'"
+                        class="px-5 py-2 rounded-full text-sm font-medium transition-all">Semua</button>
+                    <button @click="filterType = 'masuk'"
+                        :class="filterType === 'masuk' ? 'bg-tertiary-container text-on-tertiary-container border-transparent' : 'border border-outline text-on-surface hover:bg-surface-variant'"
+                        class="px-5 py-2 rounded-full text-sm font-medium transition-all">Masuk</button>
+                    <button @click="filterType = 'keluar'"
+                        :class="filterType === 'keluar' ? 'bg-error-container text-on-error-container border-transparent' : 'border border-outline text-on-surface hover:bg-surface-variant'"
+                        class="px-5 py-2 rounded-full text-sm font-medium transition-all">Keluar</button>
+                </div>
+
+                <div class="flex gap-3 items-center flex-wrap">
+                    <div
+                        class="flex items-center gap-2 bg-surface-container-lowest px-4 py-2 rounded-full border border-outline-variant">
+                        <span
+                            class="material-symbols-outlined text-on-surface-variant text-[20px]">calendar_today</span>
+                        <input type="date" x-model="dateFrom"
+                            class="bg-transparent text-sm text-on-surface outline-none" @change="fetchData()">
+                        <span class="text-on-surface-variant">-</span>
+                        <input type="date" x-model="dateTo" class="bg-transparent text-sm text-on-surface outline-none"
+                            @change="fetchData()">
                     </div>
 
-                    <div class="flex gap-3 items-center flex-wrap">
-                        <div class="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border border-gray-200">
-                            <span class="material-icons text-gray-500 text-sm">calendar_today</span>
-                            <input type="date" x-model="dateFrom" class="bg-transparent text-sm outline-none"
-                                @change="fetchData()">
-                            <span class="text-gray-400">-</span>
-                            <input type="date" x-model="dateTo" class="bg-transparent text-sm outline-none"
-                                @change="fetchData()">
-                        </div>
-
-                        <div class="flex gap-1">
-                            <button @click="setDateRange('today')"
-                                :class="dateRange === 'today' ? 'bg-gray-900 text-white' : 'bg-gray-100'"
-                                class="px-3 py-2 rounded-lg text-xs font-medium transition">Hari Ini</button>
-                            <button @click="setDateRange('7days')"
-                                :class="dateRange === '7days' ? 'bg-gray-900 text-white' : 'bg-gray-100'"
-                                class="px-3 py-2 rounded-lg text-xs font-medium transition">7 Hari Terakhir</button>
-                        </div>
-
-                        <div class="relative">
-                            <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
-                            <input type="text" x-model.debounce.300ms="search" placeholder="Cari SKU, barang, atau User"
-                                class="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 w-64">
-                        </div>
+                    <div class="relative">
+                        <span
+                            class="material-symbols-outlined absolute left-4 top-2.5 text-on-surface-variant text-[20px]">search</span>
+                        <input type="text" x-model.debounce.300ms="search" placeholder="Cari SKU / user..."
+                            class="pl-11 pr-4 py-2.5 border border-outline rounded-full text-sm bg-surface text-on-surface outline-none focus:border-primary focus:ring-1 focus:ring-primary w-64 transition-all">
                     </div>
                 </div>
             </div>
 
-            <!-- Table -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="bg-gray-50 border-b border-gray-200">
+            <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm overflow-hidden">
+                <div class="overflow-x-auto thin-scrollbar">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-surface-variant text-on-surface-variant border-b border-outline-variant">
                             <tr>
-                                <th class="px-6 py-4 text-left">
-                                    <input type="checkbox" class="rounded border-gray-300">
-                                </th>
                                 <th @click="sort('tanggal')"
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider cursor-pointer hover:text-on-surface transition">
                                     <div class="flex items-center gap-1">
-                                        <span>Tanggal</span>
-                                        <span class="material-icons text-xs">arrow_upward</span>
+                                        <span>Waktu</span>
+                                        <span class="material-symbols-outlined text-[16px]">swap_vert</span>
                                     </div>
                                 </th>
-                                <th
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    SKU</th>
-                                <th
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Nama Barang</th>
-                                <th
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Tipe</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">SKU</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Nama Barang</th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">Tipe</th>
                                 <th @click="sort('jumlah')"
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider cursor-pointer hover:bg-gray-100">
+                                    class="px-6 py-4 text-xs font-bold uppercase tracking-wider cursor-pointer hover:text-on-surface transition">
                                     <div class="flex items-center gap-1">
                                         <span>Jumlah</span>
-                                        <span class="material-icons text-xs">arrow_upward</span>
+                                        <span class="material-symbols-outlined text-[16px]">swap_vert</span>
                                     </div>
                                 </th>
-                                <th
-                                    class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    Total Nilai</th>
-                                <th
-                                    class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                    User</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider">Total Nilai
+                                </th>
+                                <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider">User</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-outline-variant relative">
+                            <div x-show="loading"
+                                class="absolute inset-0 z-10 bg-surface/50 backdrop-blur-sm flex items-center justify-center">
+                                <span
+                                    class="material-symbols-outlined text-primary text-4xl animate-spin">progress_activity</span>
+                            </div>
+
                             <template x-for="tx in filteredTransactions" :key="tx._id">
-                                <tr class="hover:bg-gray-50 transition">
+                                <tr class="hover:bg-surface-container-lowest transition-colors">
                                     <td class="px-6 py-4">
-                                        <input type="checkbox" class="rounded border-gray-300">
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="text-sm text-gray-900" x-text="formatDate(tx.tanggal)"></div>
-                                        <div class="text-xs text-gray-500" x-text="formatTime(tx.tanggal)"></div>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-mono text-sm text-gray-600" x-text="tx.item_sku"></span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="font-medium text-gray-900" x-text="tx.nama_barang || '- '"></span>
+                                        <div class="text-sm font-medium text-on-surface"
+                                            x-text="formatDate(tx.tanggal)"></div>
+                                        <div class="text-xs text-on-surface-variant" x-text="formatTime(tx.tanggal)">
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            :class="tx.tipe === 'masuk' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
-                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium">
-                                            <span class="material-icons text-xs"
-                                                x-text="tx.tipe === 'masuk' ? 'arrow_downward' : 'arrow_upward'"></span>
-                                            <span x-text="tx.tipe.charAt(0).toUpperCase() + tx.tipe.slice(1)"></span>
+                                            class="font-mono text-sm bg-surface-variant px-2 py-1 rounded-md text-on-surface-variant"
+                                            x-text="tx.item_sku"></span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span class="font-medium text-on-surface"
+                                            x-text="tx.nama_barang || '- '"></span>
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <span
+                                            :class="tx.tipe === 'masuk' ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-error-container text-on-error-container'"
+                                            class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
+                                            <span class="material-symbols-outlined text-[14px]"
+                                                x-text="tx.tipe === 'masuk' ? 'south_west' : 'north_east'"></span>
+                                            <span x-text="tx.tipe"></span>
                                         </span>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span :class="tx.tipe === 'masuk' ? 'text-green-600' : 'text-red-600'"
-                                            class="font-mono text-sm font-medium"
+                                        <span :class="tx.tipe === 'masuk' ? 'text-tertiary' : 'text-error'"
+                                            class="font-mono text-sm font-bold"
                                             x-text="(tx.tipe === 'masuk' ? '+' : '-') + tx.jumlah"></span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="text-sm text-gray-900 font-medium"
+                                        <div class="text-sm text-on-surface font-bold"
                                             x-text="formatRupiah(tx.total_nilai || 0)"></div>
-                                        <div class="text-xs text-gray-500">Rp</div>
+                                        <div
+                                            class="text-[10px] uppercase text-on-surface-variant font-bold tracking-widest">
+                                            IDR</div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="text-sm text-gray-700" x-text="tx.user || 'Admin'"></span>
+                                        <span class="text-sm text-on-surface-variant flex items-center gap-1">
+                                            <span class="material-symbols-outlined text-[16px]">account_circle</span>
+                                            <span x-text="tx.user || 'Admin'"></span>
+                                        </span>
                                     </td>
                                 </tr>
                             </template>
 
-                            <!-- Empty State -->
                             <tr x-show="filteredTransactions.length === 0 && !loading">
-                                <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                                    <span class="material-icons text-4xl mb-2 text-gray-300">receipt_long</span>
-                                    <p>Belum ada transaksi</p>
+                                <td colspan="7" class="px-6 py-16 text-center text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-6xl mb-3 opacity-50">receipt_long</span>
+                                    <p class="text-lg font-medium">Belum ada transaksi</p>
+                                    <p class="text-sm opacity-70">Data transaksi Anda akan muncul di sini</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Pagination -->
                 <div x-show="!loading && transactions.length > 0"
-                    class="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-                    <div class="text-sm text-gray-700">
-                        Menampilkan <span class="font-medium"
+                    class="px-6 py-4 border-t border-outline-variant bg-surface flex items-center justify-between">
+                    <div class="text-sm text-on-surface-variant">
+                        Menampilkan <span class="font-bold text-on-surface"
                             x-text="((pagination.page - 1) * pagination.limit) + 1"></span> -
-                        <span class="font-medium"
+                        <span class="font-bold text-on-surface"
                             x-text="Math.min(pagination.page * pagination.limit, pagination.total)"></span>
-                        dari <span class="font-medium" x-text="pagination.total"></span>
+                        dari <span class="font-bold text-on-surface" x-text="pagination.total"></span>
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm text-gray-700">Baris per halaman:</span>
-                            <select x-model="pagination.limit" @change="changeLimit()"
-                                class="border border-gray-300 rounded-lg px-3 py-1 text-sm outline-none focus:ring-2 focus:ring-indigo-500">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                            </select>
-                        </div>
+                        <select x-model="pagination.limit" @change="changeLimit()"
+                            class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm text-on-surface outline-none focus:border-primary">
+                            <option value="10">10 / hal</option>
+                            <option value="25">25 / hal</option>
+                            <option value="50">50 / hal</option>
+                        </select>
 
                         <div class="flex gap-1">
                             <button @click="changePage(pagination.page - 1)" :disabled="pagination.page === 1"
-                                class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                                ‹
+                                class="w-8 h-8 flex items-center justify-center rounded-full border border-outline text-on-surface hover:bg-surface-variant disabled:opacity-30 transition">
+                                <span class="material-symbols-outlined text-sm">chevron_left</span>
                             </button>
-                            <template x-for="p in totalPages" :key="p">
-                                <button @click="changePage(p)"
-                                    :class="p === pagination.page ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'"
-                                    class="px-3 py-1 rounded-lg text-sm font-medium" x-text="p"></button>
-                            </template>
                             <button @click="changePage(pagination.page + 1)" :disabled="pagination.page >= totalPages"
-                                class="px-3 py-1 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed">
-                                ›
+                                class="w-8 h-8 flex items-center justify-center rounded-full border border-outline text-on-surface hover:bg-surface-variant disabled:opacity-30 transition">
+                                <span class="material-symbols-outlined text-sm">chevron_right</span>
                             </button>
                         </div>
                     </div>
@@ -301,47 +346,52 @@
             </div>
         </div>
     </main>
-</div>
 
-<!-- Modal Tambah Transaksi -->
-<div x-show="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" x-cloak
-    @click.self="showModal = false">
-    <div class="bg-white rounded-2xl p-6 w-full max-w-lg mx-4">
+    <!-- Modal Transaksi Baru -->
+    <div x-show="showModal"
+        class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm transition-opacity"
+        x-cloak>
+    <div @click.away="showModal = false" x-show="showModal" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+        class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-xl font-bold text-gray-900">Tambah Transaksi</h3>
-            <button @click="showModal = false" class="text-gray-400 hover:text-gray-600">
-                <span class="material-icons">close</span>
+            <h3 class="text-2xl font-bold text-on-surface">Catat Transaksi</h3>
+            <button @click="showModal = false"
+                class="w-8 h-8 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center hover:bg-outline-variant transition">
+                <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
         </div>
 
-        <form @submit.prevent="submitTransaction()" class="space-y-4">
+        <form @submit.prevent="submitTransaction()" class="space-y-5">
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Tipe Transaksi</label>
+                <label class="block text-sm font-label-md text-on-surface mb-2">Tipe Transaksi</label>
                 <div class="flex gap-3">
                     <label class="flex-1 cursor-pointer">
                         <input type="radio" x-model="form.tipe" value="masuk" class="peer sr-only">
                         <div
-                            class="text-center py-3 border-2 border-gray-200 rounded-lg peer-checked:border-green-500 peer-checked:bg-green-50 peer-checked:text-green-700 transition">
-                            <span class="material-icons align-middle text-sm">arrow_downward</span>
-                            <span class="ml-1 font-medium">Barang Masuk</span>
+                            class="text-center py-3 border-2 border-outline-variant rounded-2xl peer-checked:border-tertiary peer-checked:bg-tertiary-container peer-checked:text-on-tertiary-container text-on-surface-variant transition-all">
+                            <span class="material-symbols-outlined align-middle text-[20px]">south_west</span>
+                            <span class="ml-1 font-bold">Masuk</span>
                         </div>
                     </label>
                     <label class="flex-1 cursor-pointer">
                         <input type="radio" x-model="form.tipe" value="keluar" class="peer sr-only">
                         <div
-                            class="text-center py-3 border-2 border-gray-200 rounded-lg peer-checked:border-red-500 peer-checked:bg-red-50 peer-checked:text-red-700 transition">
-                            <span class="material-icons align-middle text-sm">arrow_upward</span>
-                            <span class="ml-1 font-medium">Barang Keluar</span>
+                            class="text-center py-3 border-2 border-outline-variant rounded-2xl peer-checked:border-error peer-checked:bg-error-container peer-checked:text-on-error-container text-on-surface-variant transition-all">
+                            <span class="material-symbols-outlined align-middle text-[20px]">north_east</span>
+                            <span class="ml-1 font-bold">Keluar</span>
                         </div>
                     </label>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Barang</label>
+                <label class="block text-sm font-label-md text-on-surface mb-2">Pilih Barang</label>
                 <select x-model="form.item_sku" required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="">-- Pilih Barang --</option>
+                    class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
+                    <option value="">-- Pilih Barang dari Gudang --</option>
                     <template x-for="item in items" :key="item.sku">
                         <option :value="item.sku" x-text="item.sku + ' - ' + item.nama + ' (Stok: ' + item.stok + ')'">
                         </option>
@@ -350,31 +400,32 @@
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah</label>
+                <label class="block text-sm font-label-md text-on-surface mb-2">Jumlah</label>
                 <input type="number" x-model="form.jumlah" min="1" required
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
             </div>
 
             <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Catatan (Opsional)</label>
-                <textarea x-model="form.catatan" rows="3"
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                <label class="block text-sm font-label-md text-on-surface mb-2">Catatan (Opsional)</label>
+                <textarea x-model="form.catatan" rows="3" placeholder="Keterangan tambahan..."
+                    class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"></textarea>
             </div>
 
-            <div class="flex gap-3 pt-4">
+            <div class="flex gap-3 pt-4 border-t border-outline-variant">
                 <button type="button" @click="showModal = false"
-                    class="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition">
+                    class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant transition">
                     Batal
                 </button>
                 <button type="submit" :disabled="loading"
-                    class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 font-medium transition disabled:opacity-50">
-                    <span x-show="!loading">Simpan</span>
-                    <span x-show="loading">Menyimpan...</span>
+                    class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90 transition shadow-md disabled:opacity-50 flex items-center justify-center">
+                    <span x-show="!loading">Simpan Transaksi</span>
+                    <span x-show="loading" class="material-symbols-outlined animate-spin">progress_activity</span>
                 </button>
             </div>
         </form>
     </div>
-</div>
+</div><!-- end modal -->
+</div><!-- end root x-data wrapper -->
 
 <script>
     function transactionsApp() {
@@ -383,6 +434,9 @@
             transactions: [],
             items: [],
             stats: { total: 0, masuk: 0, keluar: 0, hariIni: 0 },
+
+            userName: '',
+            userPhotoUrl: '',
 
             filterType: 'all',
             search: '',
@@ -398,6 +452,14 @@
             form: { tipe: 'masuk', item_sku: '', jumlah: 1, catatan: '' },
 
             async init() {
+                try {
+                    const userRes = await fetch('/api/auth/me', { credentials: 'include' });
+                    if (userRes.ok) {
+                        const user = await userRes.json();
+                        this.userName = user.full_name || user.username;
+                        this.userPhotoUrl = user.photo_url || '';
+                    }
+                } catch (e) { }
                 await Promise.all([
                     this.fetchTransactions(),
                     this.fetchItems()
@@ -566,11 +628,4 @@
         }
     }
 </script>
-
-<style>
-    [x-cloak] {
-        display: none !important;
-    }
-</style>
-
 {% endblock %}

@@ -38,32 +38,33 @@
                 <span class="font-label-md">Inventaris</span>
             </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
-                href="#">
+                href="{{ url_for('ui.transactions') }}">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span class="font-label-md">Transaksi</span>
             </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
-                href="#">
+                href="{{ url_for('ui.finance_page') }}">
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
             </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
-                href="#">
+                href="{{ url_for('ui.export_page') }}">
                 <span class="material-symbols-outlined">ios_share</span>
                 <span class="font-label-md">Ekspor</span>
             </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
-                href="#">
+                href="{{ url_for('ui.settings_page') }}">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="font-label-md">Pengaturan</span>
             </a>
         </nav>
 
         <div class="pt-4 border-t border-outline-variant space-y-1">
-            <button
-                class="w-full flex items-center justify-center bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+            <a href="/transactions/new"
+                class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
                 Transaksi Baru
-            </button>
+            </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
                 href="#">
                 <span class="material-symbols-outlined">contact_support</span>
@@ -104,9 +105,14 @@
                     </button>
                 </div>
                 <div class="h-8 w-[1px] bg-outline-variant"></div>
-                <div class="flex items-center space-x-2 cursor-pointer">
-                    <img alt="Foto profil pengguna" class="w-8 h-8 rounded-full border border-outline-variant"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCfkeEN3J_Z8QKWYCMIAnHY0ItnVDnxJRlTo--3d2C2eJp2tobgvuMHNMFvKZj-vjCfkVG6fP8NaGpdHlGcbmeRKFyPoMoI04PNEP682SxdHOcehcqGu-f0nlcEnmkekyrdAojN1FcL5AQTF33oSgT_VckIN4oNHRyDUP4nCEMYQHNNk39Mz8hVjvEJSWsz-yEumiUBdBwl7DMliN5gEHFzy6IZaVcSzsIVxUL33tLW9UBK-Iu63TFwSxL8n9VDgulwM6KvaXAbRXg">
+                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant"
+                            x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
                     <span class="font-label-md text-on-surface hidden lg:block" x-text="userName"></span>
                 </div>
             </div>
@@ -391,6 +397,7 @@
 
             // User Data
             userName: '',
+            userPhotoUrl: '',
             todayDate: new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
 
             // ⚙️ Methods
@@ -439,7 +446,8 @@
                     this.chart.masuk = this.summary.transactions_by_month.map(m => m.masuk);
                     this.chart.keluar = this.summary.transactions_by_month.map(m => m.keluar);
 
-                    this.userName = user.username;
+                    this.userName = user.full_name || user.username;
+                    this.userPhotoUrl = user.photo_url || '';
                     this.lastUpdated = new Date().toLocaleTimeString('id-ID');
 
                     // 4. Render chart

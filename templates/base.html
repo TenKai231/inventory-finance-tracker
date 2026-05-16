@@ -140,6 +140,17 @@
         });
     });
 
+    // Global logout function
+    window.logout = async function() {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+        } catch (e) {
+            console.error(e);
+        }
+        localStorage.removeItem('access_token');
+        window.location.href = '/login';
+    };
+
     // P1: Auto-refresh JWT Cookie setiap 12 menit (720000 ms)
     setInterval(async () => {
         try {

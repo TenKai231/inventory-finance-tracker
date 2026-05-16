@@ -30,7 +30,7 @@
             const data = await res.json();
             if (res.ok) {
                 localStorage.setItem('access_token', data.access_token);
-                window.location.href = '/';
+                window.location.href = '/dashboard';
             } else {
                 const err = data.error;
                 if (Array.isArray(err)) {

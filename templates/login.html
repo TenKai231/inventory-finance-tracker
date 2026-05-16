@@ -25,7 +25,7 @@
                 // Cookie di-set otomatis oleh backend via set_access_cookies()
                 // Simpan juga di localStorage untuk keperluan fetch API client-side
                 localStorage.setItem('access_token', data.access_token);
-                window.location.href = '/';
+                window.location.href = '/dashboard';
             } else {
                 this.error = data.msg || data.error || 'Login gagal. Periksa kembali username dan password.';
             }

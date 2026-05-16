@@ -1,97 +1,150 @@
 {% extends "base.html" %}
 {% block title %}Ekspor Data - InventoTrack{% endblock %}
-
 {% block content %}
-<div class="flex h-screen bg-gray-50" x-data="exportApp()" x-init="init()">
-    <!-- Sidebar -->
-    <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden lg:flex flex-col">
-        <div class="p-6 border-b border-slate-700">
-            <h1 class="text-xl font-bold tracking-tight">InventoTrack</h1>
-            <p class="text-xs text-slate-400 mt-1">Management Suite</p>
+
+<div class="flex h-screen bg-surface" x-data="exportApp()" x-init="init()">
+
+    <!-- ══════════════════════════════════════
+         SIDEBAR — sama persis dengan dashboard
+    ══════════════════════════════════════ -->
+    <aside
+        class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
+            <div>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
+            </div>
         </div>
-        <nav class="flex-1 p-4 space-y-1">
-            <a href="/"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-                <span class="material-icons text-lg">dashboard</span><span>Dashboard</span>
+
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
             </a>
-            <a href="/inventory"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-                <span class="material-icons text-lg">inventory_2</span><span>Inventaris</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
             </a>
-            <a href="/transactions"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-                <span class="material-icons text-lg">receipt_long</span><span>Transaksi</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.transactions') }}">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
             </a>
-            <a href="/finance"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-                <span class="material-icons text-lg">account_balance_wallet</span><span>Keuangan</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.finance_page') }}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
             </a>
-            <a href="/export"
-                class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition shadow-md">
-                <span class="material-icons text-lg">upload_file</span><span>Ekspor</span>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out"
+                href="{{ url_for('ui.export_page') }}">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.settings_page') }}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
             </a>
         </nav>
-        <div class="mt-auto p-4 border-t border-slate-700">
-            <button
-                class="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition text-white font-medium">
-                <span class="material-icons text-lg">add</span><span>Tambah Transaksi</span>
-            </button>
+
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <a href="/transactions/new"
+                class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Transaksi Baru
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-error hover:text-error transition-all duration-200 ease-in-out"
+                href="#" @click.prevent="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
         </div>
     </aside>
 
-    <!-- Main Content -->
-    <main class="flex-1 overflow-y-auto">
-        <!-- Header -->
-        <header class="bg-white border-b px-8 py-4 sticky top-0 z-20">
-            <div class="flex justify-between items-center">
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Ekspor Data</h1>
-                    <p class="text-gray-500 mt-1">Generate laporan siap pakai untuk analisis dan pencadangan.</p>
+    <!-- ══════════════════════════════════════
+         MAIN CONTENT
+    ══════════════════════════════════════ -->
+    <main class="flex-1 ml-64 flex flex-col min-h-screen w-full">
+
+        <!-- Header — sama dengan dashboard -->
+        <header
+            class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div>
+                <h2 class="font-h1 text-h1 text-primary">Ekspor Data</h2>
+                <p class="text-on-surface-variant text-body-md">Generate laporan siap pakai untuk analisis dan
+                    pencadangan.</p>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex space-x-4">
+                    <button
+                        class="relative text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+                    </button>
+                    <button
+                        class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer active:opacity-80">
+                        <span class="material-symbols-outlined">help</span>
+                    </button>
                 </div>
-                <div class="flex items-center gap-4">
-                    <button class="p-2 hover:bg-gray-100 rounded-full transition"><span
-                            class="material-icons text-gray-600">notifications_none</span></button>
-                    <button class="p-2 hover:bg-gray-100 rounded-full transition"><span
-                            class="material-icons text-gray-600">settings</span></button>
-                    <button class="p-2 hover:bg-gray-100 rounded-full transition"><span
-                            class="material-icons text-gray-600">help_outline</span></button>
-                    <div
-                        class="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm">
-                        AD</div>
+                <div class="h-8 w-[1px] bg-outline-variant"></div>
+                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <p class="font-label-md text-primary hidden sm:block" x-text="userName"></p>
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant"
+                            x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
                 </div>
             </div>
         </header>
 
-        <div class="p-8 max-w-7xl mx-auto">
-            <!-- Export Cards Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Page Content -->
+        <div class="p-10 max-w-[1280px] mx-auto w-full space-y-6">
+
+            <!-- ── Export Cards Grid ── -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- Laporan Inventaris -->
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div
+                    class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-start gap-4 mb-4">
-                        <div class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span class="material-icons text-indigo-600 text-2xl">inventory_2</span>
+                        <div
+                            class="w-12 h-12 bg-secondary-fixed rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-on-secondary-fixed text-2xl">inventory_2</span>
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-gray-900 text-lg">Laporan Inventaris</h3>
+                                <h3 class="font-h3 text-h3 text-primary">Laporan Inventaris</h3>
                                 <button @click="showInfo('inventaris')"
-                                    class="text-gray-400 hover:text-gray-600 transition">
-                                    <span class="material-icons text-sm">info_outline</span>
+                                    class="text-outline hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-sm">info</span>
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500 mt-1">Ekspor semua data barang dan stok saat ini.</p>
+                            <p class="text-body-md text-on-surface-variant mt-1">Ekspor semua data barang dan stok saat
+                                ini.</p>
                         </div>
                     </div>
-
-                    <div class="flex items-center justify-between pt-4 border-t">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-semibold">XLSX</span>
+                    <div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+                        <span
+                            class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-md text-xs font-semibold font-label-md">XLSX</span>
                         <button @click="exportData('inventory')" :disabled="exporting === 'inventory'"
-                            class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                            class="px-6 py-2.5 bg-secondary text-on-secondary rounded-lg hover:opacity-90 transition font-label-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95">
                             <span x-show="exporting !== 'inventory'">Ekspor Sekarang</span>
                             <span x-show="exporting === 'inventory'" class="flex items-center gap-2">
                                 <span
-                                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    class="w-4 h-4 border-2 border-on-secondary border-t-transparent rounded-full animate-spin"></span>
                                 Memproses...
                             </span>
                         </button>
@@ -99,55 +152,58 @@
                 </div>
 
                 <!-- Laporan Transaksi -->
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div
+                    class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-start gap-4 mb-4">
-                        <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span class="material-icons text-amber-600 text-2xl">receipt_long</span>
+                        <div
+                            class="w-12 h-12 bg-primary-container rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span
+                                class="material-symbols-outlined text-on-primary-container text-2xl">receipt_long</span>
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-gray-900 text-lg">Laporan Transaksi</h3>
+                                <h3 class="font-h3 text-h3 text-primary">Laporan Transaksi</h3>
                                 <button @click="showInfo('transaksi')"
-                                    class="text-gray-400 hover:text-gray-600 transition">
-                                    <span class="material-icons text-sm">info_outline</span>
+                                    class="text-outline hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-sm">info</span>
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500 mt-1">Ekspor riwayat transaksi masuk dan keluar.</p>
+                            <p class="text-body-md text-on-surface-variant mt-1">Ekspor riwayat transaksi masuk dan
+                                keluar.</p>
                         </div>
                     </div>
-
                     <div class="mb-4 space-y-3">
                         <div class="flex items-center gap-3">
                             <input type="date" x-model="transDateFrom"
-                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
-                            <span class="text-gray-400">-</span>
+                                class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-lg text-body-md outline-none focus:ring-2 focus:ring-secondary text-on-surface">
+                            <span class="text-outline">—</span>
                             <input type="date" x-model="transDateTo"
-                                class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500">
+                                class="flex-1 px-3 py-2 bg-surface border border-outline-variant rounded-lg text-body-md outline-none focus:ring-2 focus:ring-secondary text-on-surface">
                         </div>
                         <div class="flex items-center gap-4">
-                            <span class="text-sm text-gray-600 font-medium">Pilih Format:</span>
+                            <span class="text-body-md text-on-surface-variant font-label-md">Pilih Format:</span>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" x-model="transFormat" value="xlsx"
-                                    class="text-indigo-600 focus:ring-indigo-500">
-                                <span class="text-sm text-gray-700">XLSX</span>
+                                    class="text-secondary focus:ring-secondary">
+                                <span class="text-body-md text-on-surface font-label-md">XLSX</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" x-model="transFormat" value="csv"
-                                    class="text-indigo-600 focus:ring-indigo-500">
-                                <span class="text-sm text-gray-700">CSV</span>
+                                    class="text-secondary focus:ring-secondary">
+                                <span class="text-body-md text-on-surface font-label-md">CSV</span>
                             </label>
                         </div>
                     </div>
-
-                    <div class="flex items-center justify-between pt-4 border-t">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-semibold"
+                    <div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+                        <span
+                            class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-md text-xs font-semibold font-label-md"
                             x-text="transFormat.toUpperCase()"></span>
                         <button @click="exportData('transactions')" :disabled="exporting === 'transactions'"
-                            class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                            class="px-6 py-2.5 bg-secondary text-on-secondary rounded-lg hover:opacity-90 transition font-label-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95">
                             <span x-show="exporting !== 'transactions'">Ekspor Sekarang</span>
                             <span x-show="exporting === 'transactions'" class="flex items-center gap-2">
                                 <span
-                                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    class="w-4 h-4 border-2 border-on-secondary border-t-transparent rounded-full animate-spin"></span>
                                 Memproses...
                             </span>
                         </button>
@@ -155,126 +211,132 @@
                 </div>
 
                 <!-- Laporan Keuangan -->
-                <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
+                <div
+                    class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex items-start gap-4 mb-4">
-                        <div class="w-12 h-12 bg-purple-50 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span class="material-icons text-purple-600 text-2xl">account_balance_wallet</span>
+                        <div
+                            class="w-12 h-12 bg-tertiary-container rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-on-tertiary-container text-2xl">payments</span>
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-gray-900 text-lg">Laporan Keuangan</h3>
+                                <h3 class="font-h3 text-h3 text-primary">Laporan Keuangan</h3>
                                 <button @click="showInfo('keuangan')"
-                                    class="text-gray-400 hover:text-gray-600 transition">
-                                    <span class="material-icons text-sm">info_outline</span>
+                                    class="text-outline hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-sm">info</span>
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500 mt-1">Ekspor ringkasan pemasukan, pengeluaran, dan profit.
-                            </p>
+                            <p class="text-body-md text-on-surface-variant mt-1">Ekspor ringkasan pemasukan,
+                                pengeluaran, dan profit.</p>
                         </div>
                     </div>
-
                     <div class="mb-4">
                         <select x-model="financePeriod"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-indigo-500 bg-white">
+                            class="w-full px-3 py-2 bg-surface border border-outline-variant rounded-lg text-body-md outline-none focus:ring-2 focus:ring-secondary text-on-surface">
                             <option value="bulan_ini">Bulan Ini</option>
                             <option value="bulan_lalu">Bulan Lalu</option>
                             <option value="quarter_ini">Quarter Ini</option>
                             <option value="tahun_ini">Tahun Ini</option>
                         </select>
                     </div>
-
-                    <div class="flex items-center justify-between pt-4 border-t">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-semibold">XLSX</span>
+                    <div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+                        <span
+                            class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-md text-xs font-semibold font-label-md">XLSX</span>
                         <button @click="exportData('finance')" :disabled="exporting === 'finance'"
-                            class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+                            class="px-6 py-2.5 bg-secondary text-on-secondary rounded-lg hover:opacity-90 transition font-label-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 active:scale-95">
                             <span x-show="exporting !== 'finance'">Ekspor Sekarang</span>
                             <span x-show="exporting === 'finance'" class="flex items-center gap-2">
                                 <span
-                                    class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                                    class="w-4 h-4 border-2 border-on-secondary border-t-transparent rounded-full animate-spin"></span>
                                 Memproses...
                             </span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Laporan Lengkap (Premium) -->
+                <!-- Laporan Lengkap — Premium -->
                 <div
-                    class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition relative overflow-hidden">
+                    class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                     <div class="absolute top-4 right-4">
-                        <span class="px-2 py-1 bg-gray-900 text-white text-xs font-bold rounded">PREMIUM</span>
+                        <span
+                            class="px-2 py-1 bg-surface-container-highest text-on-surface text-xs font-bold rounded font-label-md">PREMIUM</span>
                     </div>
                     <div class="flex items-start gap-4 mb-4">
-                        <div class="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <span class="material-icons text-gray-600 text-2xl">folder_zip</span>
+                        <div
+                            class="w-12 h-12 bg-surface-container rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-on-surface-variant text-2xl">folder_zip</span>
                         </div>
                         <div class="flex-1">
                             <div class="flex items-center gap-2">
-                                <h3 class="font-bold text-gray-900 text-lg">Laporan Lengkap</h3>
+                                <h3 class="font-h3 text-h3 text-primary">Laporan Lengkap</h3>
                                 <button @click="showInfo('lengkap')"
-                                    class="text-gray-400 hover:text-gray-600 transition">
-                                    <span class="material-icons text-sm">info_outline</span>
+                                    class="text-outline hover:text-on-surface transition-colors">
+                                    <span class="material-symbols-outlined text-sm">info</span>
                                 </button>
                             </div>
-                            <p class="text-sm text-gray-500 mt-1">Semua data dalam satu file — inventaris, transaksi,
-                                keuangan.</p>
+                            <p class="text-body-md text-on-surface-variant mt-1">Semua data dalam satu file —
+                                inventaris, transaksi, keuangan.</p>
                         </div>
                     </div>
-
-                    <div class="flex items-center justify-between pt-4 border-t">
-                        <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-xs font-semibold">ZIP</span>
+                    <div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+                        <span
+                            class="px-3 py-1 bg-surface-variant text-on-surface-variant rounded-md text-xs font-semibold font-label-md">ZIP</span>
                         <button
-                            class="px-6 py-2.5 border-2 border-indigo-600 text-indigo-600 rounded-lg hover:bg-indigo-50 transition font-medium">
+                            class="px-6 py-2.5 border-2 border-secondary text-secondary rounded-lg hover:bg-secondary-container transition font-label-md active:scale-95">
                             Upgrade ke Pro
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Riwayat Ekspor -->
-            <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="font-bold text-gray-900 text-lg">Riwayat Ekspor</h3>
+            <!-- ── Riwayat Ekspor ── -->
+            <div class="bg-surface-container-lowest rounded-xl border border-outline-variant shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-outline-variant">
+                    <h3 class="font-h3 text-h3 text-primary">Riwayat Ekspor</h3>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="bg-gray-50">
+                        <thead class="bg-surface-container">
                             <tr>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Tanggal</th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Jenis Laporan</th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Format</th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Ukuran</th>
                                 <th
-                                    class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Status</th>
                                 <th
-                                    class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    class="px-6 py-3 text-right text-xs font-semibold text-on-surface-variant uppercase tracking-wider font-label-md">
                                     Unduh</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-outline-variant">
                             <template x-for="history in exportHistory" :key="history.id">
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-6 py-4 text-sm text-gray-700 font-mono" x-text="history.tanggal"></td>
-                                    <td class="px-6 py-4 text-sm text-gray-900" x-text="history.jenis"></td>
-                                    <td class="px-6 py-4 text-sm text-gray-700" x-text="history.format"></td>
-                                    <td class="px-6 py-4 text-sm text-gray-700" x-text="history.ukuran"></td>
+                                <tr class="hover:bg-surface-container transition-colors">
+                                    <td class="px-6 py-4 text-body-md text-on-surface-variant font-mono"
+                                        x-text="history.tanggal"></td>
+                                    <td class="px-6 py-4 text-body-md text-on-surface" x-text="history.jenis"></td>
+                                    <td class="px-6 py-4 text-body-md text-on-surface-variant" x-text="history.format">
+                                    </td>
+                                    <td class="px-6 py-4 text-body-md text-on-surface-variant" x-text="history.ukuran">
+                                    </td>
                                     <td class="px-6 py-4">
                                         <span
-                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-                                            :class="history.status === 'Selesai' ? 'bg-blue-50 text-blue-700' : 
-                                  history.status === 'Diproses' ? 'bg-amber-50 text-amber-700' : 
-                                  'bg-gray-100 text-gray-700'">
-                                            <span class="w-1.5 h-1.5 rounded-full" :class="history.status === 'Selesai' ? 'bg-blue-600' : 
-                                    history.status === 'Diproses' ? 'bg-amber-600 animate-pulse' : 
-                                    'bg-gray-600'"></span>
+                                            class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium font-label-md"
+                                            :class="history.status === 'Selesai'  ? 'bg-secondary-container text-on-secondary-container' :
+                                                      history.status === 'Diproses' ? 'bg-primary-container text-on-primary-container' :
+                                                      'bg-surface-variant text-on-surface-variant'">
+                                            <span class="w-1.5 h-1.5 rounded-full" :class="history.status === 'Selesai'  ? 'bg-secondary' :
+                                                          history.status === 'Diproses' ? 'bg-primary animate-pulse' :
+                                                          'bg-outline'"></span>
                                             <span x-text="history.status"></span>
                                             <span x-show="history.progress" class="text-xs opacity-75"
                                                 x-text="history.progress"></span>
@@ -283,24 +345,25 @@
                                     <td class="px-6 py-4 text-right">
                                         <button @click="downloadFile(history.id)"
                                             :disabled="history.status !== 'Selesai'"
-                                            class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed">
-                                            <span class="material-icons text-sm">download</span>
+                                            class="p-2 text-secondary hover:bg-secondary-container rounded-lg transition disabled:opacity-30 disabled:cursor-not-allowed active:scale-95">
+                                            <span class="material-symbols-outlined text-sm">download</span>
                                         </button>
                                     </td>
                                 </tr>
                             </template>
-
                             <tr x-show="exportHistory.length === 0">
-                                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                                    <span class="material-icons text-4xl mb-2 text-gray-300">upload_file</span>
-                                    <p>Belum ada riwayat ekspor</p>
+                                <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">
+                                    <span
+                                        class="material-symbols-outlined text-4xl mb-2 text-outline block">upload_file</span>
+                                    <p class="font-label-md">Belum ada riwayat ekspor</p>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+
+        </div><!-- end page content -->
     </main>
 </div>
 
@@ -313,15 +376,22 @@
             transFormat: 'xlsx',
             financePeriod: 'bulan_ini',
             exportHistory: [],
+            userName: '',
+            userPhotoUrl: '',
 
             async init() {
-                // Set default date range (current month)
+                try {
+                    const userRes = await fetch('/api/auth/me', { credentials: 'include' });
+                    if (userRes.ok) {
+                        const user = await userRes.json();
+                        this.userName = user.full_name || user.username;
+                        this.userPhotoUrl = user.photo_url || '';
+                    }
+                } catch (e) { }
                 const today = new Date();
                 const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
                 this.transDateFrom = firstDay.toISOString().slice(0, 10);
                 this.transDateTo = today.toISOString().slice(0, 10);
-
-                // Load export history
                 await this.loadExportHistory();
             },
 
@@ -331,7 +401,6 @@
                     if (res.ok) {
                         this.exportHistory = await res.json();
                     } else {
-                        // Demo data jika API belum ready
                         this.exportHistory = [
                             { id: 1, tanggal: '24 Okt 2023, 14:30', jenis: 'Laporan Inventaris', format: 'XLSX', ukuran: '1.2 MB', status: 'Selesai' },
                             { id: 2, tanggal: '24 Okt 2023, 14:28', jenis: 'Laporan Transaksi (Okt)', format: 'CSV', ukuran: '0.4 MB', status: 'Diproses', progress: '45%' },
@@ -345,7 +414,6 @@
 
             async exportData(type) {
                 this.exporting = type;
-
                 try {
                     let endpoint = '';
                     let params = {};
@@ -354,11 +422,7 @@
                         endpoint = '/api/export/inventory';
                     } else if (type === 'transactions') {
                         endpoint = '/api/export/transactions';
-                        params = {
-                            from: this.transDateFrom,
-                            to: this.transDateTo,
-                            format: this.transFormat
-                        };
+                        params = { from: this.transDateFrom, to: this.transDateTo, format: this.transFormat };
                     } else if (type === 'finance') {
                         endpoint = '/api/export/finance';
                         params = { period: this.financePeriod };
@@ -375,7 +439,6 @@
 
                     if (!response.ok) throw new Error('Export failed');
 
-                    // Trigger download
                     const blob = await response.blob();
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -386,10 +449,7 @@
                     a.remove();
                     window.URL.revokeObjectURL(downloadUrl);
 
-                    // Add to history
                     await this.loadExportHistory();
-
-                    // Show success notification (optional)
                     alert('Ekspor berhasil! File sedang diunduh.');
 
                 } catch (error) {
@@ -422,7 +482,6 @@
                 try {
                     const response = await fetch(`/api/export/download/${id}`, { credentials: 'include' });
                     if (!response.ok) throw new Error('Download failed');
-
                     const blob = await response.blob();
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
@@ -440,4 +499,5 @@
         }
     }
 </script>
+
 {% endblock %}

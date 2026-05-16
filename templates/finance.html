@@ -1,362 +1,469 @@
 {% extends "base.html" %}
-{% block title %}Keuangan - StockFlow{% endblock %}
+{% block title %}Keuangan - InventoTrack{% endblock %}
 
 {% block content %}
-<div class="flex h-screen bg-gray-50" x-data="financeApp()" x-init="init()">
-  <!-- Sidebar -->
-  <aside class="w-64 bg-slate-900 text-white flex-shrink-0 hidden lg:flex flex-col">
-    <div class="p-6 border-b border-slate-700">
-      <h1 class="text-xl font-bold tracking-tight">StockFlow</h1>
-      <p class="text-xs text-slate-400 mt-1">ADMIN BISNIS KECIL</p>
-    </div>
-    <nav class="flex-1 p-4 space-y-1">
-      <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-        <span class="material-icons text-lg">dashboard</span><span>Dashboard</span>
-      </a>
-      <a href="/inventory" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-        <span class="material-icons text-lg">inventory_2</span><span>Inventaris</span>
-      </a>
-      <a href="/transactions" class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-800 transition">
-        <span class="material-icons text-lg">receipt_long</span><span>Transaksi</span>
-      </a>
-      <a href="/finance" class="flex items-center gap-3 px-4 py-3 rounded-lg bg-indigo-600 text-white transition shadow-md">
-        <span class="material-icons text-lg">account_balance_wallet</span><span>Keuangan</span>
-      </a>
-    </nav>
-    <div class="p-4 border-t border-slate-700 space-y-1">
-      <a href="/logout" class="flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-slate-800 transition">
-        <span class="material-icons text-lg">logout</span><span>Keluar</span>
-      </a>
-    </div>
-  </aside>
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
 
-  <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto">
-    <!-- Header -->
-    <header class="bg-white border-b px-8 py-4 flex justify-between items-center sticky top-0 z-20">
-      <div class="relative w-96">
-        <span class="material-icons absolute left-3 top-2.5 text-gray-400 text-sm">search</span>
-        <input type="text" placeholder="Cari transaksi atau kategori..."
-          class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
-      </div>
-      <div class="flex items-center gap-4">
-        <button class="relative p-2 hover:bg-gray-100 rounded-full transition">
-          <span class="material-icons text-gray-600">notifications_none</span>
-        </button>
-        <div class="w-9 h-9 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-700 font-bold text-sm border-2 border-white shadow-sm">A</div>
-      </div>
-    </header>
+    .thin-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
 
-    <div class="p-8 max-w-7xl mx-auto">
-      <!-- Page Title -->
-      <div class="flex justify-between items-center mb-6">
-        <div>
-          <h2 class="text-2xl font-bold text-gray-900">Keuangan</h2>
-          <p class="text-gray-500 mt-1">Ringkasan arus kas dan profit bisnis</p>
-        </div>
-        <div class="flex gap-3">
-          <button class="px-4 py-2 border border-gray-300 rounded-lg text-sm hover:bg-gray-50 flex items-center gap-2 transition">
-            <span class="material-icons text-sm text-gray-600">download</span>Export
-          </button>
-          <button class="px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm hover:bg-indigo-700 flex items-center gap-2 transition shadow-sm">
-            <span class="material-icons text-sm">receipt</span>Buat Laporan
-          </button>
-        </div>
-      </div>
+    .thin-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-      <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Pemasukan -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
-          <div class="flex justify-between items-start">
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--md-sys-color-outline-variant, #e2e8f0);
+        border-radius: 10px;
+    }
+</style>
+
+<div class="flex min-h-screen w-full bg-background font-sans" x-data="financeApp()" x-init="init()">
+
+    <aside
+        class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
             <div>
-              <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Pemasukan</p>
-              <p class="text-3xl font-bold text-emerald-600 mt-2" x-text="formatRupiah(stats.pemasukan)">Rp 0</p>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
             </div>
-            <span class="material-icons text-2xl bg-emerald-50 text-emerald-500 p-3 rounded-xl">trending_up</span>
-          </div>
-          <p class="text-sm text-emerald-600 mt-3 font-medium flex items-center gap-1">
-            <span class="material-icons text-sm">arrow_upward</span>
-            <span x-text="stats.growthPemasukan + '% dari bulan lalu'"></span>
-          </p>
         </div>
 
-        <!-- Pengeluaran -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Total Pengeluaran</p>
-              <p class="text-3xl font-bold text-red-600 mt-2" x-text="formatRupiah(stats.pengeluaran)">Rp 0</p>
-            </div>
-            <span class="material-icons text-2xl bg-red-50 text-red-500 p-3 rounded-xl">trending_down</span>
-          </div>
-          <p class="text-sm text-red-600 mt-3 font-medium flex items-center gap-1">
-            <span class="material-icons text-sm">arrow_upward</span>
-            <span x-text="stats.growthPengeluaran + '% dari bulan lalu'"></span>
-          </p>
-        </div>
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.transactions') }}">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out"
+                href="{{ url_for('ui.finance_page') }}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.export_page') }}">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.settings_page') }}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
+            </a>
+        </nav>
 
-        <!-- Profit -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition">
-          <div class="flex justify-between items-start">
-            <div>
-              <p class="text-sm font-medium text-gray-500 uppercase tracking-wide">Net Profit</p>
-              <span class="inline-block px-2 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-md mt-2"
-                x-text="'Margin ' + stats.margin + '%'"></span>
-              <p class="text-3xl font-bold text-indigo-600 mt-1" x-text="formatRupiah(stats.profit)">Rp 0</p>
-            </div>
-            <span class="material-icons text-2xl bg-indigo-50 text-indigo-500 p-3 rounded-xl">account_balance_wallet</span>
-          </div>
-          <p class="text-sm text-indigo-600 mt-3 font-medium flex items-center gap-1">
-            <span class="material-icons text-sm">arrow_upward</span>
-            <span x-text="stats.growthProfit + '% dari bulan lalu'"></span>
-          </p>
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <a href="/transactions/new"
+                class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Transaksi Baru
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-error hover:text-error transition-all duration-200 ease-in-out"
+                href="#" @click.prevent="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
         </div>
-      </div>
+    </aside>
 
-      <!-- Charts & Recent -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Tren Keuangan -->
-        <div class="lg:col-span-2 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-          <div class="flex justify-between items-center mb-6">
-            <h3 class="font-bold text-gray-800 text-lg">Tren Keuangan</h3>
-            <div class="flex gap-1 bg-gray-100 p-1 rounded-lg">
-              <button @click="trendRange='1bulan'"
-                :class="trendRange==='1bulan' ? 'bg-white shadow text-gray-900' : 'text-gray-500'"
-                class="px-3 py-1.5 text-xs font-medium rounded-md transition">1 Bulan</button>
-              <button @click="trendRange='6bulan'"
-                :class="trendRange==='6bulan' ? 'bg-white shadow text-gray-900' : 'text-gray-500'"
-                class="px-3 py-1.5 text-xs font-medium rounded-md transition">6 Bulan</button>
-              <button @click="trendRange='1tahun'"
-                :class="trendRange==='1tahun' ? 'bg-white shadow text-gray-900' : 'text-gray-500'"
-                class="px-3 py-1.5 text-xs font-medium rounded-md transition">1 Tahun</button>
+    <main class="flex-1 ml-64 min-h-screen text-on-background overflow-y-auto thin-scrollbar">
+
+        <header
+            class="bg-surface/80 backdrop-blur-md border-b border-outline-variant px-8 py-4 flex justify-between items-center sticky top-0 z-40">
+            <div class="relative w-96">
+                <span
+                    class="material-symbols-outlined absolute left-4 top-2.5 text-on-surface-variant text-[20px]">search</span>
+                <input type="text" placeholder="Cari transaksi atau kategori..."
+                    class="w-full pl-12 pr-4 py-2.5 rounded-full text-sm bg-surface-container-lowest border border-outline text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all">
             </div>
-          </div>
-          <div class="h-72 w-full">
-            <canvas id="trendChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Komposisi Pengeluaran -->
-        <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-          <h3 class="font-bold text-gray-800 text-lg mb-4">Komposisi Pengeluaran</h3>
-          <div class="h-52 w-full flex items-center justify-center">
-            <canvas id="expenseChart"></canvas>
-          </div>
-          <div class="mt-6 space-y-3">
-            <template x-for="(cat, i) in expenseCategories" :key="i">
-              <div class="flex items-center justify-between text-sm">
-                <div class="flex items-center gap-3">
-                  <span class="w-3 h-3 rounded-full shadow-sm" :style="`background-color: ${cat.color}`"></span>
-                  <span class="text-gray-700" x-text="cat.name + ' (' + cat.percent + '%)'"></span>
+            <div class="flex items-center gap-4">
+                <button
+                    class="relative w-10 h-10 flex items-center justify-center hover:bg-surface-variant rounded-full text-on-surface-variant transition">
+                    <span class="material-symbols-outlined">notifications</span>
+                </button>
+                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <p class="font-label-md text-primary hidden sm:block" x-text="userName"></p>
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-10 h-10 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-10 h-10 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant shadow-sm cursor-pointer hover:opacity-90"
+                            x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
                 </div>
-                <span class="font-semibold text-gray-900" x-text="formatRupiah(cat.value)"></span>
-              </div>
-            </template>
-          </div>
-        </div>
-      </div>
+            </div>
+        </header>
 
-      <!-- Transaksi Terbaru -->
-      <div class="mt-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-        <div class="flex justify-between items-center mb-4">
-          <h3 class="font-bold text-gray-800 text-lg">Transaksi Terbaru</h3>
-          <a href="/transactions" class="text-indigo-600 text-sm font-semibold hover:underline flex items-center gap-1">
-            LIHAT SEMUA <span class="material-icons text-sm">arrow_forward</span>
-          </a>
-        </div>
-        <div class="divide-y divide-gray-100">
-          <template x-for="tx in recentTransactions" :key="tx._id">
-            <div class="flex items-center justify-between py-4 hover:bg-gray-50 px-2 rounded-lg transition">
-              <div class="flex items-center gap-4">
-                <div class="w-11 h-11 rounded-full flex items-center justify-center shadow-sm"
-                  :class="tx.tipe === 'masuk' ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'">
-                  <span class="material-icons text-xl"
-                    x-text="tx.tipe === 'masuk' ? 'arrow_downward' : 'arrow_upward'"></span>
-                </div>
+        <div class="p-8 max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-8">
                 <div>
-                  <p class="font-semibold text-gray-900" x-text="tx.desc"></p>
-                  <p class="text-xs text-gray-500" x-text="formatRelativeDate(tx.tanggal)"></p>
+                    <h2 class="text-3xl font-bold text-on-background tracking-tight">Keuangan</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Ringkasan arus kas dan profit bisnis Anda</p>
                 </div>
-              </div>
-              <span class="font-mono font-bold text-base"
-                :class="tx.tipe === 'masuk' ? 'text-emerald-600' : 'text-red-600'"
-                x-text="(tx.tipe === 'masuk' ? '+ ' : '- ') + formatRupiah(tx.nilai)"></span>
+                <div class="flex gap-3">
+                    <button
+                        class="flex items-center gap-2 px-5 py-2.5 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">download</span>
+                        <span>Ekspor Laporan</span>
+                    </button>
+                </div>
             </div>
-          </template>
-          <p x-show="recentTransactions.length === 0" class="text-center text-gray-400 py-8">Belum ada transaksi</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Total
+                                Pemasukan</p>
+                            <p class="text-3xl font-bold text-tertiary mt-2" x-text="formatRupiah(stats.pemasukan)">Rp 0
+                            </p>
+                        </div>
+                        <div class="w-14 h-14 bg-tertiary-container rounded-2xl flex items-center justify-center">
+                            <span
+                                class="material-symbols-outlined text-on-tertiary-container text-3xl">trending_up</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mt-4">
+                        <span class="material-symbols-outlined text-sm text-tertiary">arrow_upward</span>
+                        <p class="text-sm font-medium text-tertiary"
+                            x-text="stats.growthPemasukan + '% dari bulan lalu'"></p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Total
+                                Pengeluaran</p>
+                            <p class="text-3xl font-bold text-error mt-2" x-text="formatRupiah(stats.pengeluaran)">Rp 0
+                            </p>
+                        </div>
+                        <div class="w-14 h-14 bg-error-container rounded-2xl flex items-center justify-center">
+                            <span
+                                class="material-symbols-outlined text-on-error-container text-3xl">trending_down</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mt-4">
+                        <span class="material-symbols-outlined text-sm text-error">arrow_upward</span>
+                        <p class="text-sm font-medium text-error"
+                            x-text="stats.growthPengeluaran + '% dari bulan lalu'"></p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm hover:shadow-md transition relative overflow-hidden">
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-bl-full -mr-8 -mt-8 pointer-events-none">
+                    </div>
+
+                    <div class="flex justify-between items-start relative z-10">
+                        <div>
+                            <p class="text-xs font-bold text-on-surface-variant uppercase tracking-widest">Net Profit
+                            </p>
+                            <span
+                                class="inline-block px-2.5 py-1 bg-primary-container text-on-primary-container text-[10px] uppercase tracking-widest font-bold rounded-full mt-2"
+                                x-text="'Margin ' + stats.margin + '%'"></span>
+                            <p class="text-3xl font-bold text-primary mt-1" x-text="formatRupiah(stats.profit)">Rp 0</p>
+                        </div>
+                        <div
+                            class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
+                            <span
+                                class="material-symbols-outlined text-on-primary text-3xl">account_balance_wallet</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-1 mt-3 relative z-10">
+                        <span class="material-symbols-outlined text-sm text-primary">arrow_upward</span>
+                        <p class="text-sm font-medium text-primary" x-text="stats.growthProfit + '% dari bulan lalu'">
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+                <div class="lg:col-span-2 bg-surface rounded-3xl p-6 border border-outline-variant shadow-sm">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold text-on-surface text-xl">Tren Keuangan</h3>
+                        <div class="flex gap-1 bg-surface-container p-1.5 rounded-full border border-outline-variant">
+                            <button @click="setRange('1bulan')"
+                                :class="trendRange==='1bulan' ? 'bg-secondary-container text-on-secondary-container shadow-sm' : 'text-on-surface hover:bg-surface-variant'"
+                                class="px-4 py-1.5 text-xs font-bold rounded-full transition-all">1 Bulan</button>
+                            <button @click="setRange('3bulan')"
+                                :class="trendRange==='3bulan' ? 'bg-secondary-container text-on-secondary-container shadow-sm' : 'text-on-surface hover:bg-surface-variant'"
+                                class="px-4 py-1.5 text-xs font-bold rounded-full transition-all">3 Bulan</button>
+                            <button @click="setRange('6bulan')"
+                                :class="trendRange==='6bulan' ? 'bg-secondary-container text-on-secondary-container shadow-sm' : 'text-on-surface hover:bg-surface-variant'"
+                                class="px-4 py-1.5 text-xs font-bold rounded-full transition-all">6 Bulan</button>
+                        </div>
+                    </div>
+                    <div class="h-80 w-full relative">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-surface rounded-3xl p-6 border border-outline-variant shadow-sm">
+                    <h3 class="font-bold text-on-surface text-xl mb-4">Pengeluaran</h3>
+                    <div class="h-56 w-full flex items-center justify-center relative">
+                        <canvas id="expenseChart"></canvas>
+                    </div>
+                    <div class="mt-6 space-y-4">
+                        <template x-for="(cat, i) in expenseCategories" :key="i">
+                            <div class="flex items-center justify-between text-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="w-3.5 h-3.5 rounded-full shadow-sm"
+                                        :style="`background-color: ${cat.color}`"></span>
+                                    <span class="text-on-surface-variant font-medium"
+                                        x-text="cat.name + ' (' + cat.percent + '%)'"></span>
+                                </div>
+                                <span class="font-bold text-on-surface font-mono"
+                                    x-text="formatRupiah(cat.value)"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-surface p-6 rounded-3xl border border-outline-variant shadow-sm">
+                <div class="flex justify-between items-center mb-6 border-b border-outline-variant pb-4">
+                    <h3 class="font-bold text-on-surface text-xl">Transaksi Terbaru</h3>
+                    <a href="/transactions"
+                        class="text-primary text-sm font-bold hover:underline flex items-center gap-1">LIHAT SEMUA <span
+                            class="material-symbols-outlined text-[16px]">arrow_forward</span></a>
+                </div>
+                <div class="divide-y divide-outline-variant">
+                    <template x-for="tx in recentTransactions" :key="tx._id">
+                        <div
+                            class="flex items-center justify-between py-4 hover:bg-surface-container-lowest px-4 -mx-4 rounded-2xl transition-colors">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm"
+                                    :class="tx.tipe === 'masuk' ? 'bg-tertiary-container text-on-tertiary-container' : 'bg-error-container text-on-error-container'">
+                                    <span class="material-symbols-outlined text-2xl"
+                                        x-text="tx.tipe === 'masuk' ? 'south_west' : 'north_east'"></span>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-on-surface text-base" x-text="tx.desc"></p>
+                                    <p class="text-xs text-on-surface-variant font-medium mt-0.5"
+                                        x-text="formatRelativeDate(tx.tanggal)"></p>
+                                </div>
+                            </div>
+                            <span class="font-mono font-bold text-lg"
+                                :class="tx.tipe === 'masuk' ? 'text-tertiary' : 'text-error'"
+                                x-text="(tx.tipe === 'masuk' ? '+ ' : '- ') + formatRupiah(tx.nilai)"></span>
+                        </div>
+                    </template>
+                    <div x-show="recentTransactions.length === 0" class="py-8 text-center text-on-surface-variant">
+                        Belum ada transaksi terbaru.
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </main>
+    </main>
 </div>
 
-<!-- Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
 <script>
-function financeApp() {
-  return {
-    stats: {
-      pemasukan: 0, pengeluaran: 0, profit: 0, margin: 0,
-      growthPemasukan: 0, growthPengeluaran: 0, growthProfit: 0
-    },
-    trendRange: '6bulan',
-    trendChart: null,
-    expenseChart: null,
-    expenseCategories: [],
-    recentTransactions: [],
-    trendData: { labels: [], pemasukan: [], pengeluaran: [] },
+    function financeApp() {
+        return {
+            stats: { pemasukan: 0, pengeluaran: 0, profit: 0, margin: 0, growthPemasukan: 0, growthPengeluaran: 0, growthProfit: 0 },
+            trendRange: '6bulan',
+            trendChart: null,
+            expenseChart: null,
+            expenseCategories: [],
+            recentTransactions: [],
+            trendData: { labels: [], pemasukan: [], pengeluaran: [] },
+            userName: '',
+            userPhotoUrl: '',
 
-    async init() {
-      await this.fetchData();
-    },
-
-    async fetchData() {
-      try {
-        const res = await fetch(`/api/finance/summary?range=${this.trendRange}`, { credentials: 'include' });
-        if (!res.ok) throw new Error('Gagal memuat data keuangan');
-        const data = await res.json();
-
-        this.stats = data.stats;
-        this.expenseCategories = data.expenseComposition;
-        this.recentTransactions = data.recent;
-        this.trendData = data.trend;
-
-        this.$nextTick(() => {
-          this.renderTrendChart();
-          this.renderExpenseChart();
-        });
-      } catch (e) {
-        console.warn('API error, menggunakan demo data:', e.message);
-        this.useDemoData();
-      }
-    },
-
-    useDemoData() {
-      this.stats = {
-        pemasukan: 124500000, pengeluaran: 82300000,
-        profit: 42200000, margin: 33.9,
-        growthPemasukan: 12.5, growthPengeluaran: 4.2, growthProfit: 24.8
-      };
-      this.expenseCategories = [
-        { name: 'Inventaris',  percent: 60, value: 49380000, color: '#4f46e5' },
-        { name: 'Operasional', percent: 25, value: 20575000, color: '#0f172a' },
-        { name: 'Marketing',   percent: 15, value: 12345000, color: '#bfdbfe' }
-      ];
-      this.trendData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
-        pemasukan:  [45, 52, 61, 75, 88, 124.5],
-        pengeluaran: [30, 35, 42, 48, 55, 82.3]
-      };
-      this.recentTransactions = [
-        { _id: 1, tipe: 'masuk',  desc: 'Invoice INV-001', tanggal: new Date().toISOString(), nilai: 12500000 },
-        { _id: 2, tipe: 'keluar', desc: 'Sewa Kantor',     tanggal: new Date(Date.now() - 86400000).toISOString(), nilai: 5000000 },
-        { _id: 3, tipe: 'keluar', desc: 'Restock Bahan',   tanggal: new Date(Date.now() - 172800000).toISOString(), nilai: 1200000 }
-      ];
-      this.$nextTick(() => {
-        this.renderTrendChart();
-        this.renderExpenseChart();
-      });
-    },
-
-    renderTrendChart() {
-      const ctx = document.getElementById('trendChart');
-      if (!ctx) return;
-      if (this.trendChart) this.trendChart.destroy();
-
-      this.trendChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: this.trendData.labels,
-          datasets: [
-            {
-              label: 'Pemasukan',
-              data: this.trendData.pemasukan,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16,185,129,0.1)',
-              tension: 0.4, fill: true,
-              pointRadius: 5, pointBackgroundColor: '#10b981', pointHoverRadius: 7
+            async init() {
+                try {
+                    const userRes = await fetch('/api/auth/me', { credentials: 'include' });
+                    if (userRes.ok) {
+                        const user = await userRes.json();
+                        this.userName = user.full_name || user.username;
+                        this.userPhotoUrl = user.photo_url || '';
+                    }
+                } catch (e) { }
+                await this.fetchData();
             },
-            {
-              label: 'Pengeluaran',
-              data: this.trendData.pengeluaran,
-              borderColor: '#ef4444',
-              backgroundColor: 'rgba(239,68,68,0.05)',
-              tension: 0.4, fill: false,
-              pointRadius: 4, pointBackgroundColor: '#ef4444', pointHoverRadius: 6,
-              borderDash: [5, 3]
-            }
-          ]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false,
-          plugins: {
-            legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
-            tooltip: { mode: 'index', intersect: false }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              grid: { color: '#f3f4f6', borderDash: [2, 4] },
-              ticks: { callback: v => 'Rp ' + v + 'jt' }
+
+            setRange(range) {
+                this.trendRange = range;
+                this.fetchData();
             },
-            x: { grid: { display: false } }
-          },
-          interaction: { mode: 'nearest', axis: 'x', intersect: false }
-        }
-      });
-    },
 
-    renderExpenseChart() {
-      const ctx = document.getElementById('expenseChart');
-      if (!ctx) return;
-      if (this.expenseChart) this.expenseChart.destroy();
+            async fetchData() {
+                try {
+                    const res = await fetch(`/api/finance/summary?range=${this.trendRange}`, { credentials: 'include' });
+                    if (!res.ok) throw new Error('Gagal memuat data keuangan');
+                    const data = await res.json();
 
-      this.expenseChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-          labels: this.expenseCategories.map(c => c.name),
-          datasets: [{
-            data: this.expenseCategories.map(c => c.value),
-            backgroundColor: this.expenseCategories.map(c => c.color),
-            borderWidth: 0,
-            hoverOffset: 8
-          }]
-        },
-        options: {
-          responsive: true, maintainAspectRatio: false, cutout: '78%',
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: ctx => ctx.label + ': ' + this.formatRupiah(ctx.raw)
-              }
+                    this.stats = data.stats;
+                    this.expenseCategories = data.expenseComposition;
+                    this.recentTransactions = data.recent;
+                    this.trendData = data.trend;
+
+                    this.$nextTick(() => {
+                        this.renderTrendChart();
+                        this.renderExpenseChart();
+                    });
+                } catch (e) {
+                    console.error(e);
+                    // Fallback demo data jika API belum siap
+                    this.useDemoData();
+                }
+            },
+
+            useDemoData() {
+                this.stats = { pemasukan: 124500000, pengeluaran: 82300000, profit: 42200000, margin: 33.9, growthPemasukan: 12.5, growthPengeluaran: 4.2, growthProfit: 24.8 };
+                this.expenseCategories = [
+                    { name: 'Inventaris', percent: 60, value: 49380000, color: '#4f46e5' }, // Warna bisa diubah dari backend agar dinamis
+                    { name: 'Operasional', percent: 25, value: 20575000, color: '#0f172a' },
+                    { name: 'Marketing', percent: 15, value: 12345000, color: '#94a3b8' }
+                ];
+                this.trendData = {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun'],
+                    pemasukan: [45, 52, 61, 75, 88, 124.5],
+                    pengeluaran: [30, 35, 42, 48, 55, 82.3]
+                };
+                this.recentTransactions = [
+                    { _id: 1, tipe: 'masuk', desc: 'Penjualan INV-001', tanggal: new Date().toISOString(), nilai: 12500000 },
+                    { _id: 2, tipe: 'keluar', desc: 'Pembelian Stok Barang', tanggal: new Date(Date.now() - 86400000).toISOString(), nilai: 5000000 },
+                    { _id: 3, tipe: 'keluar', desc: 'Restock Bahan', tanggal: new Date(Date.now() - 172800000).toISOString(), nilai: 1200000 }
+                ];
+                this.$nextTick(() => {
+                    this.renderTrendChart();
+                    this.renderExpenseChart();
+                });
+            },
+
+            renderTrendChart() {
+                const ctx = document.getElementById('trendChart');
+                if (!ctx) return;
+                if (this.trendChart) this.trendChart.destroy();
+
+                // BUG FIX: Format object "data" ditambahkan dengan benar
+                this.trendChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: this.trendData.labels,
+                        datasets: [
+                            {
+                                label: 'Pemasukan',
+                                data: this.trendData.pemasukan,
+                                borderColor: '#10b981', // Emerald/Tertiary
+                                backgroundColor: 'rgba(16,185,129,0.1)',
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#10b981',
+                                pointHoverRadius: 6
+                            },
+                            {
+                                label: 'Pengeluaran',
+                                data: this.trendData.pengeluaran,
+                                borderColor: '#ef4444', // Red/Error
+                                backgroundColor: 'rgba(239,68,68,0.05)',
+                                tension: 0.4,
+                                fill: false,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#ef4444',
+                                pointHoverRadius: 6,
+                                borderDash: [5, 3]
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: true, position: 'top', labels: { usePointStyle: true, boxWidth: 8, font: { family: 'inherit', size: 12 } } },
+                            tooltip: { mode: 'index', intersect: false, titleFont: { family: 'inherit' }, bodyFont: { family: 'inherit' } }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#e2e8f0', borderDash: [4, 4] },
+                                ticks: { callback: v => 'Rp ' + v + 'jt', font: { family: 'inherit' } }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { family: 'inherit' } }
+                            }
+                        },
+                        interaction: { mode: 'nearest', axis: 'x', intersect: false }
+                    }
+                });
+            },
+
+            renderExpenseChart() {
+                const ctx = document.getElementById('expenseChart');
+                if (!ctx) return;
+                if (this.expenseChart) this.expenseChart.destroy();
+
+                // BUG FIX: Format object "data" ditambahkan dengan benar
+                this.expenseChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: this.expenseCategories.map(c => c.name),
+                        datasets: [{
+                            data: this.expenseCategories.map(c => c.value),
+                            backgroundColor: this.expenseCategories.map(c => c.color),
+                            borderWidth: 0,
+                            hoverOffset: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '75%',
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                titleFont: { family: 'inherit' },
+                                bodyFont: { family: 'inherit' },
+                                callbacks: { label: ctx => ' ' + ctx.label + ': ' + this.formatRupiah(ctx.raw) }
+                            }
+                        }
+                    }
+                });
+            },
+
+            formatRupiah(n) {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
+            },
+
+            formatRelativeDate(iso) {
+                const d = new Date(iso);
+                const now = new Date();
+                const diff = Math.floor((now - d) / 1000);
+                if (diff < 3600) return 'Hari ini, ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                if (diff < 86400) return 'Kemarin, ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
             }
-          }
         }
-      });
-    },
-
-    formatRupiah(n) {
-      return new Intl.NumberFormat('id-ID', {
-        style: 'currency', currency: 'IDR', minimumFractionDigits: 0
-      }).format(n);
-    },
-
-    formatRelativeDate(iso) {
-      const d = new Date(iso);
-      const now = new Date();
-      const diff = Math.floor((now - d) / 1000);
-      if (diff < 3600)  return 'Hari ini, ' + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      if (diff < 86400) return 'Kemarin, '  + d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
     }
-  }
-}
 </script>
-
-<style>
-  [x-cloak] { display: none !important; }
-</style>
 {% endblock %}

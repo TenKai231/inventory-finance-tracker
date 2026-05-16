@@ -36,6 +36,12 @@ def inventory():
 def transactions():
     return render_template('transactions.html')
 
+@ui_bp.route('/transactions/new')
+@login_required_ui
+def new_transaction():
+    return render_template('new_transaksition.html')
+
+
 @ui_bp.route('/finance')
 @login_required_ui
 def finance_page():

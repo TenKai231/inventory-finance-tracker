@@ -120,10 +120,14 @@ def get_current_user():
     try:
         current_user = get_jwt_identity()
         user = db.users.find_one({"username": current_user})
-        role = user["role"] if user else "user"
+        if not user:
+            return jsonify({"error": "User not found"}), 404
         return jsonify({
-            "username": current_user,
-            "role": role
+            "username": user["username"],
+            "full_name": user.get("full_name", ""),
+            "email": user.get("email", ""),
+            "role": user.get("role", "user"),
+            "photo_url": user.get("photo_url", "")
         }), 200
     except Exception:
         logger.exception("Unexpected error in get_current_user")
@@ -177,3 +181,10 @@ def register():
     except Exception:
         logger.exception("Unexpected error in register")
         return jsonify({"error": "Internal server error"}), 500
+
+@auth_bp.route("/logout", methods=["POST"])
+def logout():
+    resp = jsonify({"msg": "Logout berhasil"})
+    unset_jwt_cookies(resp)
+    return resp, 200
+
