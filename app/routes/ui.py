@@ -4,6 +4,9 @@ from functools import wraps
 
 ui_bp = Blueprint('ui', __name__)
 
+from flask_jwt_extended import verify_jwt_in_request, get_jwt_identity
+from app.extensions import db
+
 def login_required_ui(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -11,6 +14,20 @@ def login_required_ui(f):
             # Proteksi dashboard: Cek JWT di cookies atau headers.
             # Jika user belum login, lempar kembali ke halaman login.
             verify_jwt_in_request(locations=["cookies", "headers"])
+        except:
+            return redirect(url_for('ui.login'))
+        return f(*args, **kwargs)
+    return decorated
+
+def owner_required_ui(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            verify_jwt_in_request(locations=["cookies", "headers"])
+            current_user = get_jwt_identity()
+            user = db.users.find_one({"username": current_user})
+            if not user or user.get("role") != "owner":
+                return redirect(url_for('ui.dashboard'))
         except:
             return redirect(url_for('ui.login'))
         return f(*args, **kwargs)
@@ -57,6 +74,16 @@ def export_page():
 def settings_page():
     return render_template('settings.html')
 
+@ui_bp.route('/warehouse')
+@login_required_ui
+def warehouse_page():
+    return render_template('warehouse.html')
+
+@ui_bp.route('/delivery')
+@login_required_ui
+def delivery_page():
+    return render_template('delivery.html')
+
 @ui_bp.route('/inventory/empty')
 @login_required_ui
 def inventory_empty():
@@ -92,3 +119,8 @@ def internal_server_error(e):
                            error_icon="cloud_off",
                            error_title="Gagal memuat data",
                            error_message="Terjadi kesalahan sistem di server kami. Silakan coba lagi nanti."), 500
+
+@ui_bp.route('/staff')
+@owner_required_ui
+def staff_page():
+    return render_template('staff.html')

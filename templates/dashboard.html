@@ -37,6 +37,14 @@
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span class="font-label-md">Inventaris</span>
             </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+                <span class="material-symbols-outlined">warehouse</span>
+                <span class="font-label-md">Gudang</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span class="font-label-md">Pengiriman</span>
+            </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
                 href="{{ url_for('ui.transactions') }}">
                 <span class="material-symbols-outlined">receipt_long</span>
@@ -46,6 +54,10 @@
                 href="{{ url_for('ui.finance_page') }}">
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-md">Staff</span>
             </a>
             <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
                 href="{{ url_for('ui.export_page') }}">
@@ -466,9 +478,9 @@
                 this.metrics.lowStock = this.items.filter(i => i.stok > 0 && i.stok < 10).length;
                 this.metrics.outOfStock = this.items.filter(i => i.stok === 0).length;
                 
-                // Asumsi pendapatan & pengeluaran pakai harga rata-rata jika data riil harga transaksi belum dicatat di API
-                this.metrics.revenue = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk * 75000), 0);
-                this.metrics.expense = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar * 65000), 0);
+                // Menggunakan nilai aktual dari data riil transaksi di API backend
+                this.metrics.revenue = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk_value || 0), 0);
+                this.metrics.expense = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar_value || 0), 0);
                 this.metrics.profit = this.metrics.revenue - this.metrics.expense;
             },
 

@@ -1,0 +1,552 @@
+{% extends "base.html" %}
+
+{% block title %}Pengiriman - InventoTrack{% endblock %}
+
+{% block content %}
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+    .thin-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .thin-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--md-sys-color-outline-variant, #e2e8f0);
+        border-radius: 10px;
+    }
+</style>
+
+<div x-data="deliveryApp()" x-init="init()" class="flex min-h-screen w-full bg-background">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
+            <div>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+                <span class="material-symbols-outlined">warehouse</span>
+                <span class="font-label-md">Gudang</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span class="font-label-md">Pengiriman</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.transactions') }}">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.finance_page') }}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-md">Staff</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.settings_page') }}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
+            </a>
+        </nav>
+
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <a href="/transactions/new" class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                Transaksi Baru
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-error hover:text-error transition-all duration-200 ease-in-out" href="#" @click.prevent="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-64 min-h-screen text-on-background overflow-y-auto thin-scrollbar">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input x-model.debounce.300ms="filters.search" @input="fetchDeliveries()" class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors" placeholder="Cari Resi, Nama Customer..." type="text">
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <div class="text-right hidden sm:block">
+                        <p class="font-label-md text-primary" x-text="userName"></p>
+                    </div>
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant" x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-10 space-y-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-on-background tracking-tight">Manajemen Pengiriman</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Lacak pesanan, atur kurir, dan ubah status pengiriman</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="showCreateModal = true" class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-full hover:bg-secondary/90 transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">add_shipping</span>
+                        <span>Buat Pengiriman Baru</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-secondary text-2xl">local_shipping</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Pengiriman Hari Ini</p>
+                        <p class="text-2xl font-bold text-on-surface" x-text="stats.todayDeliveries"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-blue-700 text-2xl">moving</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Sedang Transit</p>
+                        <p class="text-2xl font-bold text-blue-700" x-text="stats.inTransit"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-emerald-700 text-2xl">check_circle</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Selesai</p>
+                        <p class="text-2xl font-bold text-emerald-700" x-text="stats.delivered"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-error-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-error text-2xl">warning</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Delayed</p>
+                        <p class="text-2xl font-bold text-error" x-text="stats.delayed"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table & Filtering -->
+            <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+                    <div class="flex gap-4">
+                        <h3 class="text-xl font-bold text-on-surface">Daftar Pengiriman</h3>
+                        <template x-if="selectedIds.length > 0">
+                            <span class="bg-primary-container text-on-primary-container px-3 py-1 rounded-full text-xs font-bold self-center">
+                                <span x-text="selectedIds.length"></span> Terpilih
+                            </span>
+                        </template>
+                    </div>
+                    <div class="flex gap-2">
+                        <template x-if="selectedIds.length > 0">
+                            <button @click="showBulkUpdateModal = true" class="px-4 py-1.5 bg-primary text-on-primary text-sm font-bold rounded-lg hover:bg-primary/90">Ubah Status</button>
+                        </template>
+                        <select x-model="filters.status" @change="fetchDeliveries()" class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
+                            <option value="">Semua Status</option>
+                            <option value="pending">Pending</option>
+                            <option value="picked">Picked Up</option>
+                            <option value="in_transit">In Transit</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant text-sm font-label-md">
+                                <th class="px-6 py-4 font-semibold w-12 text-center">
+                                    <input type="checkbox" @change="toggleSelectAll($event.target.checked)" :checked="selectedIds.length === deliveries.length && deliveries.length > 0" class="w-4 h-4 rounded text-primary focus:ring-primary">
+                                </th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider">No. Resi</th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider">Tujuan</th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider text-right">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-outline-variant">
+                            <template x-if="loading">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">Memuat data...</td>
+                                </tr>
+                            </template>
+                            <template x-if="!loading && deliveries.length === 0">
+                                <tr>
+                                    <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">Tidak ada data pengiriman.</td>
+                                </tr>
+                            </template>
+                            <template x-for="d in deliveries" :key="d._id">
+                                <tr class="hover:bg-surface-container-lowest transition-colors">
+                                    <td class="px-6 py-4 text-center">
+                                        <input type="checkbox" :value="d._id" x-model="selectedIds" class="w-4 h-4 rounded text-primary focus:ring-primary">
+                                    </td>
+                                    <td class="px-6 py-4">
+                                        <p class="font-bold text-on-surface" x-text="d.resi"></p>
+                                        <p class="text-xs text-on-surface-variant" x-text="new Date(d.created_at).toLocaleDateString('id-ID')"></p>
+                                    </td>
+                                    <td class="px-6 py-4 text-on-surface">
+                                        <p class="font-bold" x-text="d.customer_name"></p>
+                                        <p class="text-xs text-on-surface-variant" x-text="d.customer_phone || '-'"></p>
+                                    </td>
+                                    <td class="px-6 py-4 text-on-surface text-sm max-w-xs truncate" x-text="d.address"></td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full" :class="getStatusBadge(d.status).class" x-text="getStatusBadge(d.status).text"></span>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <button @click="openTracking(d)" class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors" title="Tracking">
+                                            <span class="material-symbols-outlined text-[18px]">location_on</span>
+                                        </button>
+                                        <button @click="openStatusModal(d)" class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors ml-1" title="Ubah Status">
+                                            <span class="material-symbols-outlined text-[18px]">edit</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
+                    <span>Menampilkan <span class="font-bold" x-text="deliveries.length"></span> dari <span class="font-bold" x-text="pagination.total"></span> data</span>
+                    <div class="flex gap-2">
+                        <button @click="pagination.page > 1 ? (pagination.page--, fetchDeliveries()) : null" :disabled="pagination.page === 1" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Prev</button>
+                        <button @click="(pagination.page * pagination.limit) < pagination.total ? (pagination.page++, fetchDeliveries()) : null" :disabled="(pagination.page * pagination.limit) >= pagination.total" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Next</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Create Delivery Modal -->
+    <div x-show="showCreateModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showCreateModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-xl shadow-2xl border border-outline-variant mx-4 max-h-[90vh] overflow-y-auto thin-scrollbar">
+            <h3 class="text-2xl font-bold mb-6">Buat Pengiriman Baru</h3>
+            <form @submit.prevent="createDelivery()" class="space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-label-md mb-2">Nama Customer</label>
+                        <input type="text" x-model="createForm.customer_name" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-label-md mb-2">No. HP</label>
+                        <input type="text" x-model="createForm.customer_phone" class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Alamat Lengkap</label>
+                    <textarea x-model="createForm.address" required rows="2" class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Estimasi Tiba (Tgl & Waktu)</label>
+                    <input type="datetime-local" x-model="createForm.estimated_arrival" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="pt-2">
+                    <label class="block text-sm font-label-md mb-2 font-bold">Item Pengiriman</label>
+                    <div class="space-y-2 mb-2">
+                        <template x-for="(item, index) in createForm.items" :key="index">
+                            <div class="flex gap-2 items-center">
+                                <input type="text" x-model="item.sku" placeholder="SKU" required class="flex-1 bg-surface-container-lowest border border-outline rounded-xl px-4 py-2 outline-none">
+                                <input type="number" x-model="item.qty" placeholder="Qty" min="1" required class="w-24 bg-surface-container-lowest border border-outline rounded-xl px-4 py-2 outline-none">
+                                <button type="button" @click="createForm.items.splice(index, 1)" class="p-2 text-error hover:bg-error-container rounded-full">
+                                    <span class="material-symbols-outlined text-[18px]">delete</span>
+                                </button>
+                            </div>
+                        </template>
+                    </div>
+                    <button type="button" @click="createForm.items.push({sku: '', qty: 1})" class="text-sm font-bold text-primary flex items-center gap-1 hover:underline">
+                        <span class="material-symbols-outlined text-[16px]">add</span> Tambah Item
+                    </button>
+                </div>
+                
+                <div class="flex gap-3 pt-6 border-t border-outline-variant">
+                    <button type="button" @click="showCreateModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Buat Pengiriman</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bulk/Single Update Status Modal -->
+    <div x-show="showBulkUpdateModal || activeDelivery" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="closeStatusModal()" class="bg-surface rounded-3xl p-8 w-full max-w-sm shadow-2xl border border-outline-variant mx-4">
+            <h3 class="text-2xl font-bold mb-6" x-text="activeDelivery ? 'Ubah Status' : 'Ubah Status Massal'"></h3>
+            <template x-if="!activeDelivery">
+                <p class="text-sm mb-4 text-on-surface-variant"><span x-text="selectedIds.length"></span> pengiriman terpilih.</p>
+            </template>
+            <form @submit.prevent="activeDelivery ? updateStatus() : bulkUpdateStatus()" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Status Baru</label>
+                    <select x-model="statusForm.status" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <option value="pending">Pending</option>
+                        <option value="picked">Picked Up</option>
+                        <option value="in_transit">In Transit</option>
+                        <option value="delivered">Delivered</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Catatan</label>
+                    <input type="text" x-model="statusForm.notes" class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" @click="closeStatusModal()" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tracking Modal -->
+    <div x-show="showTrackingModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showTrackingModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-md shadow-2xl border border-outline-variant mx-4 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold">Tracking Pengiriman</h3>
+                <button @click="showTrackingModal = false" class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+            </div>
+            
+            <template x-if="trackingData">
+                <div class="flex-1 overflow-y-auto thin-scrollbar">
+                    <div class="mb-6 p-4 bg-surface-container-lowest rounded-xl border border-outline-variant">
+                        <p class="font-bold text-on-surface" x-text="'Resi: ' + trackingData.delivery.resi"></p>
+                        <p class="text-sm text-on-surface-variant mt-1" x-text="'Tujuan: ' + trackingData.delivery.customer_name"></p>
+                        <p class="text-sm text-on-surface-variant" x-text="trackingData.delivery.address"></p>
+                    </div>
+
+                    <div class="relative pl-4 space-y-6">
+                        <div class="absolute left-6 top-2 bottom-2 w-0.5 bg-outline-variant"></div>
+                        <template x-for="(history, index) in trackingData.tracking_history" :key="index">
+                            <div class="relative flex gap-4">
+                                <div class="w-5 h-5 rounded-full z-10 flex-shrink-0 mt-1" :class="index === trackingData.tracking_history.length - 1 ? 'bg-primary ring-4 ring-primary-container' : 'bg-outline'"></div>
+                                <div>
+                                    <p class="font-bold text-sm text-on-surface capitalize" x-text="history.status.replace('_', ' ')"></p>
+                                    <p class="text-xs text-on-surface-variant" x-text="new Date(history.timestamp).toLocaleString('id-ID')"></p>
+                                    <template x-if="history.note">
+                                        <p class="text-sm text-on-surface mt-1 bg-surface-container-lowest p-2 rounded border border-outline-variant" x-text="history.note"></p>
+                                    </template>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+</div>
+
+<script>
+function deliveryApp() {
+    return {
+        loading: false,
+        userName: '',
+        userPhotoUrl: '',
+        stats: { todayDeliveries: 0, inTransit: 0, delivered: 0, delayed: 0 },
+        drivers: [],
+        deliveries: [],
+        pagination: { page: 1, limit: 10, total: 0 },
+        filters: { search: '', status: '' },
+        selectedIds: [],
+        
+        showCreateModal: false,
+        showBulkUpdateModal: false,
+        showTrackingModal: false,
+        activeDelivery: null,
+        trackingData: null,
+        
+        createForm: { customer_name: '', customer_phone: '', address: '', estimated_arrival: '', items: [{sku: '', qty: 1}] },
+        statusForm: { status: 'pending', notes: '' },
+
+        async init() {
+            try {
+                const userRes = await fetch('/api/auth/me');
+                if (userRes.ok) {
+                    const user = await userRes.json();
+                    this.userName = user.full_name || user.username;
+                    this.userPhotoUrl = user.photo_url || '';
+                }
+            } catch (e) {}
+
+            await Promise.all([
+                this.fetchSummary(),
+                this.fetchDeliveries()
+            ]);
+        },
+
+        async fetchSummary() {
+            try {
+                const res = await fetch('/api/delivery/summary');
+                if(res.ok) {
+                    const data = await res.json();
+                    this.stats = data.stats;
+                    this.drivers = data.drivers;
+                }
+            } catch(e) {}
+        },
+
+        async fetchDeliveries() {
+            this.loading = true;
+            try {
+                const query = new URLSearchParams({
+                    page: this.pagination.page,
+                    limit: this.pagination.limit,
+                    search: this.filters.search,
+                    status: this.filters.status
+                }).toString();
+                const res = await fetch(`/api/deliveries?${query}`);
+                if(res.ok) {
+                    const data = await res.json();
+                    this.deliveries = data.data;
+                    this.pagination.total = data.total;
+                    this.selectedIds = [];
+                }
+            } catch(e) {} finally {
+                this.loading = false;
+            }
+        },
+
+        toggleSelectAll(checked) {
+            if (checked) {
+                this.selectedIds = this.deliveries.map(d => d._id);
+            } else {
+                this.selectedIds = [];
+            }
+        },
+
+        async createDelivery() {
+            try {
+                // Konversi tanggal lokal ke ISO String dengan penanda UTC jika dibutuhkan, 
+                // tapi API Pydantic menangani parsing ISO dari string yang dikirim dengan format YYYY-MM-DDTHH:MM
+                // asalkan ada +00:00 atau Z. Kita append Z supaya dianggap UTC oleh Pydantic (atau sesuai parser).
+                const payload = { ...this.createForm };
+                if (payload.estimated_arrival) {
+                    payload.estimated_arrival = new Date(payload.estimated_arrival).toISOString();
+                }
+
+                const res = await fetch('/api/deliveries', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                if(res.ok) {
+                    this.showCreateModal = false;
+                    this.createForm = { customer_name: '', customer_phone: '', address: '', estimated_arrival: '', items: [{sku: '', qty: 1}] };
+                    this.init();
+                } else {
+                    alert((await res.json()).error || "Gagal buat pengiriman");
+                }
+            } catch(e) {}
+        },
+
+        openStatusModal(delivery) {
+            this.activeDelivery = delivery;
+            this.statusForm = { status: delivery.status, notes: '' };
+        },
+
+        closeStatusModal() {
+            this.activeDelivery = null;
+            this.showBulkUpdateModal = false;
+            this.statusForm = { status: 'pending', notes: '' };
+        },
+
+        async updateStatus() {
+            if(!this.activeDelivery) return;
+            try {
+                const res = await fetch(`/api/deliveries/${this.activeDelivery._id}/status`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(this.statusForm)
+                });
+                if(res.ok) {
+                    this.closeStatusModal();
+                    this.fetchDeliveries();
+                    this.fetchSummary();
+                } else {
+                    alert((await res.json()).error || "Gagal update status");
+                }
+            } catch(e) {}
+        },
+
+        async bulkUpdateStatus() {
+            if(this.selectedIds.length === 0) return;
+            try {
+                const res = await fetch(`/api/deliveries/bulk-update-status`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        delivery_ids: this.selectedIds,
+                        ...this.statusForm
+                    })
+                });
+                if(res.ok) {
+                    this.closeStatusModal();
+                    this.fetchDeliveries();
+                    this.fetchSummary();
+                } else {
+                    alert((await res.json()).error || "Gagal update status massal");
+                }
+            } catch(e) {}
+        },
+
+        async openTracking(delivery) {
+            try {
+                const res = await fetch(`/api/deliveries/${delivery._id}/tracking`);
+                if(res.ok) {
+                    this.trackingData = await res.json();
+                    this.showTrackingModal = true;
+                }
+            } catch(e) {}
+        },
+
+        getStatusBadge(status) {
+            switch(status) {
+                case 'pending': return { class: 'bg-surface-variant text-on-surface-variant', text: 'Pending' };
+                case 'picked': return { class: 'bg-secondary-container text-on-secondary-container', text: 'Picked Up' };
+                case 'in_transit': return { class: 'bg-blue-100 text-blue-700', text: 'In Transit' };
+                case 'delivered': return { class: 'bg-emerald-100 text-emerald-700', text: 'Delivered' };
+                case 'cancelled': return { class: 'bg-error-container text-error', text: 'Cancelled' };
+                default: return { class: 'bg-surface-variant text-on-surface', text: status };
+            }
+        },
+
+        async logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+    }
+}
+</script>
+{% endblock %}

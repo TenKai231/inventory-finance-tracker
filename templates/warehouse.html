@@ -1,0 +1,507 @@
+{% extends "base.html" %}
+
+{% block title %}Gudang - InventoTrack{% endblock %}
+
+{% block content %}
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+    .thin-scrollbar::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+    .thin-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .thin-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--md-sys-color-outline-variant, #e2e8f0);
+        border-radius: 10px;
+    }
+</style>
+
+<div x-data="warehouseApp()" x-init="init()" class="flex min-h-screen w-full bg-background">
+    <!-- SideNavBar -->
+    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+        <div class="flex items-center space-x-2 mb-10">
+            <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
+            </div>
+            <div>
+                <h1 class="font-h3 text-h3 font-bold text-on-primary-container">InventoTrack</h1>
+                <p class="text-[10px] font-label-md opacity-70">Konsol Manajemen</p>
+            </div>
+        </div>
+
+        <nav class="flex-1 space-y-1">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span class="font-label-md">Dasbor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <span class="font-label-md">Inventaris</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+                <span class="material-symbols-outlined">warehouse</span>
+                <span class="font-label-md">Gudang</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <span class="font-label-md">Pengiriman</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.transactions') }}">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <span class="font-label-md">Transaksi</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.finance_page') }}">
+                <span class="material-symbols-outlined">payments</span>
+                <span class="font-label-md">Keuangan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+                <span class="material-symbols-outlined">group</span>
+                <span class="font-label-md">Staff</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.export_page') }}">
+                <span class="material-symbols-outlined">ios_share</span>
+                <span class="font-label-md">Ekspor</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.settings_page') }}">
+                <span class="material-symbols-outlined">settings</span>
+                <span class="font-label-md">Pengaturan</span>
+            </a>
+        </nav>
+
+        <div class="pt-4 border-t border-outline-variant space-y-1">
+            <a href="/transactions/new" class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+                <span class="material-symbols-outlined text-[18px]">add</span>
+                <span class="font-label-md">Transaksi Baru</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+                <span class="material-symbols-outlined">contact_support</span>
+                <span class="font-label-md">Dukungan</span>
+            </a>
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out" href="#" @click.prevent="logout()">
+                <span class="material-symbols-outlined">logout</span>
+                <span class="font-label-md">Keluar</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="flex-1 ml-64 min-h-screen text-on-background overflow-y-auto thin-scrollbar">
+        <!-- Header -->
+        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+            <div class="flex items-center flex-1 max-w-xl">
+                <div class="relative w-full">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input x-model.debounce.300ms="filters.search" @input="fetchItems()" class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors" placeholder="Cari SKU, nama, lokasi..." type="text">
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 ml-6">
+                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                    <div class="text-right hidden sm:block">
+                        <p class="font-label-md text-primary" x-text="userName"></p>
+                    </div>
+                    <template x-if="userPhotoUrl">
+                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                    </template>
+                    <template x-if="!userPhotoUrl">
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant" x-text="(userName || 'U').charAt(0)"></div>
+                    </template>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-6 md:p-10 space-y-8">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-bold text-on-background tracking-tight">Gudang & Lokasi</h2>
+                    <p class="text-on-surface-variant mt-1 text-sm">Monitoring stok fisik, lokasi rak, dan stock opname</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @click="showReceiveModal = true" class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-full hover:bg-secondary/90 transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">add_box</span>
+                        <span>Terima Barang</span>
+                    </button>
+                    <button @click="showMutasiModal = true" class="flex items-center gap-2 px-5 py-2.5 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">sync_alt</span>
+                        <span>Mutasi</span>
+                    </button>
+                    <button @click="showOpnameModal = true" class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary rounded-full hover:bg-primary/90 transition-colors font-label-md font-medium shadow-sm">
+                        <span class="material-symbols-outlined text-[20px]">inventory</span>
+                        <span>Opname</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-secondary text-2xl">warehouse</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Kapasitas</p>
+                        <p class="text-2xl font-bold text-on-surface" x-text="stats.totalCapacity + '%'"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-emerald-700 text-2xl">arrow_downward</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Masuk Hari Ini</p>
+                        <p class="text-2xl font-bold text-on-surface" x-text="stats.itemsReceivedToday"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-error-container rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-error text-2xl">warning</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Low Stock</p>
+                        <p class="text-2xl font-bold text-error" x-text="stats.lowStockAlerts"></p>
+                    </div>
+                </div>
+                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-orange-700 text-2xl">event_busy</span>
+                    </div>
+                    <div>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Expiring Soon</p>
+                        <p class="text-2xl font-bold text-orange-700" x-text="stats.expiringSoon"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Main Table -->
+                <div class="lg:col-span-2 bg-surface rounded-3xl border border-outline-variant shadow-sm overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-outline-variant flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-on-surface">Data Stok Rak</h3>
+                        <div class="flex gap-2">
+                            <select x-model="filters.status" @change="fetchItems()" class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
+                                <option value="">Semua Status</option>
+                                <option value="low">Low Stock</option>
+                                <option value="out">Out of Stock</option>
+                                <option value="expiring">Expiring Soon</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant text-sm font-label-md">
+                                    <th class="px-6 py-4 font-semibold uppercase tracking-wider">SKU & Barang</th>
+                                    <th class="px-6 py-4 font-semibold uppercase tracking-wider">Lokasi</th>
+                                    <th class="px-6 py-4 font-semibold uppercase tracking-wider">Stok</th>
+                                    <th class="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-outline-variant">
+                                <template x-if="loading">
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-12 text-center text-on-surface-variant">Memuat data...</td>
+                                    </tr>
+                                </template>
+                                <template x-if="!loading && items.length === 0">
+                                    <tr>
+                                        <td colspan="4" class="px-6 py-12 text-center text-on-surface-variant">Tidak ada data ditemukan.</td>
+                                    </tr>
+                                </template>
+                                <template x-for="item in items" :key="item._id">
+                                    <tr class="hover:bg-surface-container-lowest transition-colors">
+                                        <td class="px-6 py-4">
+                                            <p class="font-bold text-on-surface" x-text="item.nama"></p>
+                                            <p class="text-xs text-on-surface-variant" x-text="item.sku"></p>
+                                        </td>
+                                        <td class="px-6 py-4 font-medium text-on-surface" x-text="item.location || '-'"></td>
+                                        <td class="px-6 py-4 font-bold text-on-surface" x-text="item.stok"></td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-2.5 py-1 text-xs font-bold rounded-full" :class="getStatusBadge(item.status).class" x-text="getStatusBadge(item.status).text"></span>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
+                        <span>Menampilkan <span class="font-bold" x-text="items.length"></span> dari <span class="font-bold" x-text="pagination.total"></span> barang</span>
+                        <div class="flex gap-2">
+                            <button @click="pagination.page > 1 ? (pagination.page--, fetchItems()) : null" :disabled="pagination.page === 1" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Prev</button>
+                            <button @click="(pagination.page * pagination.limit) < pagination.total ? (pagination.page++, fetchItems()) : null" :disabled="(pagination.page * pagination.limit) >= pagination.total" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Activity Log -->
+                <div class="bg-surface rounded-3xl border border-outline-variant shadow-sm p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-on-surface mb-6">Activity Log</h3>
+                    <div class="flex-1 overflow-y-auto pr-2 thin-scrollbar space-y-4">
+                        <template x-for="log in activities" :key="log._id">
+                            <div class="flex gap-4">
+                                <div class="mt-1 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant" x-text="log.type === 'receive' ? 'add_box' : log.type === 'mutasi' ? 'sync_alt' : 'inventory'"></span>
+                                </div>
+                                <div>
+                                    <p class="text-sm text-on-surface">
+                                        <span class="font-bold" x-text="log.type.toUpperCase()"></span>
+                                        <span x-text="log.item_sku"></span>
+                                    </p>
+                                    <p class="text-xs text-on-surface-variant mt-0.5" x-text="new Date(log.timestamp).toLocaleString('id-ID')"></p>
+                                </div>
+                            </div>
+                        </template>
+                        <template x-if="activities.length === 0">
+                            <p class="text-center text-sm text-on-surface-variant">Belum ada aktivitas</p>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <!-- Receive Modal -->
+    <div x-show="showReceiveModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showReceiveModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+            <h3 class="text-2xl font-bold mb-6">Terima Barang</h3>
+            <form @submit.prevent="receiveItem()" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-label-md mb-2">SKU Barang</label>
+                    <input type="text" x-model="receiveForm.sku" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Jumlah</label>
+                    <input type="number" x-model="receiveForm.qty" min="1" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Lokasi Rak</label>
+                    <input type="text" x-model="receiveForm.location" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" @click="showReceiveModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Mutasi Modal -->
+    <div x-show="showMutasiModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showMutasiModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+            <h3 class="text-2xl font-bold mb-6">Mutasi Rak</h3>
+            <form @submit.prevent="mutasiItem()" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-label-md mb-2">SKU Barang</label>
+                    <input type="text" x-model="mutasiForm.sku" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-label-md mb-2">Dari Lokasi</label>
+                        <input type="text" x-model="mutasiForm.from" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-label-md mb-2">Ke Lokasi</label>
+                        <input type="text" x-model="mutasiForm.to" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Jumlah</label>
+                    <input type="number" x-model="mutasiForm.qty" min="1" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" @click="showMutasiModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Pindah</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Opname Modal -->
+    <div x-show="showOpnameModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showOpnameModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+            <h3 class="text-2xl font-bold mb-6">Stock Opname</h3>
+            <form @submit.prevent="stockOpname()" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-label-md mb-2">SKU Barang</label>
+                    <input type="text" x-model="opnameForm.sku" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Stok Aktual</label>
+                    <input type="number" x-model="opnameForm.actual" min="0" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-label-md mb-2">Lokasi / Keterangan</label>
+                    <input type="text" x-model="opnameForm.location" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                </div>
+                <div class="flex gap-3 pt-4">
+                    <button type="button" @click="showOpnameModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Sesuaikan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function warehouseApp() {
+    return {
+        loading: false,
+        userName: '',
+        userPhotoUrl: '',
+        stats: { totalCapacity: 0, itemsReceivedToday: 0, lowStockAlerts: 0, expiringSoon: 0 },
+        zones: [],
+        items: [],
+        activities: [],
+        pagination: { page: 1, limit: 10, total: 0 },
+        filters: { search: '', location: '', status: '' },
+        
+        showReceiveModal: false,
+        showMutasiModal: false,
+        showOpnameModal: false,
+        
+        receiveForm: { sku: '', qty: 1, location: '', expired_date: '', catatan: '' },
+        mutasiForm: { sku: '', from: '', to: '', qty: 1, alasan: '' },
+        opnameForm: { sku: '', location: '', actual: 0, alasan: '' },
+
+        async init() {
+            try {
+                const userRes = await fetch('/api/auth/me');
+                if (userRes.ok) {
+                    const user = await userRes.json();
+                    this.userName = user.full_name || user.username;
+                    this.userPhotoUrl = user.photo_url || '';
+                }
+            } catch (e) {}
+
+            await Promise.all([
+                this.fetchSummary(),
+                this.fetchItems(),
+                this.fetchActivities()
+            ]);
+        },
+
+        async fetchSummary() {
+            try {
+                const res = await fetch('/api/warehouse/summary');
+                if(res.ok) {
+                    const data = await res.json();
+                    this.stats = data.stats;
+                    this.zones = data.zones;
+                }
+            } catch(e) {}
+        },
+
+        async fetchItems() {
+            this.loading = true;
+            try {
+                const query = new URLSearchParams({
+                    page: this.pagination.page,
+                    limit: this.pagination.limit,
+                    search: this.filters.search,
+                    status: this.filters.status,
+                    location: this.filters.location
+                }).toString();
+                const res = await fetch(`/api/warehouse/items?${query}`);
+                if(res.ok) {
+                    const data = await res.json();
+                    this.items = data.data;
+                    this.pagination.total = data.total;
+                }
+            } catch(e) {} finally {
+                this.loading = false;
+            }
+        },
+
+        async fetchActivities() {
+            try {
+                const res = await fetch('/api/warehouse/activity-log?limit=20');
+                if(res.ok) {
+                    const data = await res.json();
+                    this.activities = data.data;
+                }
+            } catch(e) {}
+        },
+
+        async receiveItem() {
+            try {
+                const res = await fetch('/api/warehouse/receive', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(this.receiveForm)
+                });
+                if(res.ok) {
+                    this.showReceiveModal = false;
+                    this.receiveForm = { sku: '', qty: 1, location: '', expired_date: '', catatan: '' };
+                    this.init();
+                } else {
+                    alert((await res.json()).error || "Gagal terima barang");
+                }
+            } catch(e) {}
+        },
+
+        async mutasiItem() {
+            try {
+                const res = await fetch('/api/warehouse/mutasi', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        sku: this.mutasiForm.sku,
+                        from_location: this.mutasiForm.from,
+                        to_location: this.mutasiForm.to,
+                        qty: this.mutasiForm.qty,
+                        alasan: this.mutasiForm.alasan
+                    })
+                });
+                if(res.ok) {
+                    this.showMutasiModal = false;
+                    this.mutasiForm = { sku: '', from: '', to: '', qty: 1, alasan: '' };
+                    this.init();
+                } else {
+                    alert((await res.json()).error || "Gagal mutasi");
+                }
+            } catch(e) {}
+        },
+
+        async stockOpname() {
+            try {
+                const res = await fetch('/api/warehouse/stock-opname', {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        sku: this.opnameForm.sku,
+                        location: this.opnameForm.location,
+                        actual_stok: this.opnameForm.actual,
+                        alasan_perbedaan: this.opnameForm.alasan
+                    })
+                });
+                if(res.ok) {
+                    this.showOpnameModal = false;
+                    this.opnameForm = { sku: '', location: '', actual: 0, alasan: '' };
+                    this.init();
+                } else {
+                    alert((await res.json()).error || "Gagal opname");
+                }
+            } catch(e) {}
+        },
+
+        getStatusBadge(status) {
+            switch(status) {
+                case 'out': return { class: 'bg-error-container text-error', text: 'Habis' };
+                case 'low': return { class: 'bg-orange-100 text-orange-700', text: 'Low Stock' };
+                case 'expiring': return { class: 'bg-warning-container text-warning', text: 'Expiring' };
+                default: return { class: 'bg-emerald-100 text-emerald-700', text: 'Normal' };
+            }
+        },
+
+        async logout() {
+            await fetch('/api/auth/logout', { method: 'POST' });
+            window.location.href = '/login';
+        }
+    }
+}
+</script>
+{% endblock %}
