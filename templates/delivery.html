@@ -237,6 +237,7 @@
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">No. Resi</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Customer</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Tujuan</th>
+                                <th class="px-6 py-4 font-semibold uppercase tracking-wider">Estimasi Tiba</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider text-right">Aksi</th>
                             </tr>
@@ -244,13 +245,13 @@
                         <tbody class="divide-y divide-outline-variant">
                             <template x-if="loading">
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">Memuat
+                                    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">Memuat
                                         data...</td>
                                 </tr>
                             </template>
                             <template x-if="!loading && deliveries.length === 0">
                                 <tr>
-                                    <td colspan="6" class="px-6 py-12 text-center text-on-surface-variant">Tidak ada
+                                    <td colspan="7" class="px-6 py-12 text-center text-on-surface-variant">Tidak ada
                                         data pengiriman.</td>
                                 </tr>
                             </template>
@@ -270,6 +271,9 @@
                                         <p class="text-xs text-on-surface-variant" x-text="d.customer_phone || '-'"></p>
                                     </td>
                                     <td class="px-6 py-4 text-on-surface text-sm max-w-xs truncate" x-text="d.address">
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-on-surface-variant">
+                                        <p x-text="d.estimated_arrival ? new Date(d.estimated_arrival).toLocaleString('id-ID', {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : '-'"></p>
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="px-2.5 py-1 text-xs font-bold rounded-full"
@@ -430,6 +434,8 @@
                         <p class="text-sm text-on-surface-variant mt-1"
                             x-text="'Tujuan: ' + trackingData.delivery.customer_name"></p>
                         <p class="text-sm text-on-surface-variant" x-text="trackingData.delivery.address"></p>
+                        <p class="text-sm font-bold text-primary mt-2" 
+                            x-text="'Estimasi Tiba: ' + (trackingData.delivery.estimated_arrival ? new Date(trackingData.delivery.estimated_arrival).toLocaleString('id-ID', {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'}) : '-')"></p>
                     </div>
 
                     <div class="relative pl-4 space-y-6">

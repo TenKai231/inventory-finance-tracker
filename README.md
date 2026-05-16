@@ -1,108 +1,68 @@
-# Inventory & Finance Tracker
+# 📦 InventoTrack
 
-Aplikasi **Inventory & Finance Tracker** adalah sistem berbasis web yang dirancang untuk membantu entitas bisnis atau perorangan dalam mengelola inventaris barang sekaligus mendata laporan keuangan yang berhubungan dengan transaksi barang tersebut (pemasukan, pengeluaran, profit).
+Welcome! I'm thrilled to share **InventoTrack**, an end-to-end Inventory & Finance Management web application built as a showcase of my full-stack development capabilities. 
 
-## 🚀 Teknologi yang Digunakan (Tech Stack)
+## 👋 Hello, Recruiters & Hiring Managers!
+If you're reading this, thank you for taking the time to review my portfolio! I built this project to demonstrate my ability to develop a production-ready, full-stack web application from scratch. This project highlights my proficiency in:
+- Building robust Python RESTful APIs.
+- Integrating modern frontend reactivity without relying on heavy frameworks.
+- Designing and querying NoSQL databases.
+- Containerizing applications for reliable deployment.
 
-Aplikasi ini menggunakan teknologi berikut untuk sisi Backend (Server) dan Frontend (Klien):
+I would love to discuss how the technical decisions and skills demonstrated here can bring value to your engineering team. Feel free to explore the codebase and try out the app!
 
-**Backend:**
-- **[Flask (Python)](https://flask.palletsprojects.com/)**: Framework web mikro untuk membangun API dan merender tampilan.
-- **[MongoDB](https://www.mongodb.com/)**: Database NoSQL yang digunakan untuk menyimpan data barang dan transaksi.
-- **Flask-JWT-Extended**: Untuk proses autentikasi.
-- **Pandas & Openpyxl**: Untuk pengolahan data (ekspor/impor Excel/CSV).
+## 🚀 About The Project
+InventoTrack is a comprehensive dashboard application designed to help businesses seamlessly track their inventory stock, monitor financial transactions, and manage delivery logistics. The application acts as a single source of truth for both warehouse and financial operations, ensuring that stock levels and financial ledgers are always perfectly synchronized.
 
-**Frontend:**
-- **[Tailwind CSS](https://tailwindcss.com/)**: Framework CSS utility-first untuk styling.
-- **[Alpine.js](https://alpinejs.dev/)**: Framework JavaScript minimalis untuk mengelola state di DOM.
-- **[Chart.js](https://www.chartjs.org/)**: Library untuk membuat visualisasi data/grafik interaktif (contoh: di Dashboard).
+### ✨ Key Features
+- **📊 Real-time Dashboard:** A dynamic analytics dashboard utilizing Chart.js to visualize revenue, expenses, and transaction trends over time.
+- **📦 Inventory Management:** Complete CRUD operations for items, including stock tracking, purchase/selling price management, and low-stock alerts.
+- **💰 Financial Tracking:** Automatically calculate profit margins, incoming revenue, and outgoing expenses based on inventory movements.
+- **🚚 Delivery & Logistics:** A dedicated module for tracking outgoing shipments, updating delivery statuses, tracking history, and managing estimated arrival times.
+- **🔒 Secure Authentication:** Role-based access control secured by stateless JWT (JSON Web Tokens).
+- **⚡ Reactive UI:** Built with Alpine.js to provide a smooth, Single-Page-Application (SPA) feel while keeping the bundle size minimal.
 
----
+## 🛠️ Technology Stack
+- **Backend:** Python 3.12, Flask, Pydantic (Strict Data Validation)
+- **Frontend:** HTML5, Tailwind CSS (Styling), Alpine.js (Reactivity), Chart.js (Data Visualization)
+- **Database:** MongoDB
+- **Deployment:** Docker, Gunicorn (WSGI Server)
 
-## 🏗️ Struktur Proyek (Panduan untuk Kontributor)
+## ⚙️ How It Works
+The architecture follows a decoupled approach where the Flask backend serves purely as a JSON API, and the frontend templates consume this data asynchronously. 
+- **Data Flow:** When an item is added or a transaction is made, the backend calculates the financial implications using complex queries and aggregations.
+- **Validation:** All incoming requests are strictly validated using Pydantic schemas to ensure data integrity before touching the database.
+- **UI Reactivity:** Alpine.js binds the fetched API data directly to the DOM, handling state management (like loading spinners, modals, and dynamic charts) entirely within the HTML templates.
 
-Agar memudahkan bagi siapa pun yang ingin membaca kode atau berkontribusi, berikut adalah peta struktur proyek ini:
+## 🏃‍♂️ Getting Started (Local Setup)
 
+### Prerequisites
+- Docker and Docker Compose installed on your machine.
+- A MongoDB instance (Local or MongoDB Atlas URI).
+
+### Installation
+1. **Clone this repository:**
+```bash
+git clone https://github.com/yourusername/inventory-finance-tracker.git
+cd inventory-finance-tracker
 ```
-inventory-finance-tracker/
-├── app/                      # Kode utama aplikasi Backend (Python/Flask)
-│   ├── models/               # Logika database, query ke MongoDB
-│   ├── routes/               # Definisi Endpoint API dan URL aplikasi
-│   │   ├── auth.py           # Endpoint Sistem Login & Register
-│   │   ├── data.py           # Endpoint API manajemen data
-│   │   └── ui.py             # Endpoint untuk me-render HTML (halaman web)
-│   ├── services/             # Logika bisnis tambahan
-│   ├── config.py             # Konfigurasi aplikasi
-│   └── extensions.py         # Koneksi database dan ekstensi Flask lainnya
-├── static/                   # Aset yang di-serve secara publik
-│   ├── css/                  # Berkas CSS (Input dari Tailwind & Output)
-│   └── js/                   # Berkas skrip JS Client-side (mis. dashboard)
-├── templates/                # File HTML (Jinja2) untuk UI Frontend
-├── tests/                    # File pengujian (unit/integrasi tes)
-├── Dockerfile                # Konfigurasi jika ingin menjalankan via Docker
-├── package.json              # Daftar library Node.js (untuk Tailwind CSS)
-├── requirements.txt          # Daftar library Python
-└── run.py                    # Titik masuk utama untuk menjalankan server Flask
+
+2. **Configure Environment Variables:**
+Create a `.env` file in the root directory:
+```env
+MONGO_URI=mongodb://host.docker.internal:27017/inventory_db
+JWT_SECRET_KEY=your_super_secret_jwt_key
+FLASK_ENV=production
 ```
 
----
+3. **Build and Run via Docker:**
+```bash
+docker build -t inventory-app .
+docker run -d -p 5000:5000 --env-file .env inventory-app
+```
 
-## 🛠️ Cara Menjalankan Proyek di Lokal
-
-Jika kamu ingin menjalankan atau ikut berkontribusi dalam mengembangkan aplikasi ini, ikuti langkah-langkah di bawah ini:
-
-### Prasyarat
-- **Python** (versi 3.9 atau lebih baru)
-- **Node.js & npm** (terbaru, diperlukan hanya untuk build CSS Tailwind)
-- Klaster **MongoDB** (Lokal atau MongoDB Atlas)
-
-### Langkah 1: Setup Frontend (Tailwind CSS)
-1. Buka terminal di direktori proyek ini.
-2. Install dependency Node:
-   ```bash
-   npm install
-   ```
-3. Bangun ulang file CSS Tailwind:
-   ```bash
-   npm run build
-   ```
-   *Tip: Saat sedang menyunting HTML/CSS, gunakan `npm run dev` agar CSS langsung terkompilasi saat ada perubahan (watch mode).*
-
-### Langkah 2: Setup Backend (Python Flask)
-1. Disarankan untuk menggunakan Virtual Environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate       # Di Linux/Mac
-   venv\Scripts\activate          # Di Windows
-   ```
-2. Install library Python:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Buat file `.env` di direktori terluar (sejajar dengan `run.py`) lalu masukkan variabel wajib (contoh):
-   ```
-   MONGO_URI="mongodb+srv://<username>:<password>@cluster0.mongodb.net/?retryWrites=true&w=majority"
-   SECRET_KEY="rahasia_untuk_sesi_flask"
-   JWT_SECRET_KEY="rahasia_untuk_token_apikamu"
-   ```
-4. Jalankan aplikasi Flask:
-   ```bash
-   python run.py
-   ```
-5. Buka browser dan akses ke `http://127.0.0.1:5000` (atau port yang tertera pada terminal).
+4. **Access the Application:**
+Open your browser and navigate to: `http://localhost:5000`
 
 ---
-
-## 🤝 Cara Berkontribusi
-
-Bagi kamu yang tidak mau pusing dan ingin cepat berkontribusi:
-1. Pahami struktur folder utama di bagian **Struktur Proyek**.
-2. Jika ingin memperbaiki tampilan, cek folder `templates/` (HTML) dan `static/` (CSS/JS).
-3. Jika ingin mengubah alur logika data atau menambah API, cek folder `app/routes/`.
-4. Jika logika database yang perlu diperbaiki, lihat `app/models/`.
-5. **Flow Git**:
-   - Lakukan `Fork` pada repositori ini.
-   - Buat *branch* baru (contoh: `git checkout -b fitur-tambah-kategori`).
-   - Lakukan `Commit` (contoh: `git commit -m "Menambahkan fitur kategori inventaris"`).
-   - Lakukan `Push` ke branch tersebut.
-   - Ajukan *Pull Request* (PR) kepada kami.
+*Thank you again for visiting my portfolio. Let's build something great together!*

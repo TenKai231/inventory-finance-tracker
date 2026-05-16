@@ -474,6 +474,14 @@
                     this.chart.masuk = this.summary.transactions_by_month.map(m => m.masuk);
                     this.chart.keluar = this.summary.transactions_by_month.map(m => m.keluar);
 
+                    // FIX: Jika hanya ada 1 titik data, line chart Chart.js tidak bisa menggambar garis.
+                    // Tambahkan padding kosong di awal agar minimal ada 2 titik.
+                    if (this.chart.labels.length === 1) {
+                        this.chart.labels.unshift('');
+                        this.chart.masuk.unshift(0);
+                        this.chart.keluar.unshift(0);
+                    }
+
                     this.userName = user.full_name || user.username;
                     this.userPhotoUrl = user.photo_url || '';
                     this.lastUpdated = new Date().toLocaleTimeString('id-ID');
@@ -482,12 +490,13 @@
                     this.error = err.message || 'Terjadi kesalahan jaringan';
                 } finally {
                     this.loading = false;
+                    // Pastikan chart dirender HANYA setelah loading = false dan elemen Canvas masuk ke DOM (visible)
                     this.$nextTick(() => {
                         if (!this.error) {
                             this.renderChart();
-                            if (window._dashboardChart) {
-                                window._dashboardChart.resize();
-                            }
+                            setTimeout(() => {
+                                if (window._dashboardChart) window._dashboardChart.resize();
+                            }, 50);
                         }
                     });
                 }
@@ -517,6 +526,10 @@
             },
 
             renderChart() {
+                if (typeof window.Chart === 'undefined') {
+                    setTimeout(() => this.renderChart(), 200);
+                    return;
+                }
                 const ctx = document.getElementById('inventoryChart');
                 if (!ctx) return;
 
@@ -558,11 +571,6 @@
                 });
             },
 
-            // Helper: format currency
-            formatRupiah(num) {
-                if (isNaN(num)) return num;
-                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(num);
-            },
 
             async exportData() {
                 try {

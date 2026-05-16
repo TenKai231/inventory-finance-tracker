@@ -267,8 +267,8 @@ def dashboard_summary():
         }
 
         return jsonify({
-            "stock_by_category": [{**doc, "_id": doc.pop("_id")} for doc in stock_by_category],
-            "transactions_by_month": [{**doc, "_id": doc.pop("_id")} for doc in transactions_by_month],
+            "stock_by_category": [{**doc, "_id": str(doc.get("_id", ""))} for doc in stock_by_category],
+            "transactions_by_month": transactions_by_month,
             "quick_stats": quick_stats,
             "generated_at": datetime.now(timezone.utc).isoformat()
         }), 200
