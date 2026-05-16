@@ -301,8 +301,6 @@
         return {
             stats: { pemasukan: 0, pengeluaran: 0, profit: 0, margin: 0, growthPemasukan: 0, growthPengeluaran: 0, growthProfit: 0 },
             trendRange: '6bulan',
-            trendChart: null,
-            expenseChart: null,
             expenseCategories: [],
             recentTransactions: [],
             trendData: { labels: [], pemasukan: [], pengeluaran: [] },
@@ -374,17 +372,17 @@
             renderTrendChart() {
                 const ctx = document.getElementById('trendChart');
                 if (!ctx) return;
-                if (this.trendChart) this.trendChart.destroy();
+                if (window._trendChart) window._trendChart.destroy();
 
                 // BUG FIX: Format object "data" ditambahkan dengan benar
-                this.trendChart = new Chart(ctx, {
+                window._trendChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: this.trendData.labels,
+                        labels: [...this.trendData.labels],
                         datasets: [
                             {
                                 label: 'Pemasukan',
-                                data: this.trendData.pemasukan,
+                                data: [...this.trendData.pemasukan],
                                 borderColor: '#10b981', // Emerald/Tertiary
                                 backgroundColor: 'rgba(16,185,129,0.1)',
                                 tension: 0.4,
@@ -395,7 +393,7 @@
                             },
                             {
                                 label: 'Pengeluaran',
-                                data: this.trendData.pengeluaran,
+                                data: [...this.trendData.pengeluaran],
                                 borderColor: '#ef4444', // Red/Error
                                 backgroundColor: 'rgba(239,68,68,0.05)',
                                 tension: 0.4,
@@ -433,16 +431,16 @@
             renderExpenseChart() {
                 const ctx = document.getElementById('expenseChart');
                 if (!ctx) return;
-                if (this.expenseChart) this.expenseChart.destroy();
+                if (window._expenseChart) window._expenseChart.destroy();
 
                 // BUG FIX: Format object "data" ditambahkan dengan benar
-                this.expenseChart = new Chart(ctx, {
+                window._expenseChart = new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: this.expenseCategories.map(c => c.name),
+                        labels: [...this.expenseCategories.map(c => c.name)],
                         datasets: [{
-                            data: this.expenseCategories.map(c => c.value),
-                            backgroundColor: this.expenseCategories.map(c => c.color),
+                            data: [...this.expenseCategories.map(c => c.value)],
+                            backgroundColor: [...this.expenseCategories.map(c => c.color)],
                             borderWidth: 0,
                             hoverOffset: 8
                         }]

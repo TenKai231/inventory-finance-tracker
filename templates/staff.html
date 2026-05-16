@@ -7,13 +7,16 @@
     [x-cloak] {
         display: none !important;
     }
+
     .thin-scrollbar::-webkit-scrollbar {
         width: 6px;
         height: 6px;
     }
+
     .thin-scrollbar::-webkit-scrollbar-track {
         background: transparent;
     }
+
     .thin-scrollbar::-webkit-scrollbar-thumb {
         background: var(--md-sys-color-outline-variant, #e2e8f0);
         border-radius: 10px;
@@ -22,7 +25,8 @@
 
 <div x-data="staffApp()" x-init="init()" class="flex min-h-screen w-full bg-background">
     <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
+    <aside
+        class="fixed left-0 top-0 bottom-0 flex flex-col p-4 space-y-2 h-screen w-64 bg-primary-container text-on-primary-container border-r border-outline-variant z-50">
         <div class="flex items-center space-x-2 mb-10">
             <div class="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-secondary">inventory_2</span>
@@ -34,54 +38,66 @@
         </div>
 
         <nav class="flex-1 space-y-1">
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.dashboard') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.dashboard') }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span class="font-label-md">Dasbor</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.inventory') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.inventory') }}">
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span class="font-label-md">Inventaris</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.warehouse_page') }}">
                 <span class="material-symbols-outlined">warehouse</span>
                 <span class="font-label-md">Gudang</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.delivery_page') }}">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span class="font-label-md">Pengiriman</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.transactions') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.transactions') }}">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span class="font-label-md">Transaksi</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.finance_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.finance_page') }}">
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg bg-secondary-container text-on-secondary-container font-semibold duration-200 ease-in-out"
+                href="{{ url_for('ui.staff_page') }}">
                 <span class="material-symbols-outlined">group</span>
                 <span class="font-label-md">Staff</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.export_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.export_page') }}">
                 <span class="material-symbols-outlined">ios_share</span>
                 <span class="font-label-md">Ekspor</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.settings_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.settings_page') }}">
                 <span class="material-symbols-outlined">settings</span>
                 <span class="font-label-md">Pengaturan</span>
             </a>
         </nav>
 
         <div class="pt-4 border-t border-outline-variant space-y-1">
-            <a href="/transactions/new" class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
+            <a href="/transactions/new"
+                class="w-full flex items-center justify-center gap-2 bg-secondary hover:opacity-90 text-on-secondary py-2 rounded-lg font-label-md transition-all mb-4">
                 <span class="material-symbols-outlined text-[18px]">add</span>
                 <span class="font-label-md">Transaksi Baru</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="#">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="#">
                 <span class="material-symbols-outlined">contact_support</span>
                 <span class="font-label-md">Dukungan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out" href="#" @click.prevent="logout()">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 ease-in-out"
+                href="#" @click.prevent="logout()">
                 <span class="material-symbols-outlined">logout</span>
                 <span class="font-label-md">Keluar</span>
             </a>
@@ -90,23 +106,30 @@
 
     <main class="flex-1 ml-64 min-h-screen text-on-background overflow-y-auto thin-scrollbar">
         <!-- Header -->
-        <header class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
+        <header
+            class="sticky top-0 z-40 flex justify-between items-center px-6 h-16 w-full bg-surface border-b border-outline-variant">
             <div class="flex items-center flex-1 max-w-xl">
                 <div class="relative w-full">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input x-model.debounce.300ms="filters.search" @input="fetchStaff()" class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors" placeholder="Cari nama, email, username..." type="text">
+                    <span
+                        class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                    <input x-model.debounce.300ms="filters.search" @input="fetchStaff()"
+                        class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 text-body-md focus:outline-none focus:border-secondary transition-colors"
+                        placeholder="Cari nama, email, username..." type="text">
                 </div>
             </div>
             <div class="flex items-center space-x-6 ml-6">
-                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                <div class="flex items-center space-x-2 cursor-pointer"
+                    @click="window.location.href='{{ url_for('ui.settings_page') }}'">
                     <div class="text-right hidden sm:block">
                         <p class="font-label-md text-primary" x-text="userName"></p>
                     </div>
                     <template x-if="userPhotoUrl">
-                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                        <img :src="userPhotoUrl" alt="Foto profil"
+                            class="w-8 h-8 rounded-full object-cover border border-outline-variant">
                     </template>
                     <template x-if="!userPhotoUrl">
-                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant" x-text="(userName || 'U').charAt(0)"></div>
+                        <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant"
+                            x-text="(userName || 'U').charAt(0)"></div>
                     </template>
                 </div>
             </div>
@@ -116,10 +139,12 @@
             <div class="flex justify-between items-center">
                 <div>
                     <h2 class="text-3xl font-bold text-on-background tracking-tight">Manajemen Staff</h2>
-                    <p class="text-on-surface-variant mt-1 text-sm">Kelola akun tim, atur hak akses, dan monitor keamanan akun internal</p>
+                    <p class="text-on-surface-variant mt-1 text-sm">Kelola akun tim, atur hak akses, dan monitor
+                        keamanan akun internal</p>
                 </div>
                 <div class="flex gap-3">
-                    <button @click="showAddModal = true" class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-full hover:bg-secondary/90 transition-colors font-label-md font-medium shadow-sm">
+                    <button @click="showAddModal = true"
+                        class="flex items-center gap-2 px-5 py-2.5 bg-secondary text-on-secondary rounded-full hover:bg-secondary/90 transition-colors font-label-md font-medium shadow-sm">
                         <span class="material-symbols-outlined text-[20px]">person_add</span>
                         <span>Tambah Staff</span>
                     </button>
@@ -129,39 +154,47 @@
 
             <!-- Stats Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 bg-secondary-container rounded-2xl flex items-center justify-center">
                         <span class="material-symbols-outlined text-secondary text-2xl">group</span>
                     </div>
                     <div>
-                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Total Staff</p>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Total
+                            Staff</p>
                         <p class="text-2xl font-bold text-on-surface" x-text="stats.totalStaff"></p>
                     </div>
                 </div>
-                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 bg-emerald-100 rounded-2xl flex items-center justify-center">
                         <span class="material-symbols-outlined text-emerald-700 text-2xl">how_to_reg</span>
                     </div>
                     <div>
-                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Aktif Hari Ini</p>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Aktif
+                            Hari Ini</p>
                         <p class="text-2xl font-bold text-emerald-700" x-text="stats.activeToday"></p>
                     </div>
                 </div>
-                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center">
                         <span class="material-symbols-outlined text-orange-700 text-2xl">directions_run</span>
                     </div>
                     <div>
-                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Sedang Cuti</p>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Sedang
+                            Cuti</p>
                         <p class="text-2xl font-bold text-orange-700" x-text="stats.onLeave"></p>
                     </div>
                 </div>
-                <div class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
+                <div
+                    class="bg-surface-container rounded-3xl p-6 border border-outline-variant shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 bg-error-container rounded-2xl flex items-center justify-center">
                         <span class="material-symbols-outlined text-error text-2xl">gpp_bad</span>
                     </div>
                     <div>
-                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Security Alerts</p>
+                        <p class="text-on-surface-variant font-label-md text-xs uppercase tracking-wider mb-1">Security
+                            Alerts</p>
                         <p class="text-2xl font-bold text-error" x-text="stats.securityAlerts"></p>
                     </div>
                 </div>
@@ -172,14 +205,16 @@
                 <div class="p-6 border-b border-outline-variant flex justify-between items-center flex-wrap gap-4">
                     <h3 class="text-xl font-bold text-on-surface">Daftar Akun Tim</h3>
                     <div class="flex gap-2">
-                        <select x-model="filters.role" @change="fetchStaff()" class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
+                        <select x-model="filters.role" @change="fetchStaff()"
+                            class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
                             <option value="all">Semua Role</option>
                             <option value="manager">Manager</option>
                             <option value="kasir">Kasir</option>
                             <option value="gudang">Gudang</option>
                             <option value="kurir">Kurir</option>
                         </select>
-                        <select x-model="filters.status" @change="fetchStaff()" class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
+                        <select x-model="filters.status" @change="fetchStaff()"
+                            class="bg-surface-container-lowest border border-outline rounded-lg px-3 py-1.5 text-sm outline-none">
                             <option value="all">Semua Status</option>
                             <option value="active">Aktif</option>
                             <option value="on_leave">Cuti / Izin</option>
@@ -187,11 +222,12 @@
                         </select>
                     </div>
                 </div>
-                
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant text-sm font-label-md">
+                            <tr
+                                class="bg-surface-container-lowest border-b border-outline-variant text-on-surface-variant text-sm font-label-md">
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Nama & Email</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Role & Dept</th>
                                 <th class="px-6 py-4 font-semibold uppercase tracking-wider">Status</th>
@@ -202,7 +238,8 @@
                         <tbody class="divide-y divide-outline-variant">
                             <template x-if="loading">
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-on-surface-variant">Memuat data...</td>
+                                    <td colspan="5" class="px-6 py-12 text-center text-on-surface-variant">Memuat
+                                        data...</td>
                                 </tr>
                             </template>
                             <template x-if="!loading && staffList.length === 0">
@@ -217,9 +254,11 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="relative">
-                                                <div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold uppercase border border-outline-variant" x-text="user.nama_lengkap.charAt(0)"></div>
+                                                <div class="w-10 h-10 rounded-full bg-surface-variant text-on-surface-variant flex items-center justify-center font-bold uppercase border border-outline-variant"
+                                                    x-text="user.nama_lengkap.charAt(0)"></div>
                                                 <template x-if="isOnline(user.last_login)">
-                                                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-surface rounded-full"></span>
+                                                    <span
+                                                        class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-surface rounded-full"></span>
                                                 </template>
                                             </div>
                                             <div>
@@ -229,12 +268,16 @@
                                         </div>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full capitalize" :class="getRoleBadge(user.role).class" x-text="user.role"></span>
-                                        <p class="text-xs text-on-surface-variant mt-1" x-text="user.departemen || '-'"></p>
+                                        <span class="px-2.5 py-1 text-xs font-bold rounded-full capitalize"
+                                            :class="getRoleBadge(user.role).class" x-text="user.role"></span>
+                                        <p class="text-xs text-on-surface-variant mt-1" x-text="user.departemen || '-'">
+                                        </p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <span class="flex items-center gap-1.5 text-sm font-medium" :class="getStatusBadge(user.status).class">
-                                            <span class="w-2 h-2 rounded-full" :class="getStatusBadge(user.status).dotClass"></span>
+                                        <span class="flex items-center gap-1.5 text-sm font-medium"
+                                            :class="getStatusBadge(user.status).class">
+                                            <span class="w-2 h-2 rounded-full"
+                                                :class="getStatusBadge(user.status).dotClass"></span>
                                             <span x-text="getStatusBadge(user.status).text"></span>
                                         </span>
                                     </td>
@@ -242,13 +285,19 @@
                                         <span x-text="formatLastActive(user.last_login)"></span>
                                     </td>
                                     <td class="px-6 py-4 text-right space-x-1">
-                                        <button @click="openEditModal(user)" class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors" title="Edit Profil & Role">
+                                        <button @click="openEditModal(user)"
+                                            class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors"
+                                            title="Edit Profil & Role">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
-                                        <button @click="openLogModal(user)" class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors" title="Activity Log">
+                                        <button @click="openLogModal(user)"
+                                            class="p-2 bg-surface border border-outline rounded-full text-on-surface hover:bg-surface-variant transition-colors"
+                                            title="Activity Log">
                                             <span class="material-symbols-outlined text-[18px]">history</span>
                                         </button>
-                                        <button @click="confirmDelete(user)" class="p-2 bg-surface border border-error/50 rounded-full text-error hover:bg-error-container transition-colors" title="Hapus Akun">
+                                        <button @click="confirmDelete(user)"
+                                            class="p-2 bg-surface border border-error/50 rounded-full text-error hover:bg-error-container transition-colors"
+                                            title="Hapus Akun">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
                                         </button>
                                     </td>
@@ -257,12 +306,19 @@
                         </tbody>
                     </table>
                 </div>
-                
-                <div class="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
-                    <span>Menampilkan <span class="font-bold" x-text="staffList.length"></span> dari <span class="font-bold" x-text="pagination.total"></span> data</span>
+
+                <div
+                    class="p-4 border-t border-outline-variant flex items-center justify-between text-sm text-on-surface-variant">
+                    <span>Menampilkan <span class="font-bold" x-text="staffList.length"></span> dari <span
+                            class="font-bold" x-text="pagination.total"></span> data</span>
                     <div class="flex gap-2">
-                        <button @click="pagination.page > 1 ? (pagination.page--, fetchStaff()) : null" :disabled="pagination.page === 1" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Prev</button>
-                        <button @click="(pagination.page * pagination.limit) < pagination.total ? (pagination.page++, fetchStaff()) : null" :disabled="(pagination.page * pagination.limit) >= pagination.total" class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Next</button>
+                        <button @click="pagination.page > 1 ? (pagination.page--, fetchStaff()) : null"
+                            :disabled="pagination.page === 1"
+                            class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Prev</button>
+                        <button
+                            @click="(pagination.page * pagination.limit) < pagination.total ? (pagination.page++, fetchStaff()) : null"
+                            :disabled="(pagination.page * pagination.limit) >= pagination.total"
+                            class="px-3 py-1.5 border border-outline-variant rounded-md hover:bg-surface-container disabled:opacity-50 transition">Next</button>
                     </div>
                 </div>
             </div>
@@ -271,28 +327,34 @@
 
     <!-- Modals -->
     <!-- Add Staff Modal -->
-    <div x-show="showAddModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
-        <div @click.away="showAddModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+    <div x-show="showAddModal"
+        class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showAddModal = false"
+            class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
             <h3 class="text-2xl font-bold mb-6">Tambah Staff Baru</h3>
             <form @submit.prevent="addStaff()" class="space-y-4">
                 <div>
                     <label class="block text-sm font-label-md mb-2">Nama Lengkap</label>
-                    <input type="text" x-model="addForm.nama_lengkap" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    <input type="text" x-model="addForm.nama_lengkap" required
+                        class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-label-md mb-2">Username</label>
-                        <input type="text" x-model="addForm.username" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <input type="text" x-model="addForm.username" required
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                     </div>
                     <div>
                         <label class="block text-sm font-label-md mb-2">Email</label>
-                        <input type="email" x-model="addForm.email" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <input type="email" x-model="addForm.email" required
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-label-md mb-2">Role</label>
-                        <select x-model="addForm.role" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <select x-model="addForm.role" required
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                             <option value="kasir">Kasir</option>
                             <option value="manager">Manager</option>
                             <option value="gudang">Gudang</option>
@@ -301,44 +363,56 @@
                     </div>
                     <div>
                         <label class="block text-sm font-label-md mb-2">Departemen</label>
-                        <input type="text" x-model="addForm.departemen" class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <input type="text" x-model="addForm.departemen"
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-label-md mb-2">Password Sementara</label>
-                    <input type="text" x-model="addForm.temporary_password" minlength="8" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none" placeholder="Minimal 8 karakter">
+                    <input type="text" x-model="addForm.temporary_password" minlength="8" required
+                        class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none"
+                        placeholder="Minimal 8 karakter">
                 </div>
                 <div class="flex gap-3 pt-4">
-                    <button type="button" @click="showAddModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
-                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Buat Akun</button>
+                    <button type="button" @click="showAddModal = false"
+                        class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Buat
+                        Akun</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Edit Staff Modal -->
-    <div x-show="showEditModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
-        <div @click.away="showEditModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
+    <div x-show="showEditModal"
+        class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showEditModal = false"
+            class="bg-surface rounded-3xl p-8 w-full max-w-lg shadow-2xl border border-outline-variant mx-4">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold">Edit Profil Staff</h3>
-                <button @click="resetPassword(editForm._id)" class="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary-container px-3 py-1.5 rounded-lg">
+                <button @click="resetPassword(editForm._id)"
+                    class="text-sm font-bold text-primary hover:underline flex items-center gap-1 bg-primary-container px-3 py-1.5 rounded-lg">
                     <span class="material-symbols-outlined text-[16px]">key</span> Reset Password
                 </button>
             </div>
-            
+
             <form @submit.prevent="updateStaff()" class="space-y-4">
                 <div>
                     <label class="block text-sm font-label-md mb-2">Nama Lengkap</label>
-                    <input type="text" x-model="editForm.nama_lengkap" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    <input type="text" x-model="editForm.nama_lengkap" required
+                        class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                 </div>
                 <div>
                     <label class="block text-sm font-label-md mb-2">Email</label>
-                    <input type="email" x-model="editForm.email" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    <input type="email" x-model="editForm.email" required
+                        class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-label-md mb-2">Role</label>
-                        <select x-model="editForm.role" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <select x-model="editForm.role" required
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                             <option value="kasir">Kasir</option>
                             <option value="manager">Manager</option>
                             <option value="gudang">Gudang</option>
@@ -347,7 +421,8 @@
                     </div>
                     <div>
                         <label class="block text-sm font-label-md mb-2">Status</label>
-                        <select x-model="editForm.status" required class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                        <select x-model="editForm.status" required
+                            class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                             <option value="active">Aktif</option>
                             <option value="inactive">Nonaktif</option>
                             <option value="on_leave">Cuti / Izin</option>
@@ -357,22 +432,29 @@
                 </div>
                 <div>
                     <label class="block text-sm font-label-md mb-2">Departemen</label>
-                    <input type="text" x-model="editForm.departemen" class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
+                    <input type="text" x-model="editForm.departemen"
+                        class="w-full bg-surface-container-lowest border border-outline rounded-xl px-4 py-3 outline-none">
                 </div>
                 <div class="flex gap-3 pt-4">
-                    <button type="button" @click="showEditModal = false" class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
-                    <button type="submit" class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Simpan Perubahan</button>
+                    <button type="button" @click="showEditModal = false"
+                        class="flex-1 px-4 py-3 bg-surface-variant text-on-surface-variant rounded-full font-bold hover:bg-outline-variant">Batal</button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-3 bg-primary text-on-primary rounded-full font-bold hover:bg-primary/90">Simpan
+                        Perubahan</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Activity Log Modal -->
-    <div x-show="showLogModal" class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
-        <div @click.away="showLogModal = false" class="bg-surface rounded-3xl p-8 w-full max-w-md shadow-2xl border border-outline-variant mx-4 max-h-[85vh] flex flex-col">
+    <div x-show="showLogModal"
+        class="fixed inset-0 z-[100] flex justify-center items-center bg-black/50 backdrop-blur-sm" x-cloak>
+        <div @click.away="showLogModal = false"
+            class="bg-surface rounded-3xl p-8 w-full max-w-md shadow-2xl border border-outline-variant mx-4 max-h-[85vh] flex flex-col">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold">Log Aktivitas Keamanan</h3>
-                <button @click="showLogModal = false" class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+                <button @click="showLogModal = false" class="text-on-surface-variant hover:text-on-surface"><span
+                        class="material-symbols-outlined">close</span></button>
             </div>
             <div class="flex-1 overflow-y-auto thin-scrollbar pr-2 space-y-4">
                 <template x-if="activityLogs.length === 0">
@@ -380,13 +462,18 @@
                 </template>
                 <template x-for="log in activityLogs" :key="log._id">
                     <div class="flex gap-4">
-                        <div class="mt-1 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
-                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant" x-text="log.action === 'password_reset' ? 'key' : (log.action === 'role_change' ? 'manage_accounts' : 'history')"></span>
+                        <div
+                            class="mt-1 w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-[16px] text-on-surface-variant"
+                                x-text="log.action === 'password_reset' ? 'key' : (log.action === 'role_change' ? 'manage_accounts' : 'history')"></span>
                         </div>
                         <div>
-                            <p class="text-sm text-on-surface font-bold uppercase" x-text="log.action.replace('_', ' ')"></p>
-                            <p class="text-xs text-on-surface-variant mt-0.5" x-text="new Date(log.timestamp).toLocaleString('id-ID')"></p>
-                            <div class="text-xs text-on-surface bg-surface-container-lowest p-2 rounded mt-1 border border-outline-variant font-mono whitespace-pre-wrap" x-text="JSON.stringify(log.details, null, 2)"></div>
+                            <p class="text-sm text-on-surface font-bold uppercase"
+                                x-text="log.action.replace('_', ' ')"></p>
+                            <p class="text-xs text-on-surface-variant mt-0.5"
+                                x-text="new Date(log.timestamp).toLocaleString('id-ID')"></p>
+                            <div class="text-xs text-on-surface bg-surface-container-lowest p-2 rounded mt-1 border border-outline-variant font-mono whitespace-pre-wrap"
+                                x-text="JSON.stringify(log.details, null, 2)"></div>
                         </div>
                     </div>
                 </template>
@@ -396,214 +483,214 @@
 </div>
 
 <script>
-function staffApp() {
-    return {
-        loading: false,
-        userName: '',
-        userPhotoUrl: '',
-        stats: { totalStaff: 0, activeToday: 0, onLeave: 0, securityAlerts: 0 },
-        roleDistribution: {},
-        staffList: [],
-        activityLogs: [],
-        pagination: { page: 1, limit: 10, total: 0 },
-        filters: { search: '', role: 'all', status: 'all' },
-        
-        showAddModal: false,
-        showEditModal: false,
-        showLogModal: false,
-        
-        addForm: { nama_lengkap: '', username: '', email: '', role: 'kasir', departemen: '', temporary_password: '' },
-        editForm: {},
+    function staffApp() {
+        return {
+            loading: false,
+            userName: '',
+            userPhotoUrl: '',
+            stats: { totalStaff: 0, activeToday: 0, onLeave: 0, securityAlerts: 0 },
+            roleDistribution: {},
+            staffList: [],
+            activityLogs: [],
+            pagination: { page: 1, limit: 10, total: 0 },
+            filters: { search: '', role: 'all', status: 'all' },
 
-        async init() {
-            try {
-                const userRes = await fetch('/api/auth/me');
-                if (userRes.ok) {
-                    const user = await userRes.json();
-                    this.userName = user.full_name || user.username;
-                    this.userPhotoUrl = user.photo_url || '';
+            showAddModal: false,
+            showEditModal: false,
+            showLogModal: false,
+
+            addForm: { nama_lengkap: '', username: '', email: '', role: 'kasir', departemen: '', temporary_password: '' },
+            editForm: {},
+
+            async init() {
+                try {
+                    const userRes = await fetch('/api/auth/me');
+                    if (userRes.ok) {
+                        const user = await userRes.json();
+                        this.userName = user.full_name || user.username;
+                        this.userPhotoUrl = user.photo_url || '';
+                    }
+                } catch (e) { }
+
+                await Promise.all([
+                    this.fetchSummary(),
+                    this.fetchStaff()
+                ]);
+            },
+
+            async fetchSummary() {
+                try {
+                    const res = await fetch('/api/staff/summary');
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.stats = data.stats;
+                        this.roleDistribution = data.roleDistribution;
+                    } else if (res.status === 403) {
+                        alert("Akses ditolak. Anda bukan owner.");
+                        window.location.href = '/dashboard';
+                    }
+                } catch (e) { }
+            },
+
+            async fetchStaff() {
+                this.loading = true;
+                try {
+                    const query = new URLSearchParams({
+                        page: this.pagination.page,
+                        limit: this.pagination.limit,
+                        search: this.filters.search,
+                        role: this.filters.role,
+                        status: this.filters.status
+                    }).toString();
+                    const res = await fetch(`/api/staff?${query}`);
+                    if (res.ok) {
+                        const data = await res.json();
+                        this.staffList = data.data;
+                        this.pagination.total = data.total;
+                    }
+                } catch (e) { } finally {
+                    this.loading = false;
                 }
-            } catch (e) {}
+            },
 
-            await Promise.all([
-                this.fetchSummary(),
-                this.fetchStaff()
-            ]);
-        },
+            async addStaff() {
+                try {
+                    const res = await fetch('/api/staff', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(this.addForm)
+                    });
+                    if (res.ok) {
+                        this.showAddModal = false;
+                        this.addForm = { nama_lengkap: '', username: '', email: '', role: 'kasir', departemen: '', temporary_password: '' };
+                        this.init();
+                    } else {
+                        alert((await res.json()).error || "Gagal tambah staff");
+                    }
+                } catch (e) { }
+            },
 
-        async fetchSummary() {
-            try {
-                const res = await fetch('/api/staff/summary');
-                if(res.ok) {
-                    const data = await res.json();
-                    this.stats = data.stats;
-                    this.roleDistribution = data.roleDistribution;
-                } else if(res.status === 403) {
-                    alert("Akses ditolak. Anda bukan owner.");
-                    window.location.href = '/dashboard';
-                }
-            } catch(e) {}
-        },
-
-        async fetchStaff() {
-            this.loading = true;
-            try {
-                const query = new URLSearchParams({
-                    page: this.pagination.page,
-                    limit: this.pagination.limit,
-                    search: this.filters.search,
-                    role: this.filters.role,
-                    status: this.filters.status
-                }).toString();
-                const res = await fetch(`/api/staff?${query}`);
-                if(res.ok) {
-                    const data = await res.json();
-                    this.staffList = data.data;
-                    this.pagination.total = data.total;
-                }
-            } catch(e) {} finally {
-                this.loading = false;
-            }
-        },
-
-        async addStaff() {
-            try {
-                const res = await fetch('/api/staff', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(this.addForm)
-                });
-                if(res.ok) {
-                    this.showAddModal = false;
-                    this.addForm = { nama_lengkap: '', username: '', email: '', role: 'kasir', departemen: '', temporary_password: '' };
-                    this.init();
-                } else {
-                    alert((await res.json()).error || "Gagal tambah staff");
-                }
-            } catch(e) {}
-        },
-
-        openEditModal(user) {
-            this.editForm = { 
-                _id: user._id, 
-                nama_lengkap: user.nama_lengkap, 
-                email: user.email, 
-                role: user.role, 
-                departemen: user.departemen || '',
-                status: user.status || 'active'
-            };
-            this.showEditModal = true;
-        },
-
-        async updateStaff() {
-            try {
-                const payload = {
-                    nama_lengkap: this.editForm.nama_lengkap,
-                    email: this.editForm.email,
-                    role: this.editForm.role,
-                    departemen: this.editForm.departemen,
-                    status: this.editForm.status
+            openEditModal(user) {
+                this.editForm = {
+                    _id: user._id,
+                    nama_lengkap: user.nama_lengkap,
+                    email: user.email,
+                    role: user.role,
+                    departemen: user.departemen || '',
+                    status: user.status || 'active'
                 };
-                const res = await fetch(`/api/staff/${this.editForm._id}`, {
-                    method: 'PUT',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-                if(res.ok) {
-                    this.showEditModal = false;
-                    this.fetchStaff();
-                    this.fetchSummary();
-                } else {
-                    alert((await res.json()).error || "Gagal update staff");
+                this.showEditModal = true;
+            },
+
+            async updateStaff() {
+                try {
+                    const payload = {
+                        nama_lengkap: this.editForm.nama_lengkap,
+                        email: this.editForm.email,
+                        role: this.editForm.role,
+                        departemen: this.editForm.departemen,
+                        status: this.editForm.status
+                    };
+                    const res = await fetch(`/api/staff/${this.editForm._id}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    if (res.ok) {
+                        this.showEditModal = false;
+                        this.fetchStaff();
+                        this.fetchSummary();
+                    } else {
+                        alert((await res.json()).error || "Gagal update staff");
+                    }
+                } catch (e) { }
+            },
+
+            async resetPassword(id) {
+                if (!confirm("Yakin ingin mereset password akun ini? User akan mendapatkan password acak baru.")) return;
+                try {
+                    const res = await fetch(`/api/staff/${id}/reset-password`, {
+                        method: 'POST'
+                    });
+                    if (res.ok) {
+                        const data = await res.json();
+                        alert(`Password berhasil direset!\n\nPassword Baru (SIMPAN): ${data.temporary_password}\n\nBerikan password ini kepada user.`);
+                    } else {
+                        alert((await res.json()).error || "Gagal reset password");
+                    }
+                } catch (e) { }
+            },
+
+            async openLogModal(user) {
+                try {
+                    const res = await fetch(`/api/staff/${user._id}/activity-log?limit=20`);
+                    if (res.ok) {
+                        this.activityLogs = (await res.json()).logs;
+                        this.showLogModal = true;
+                    }
+                } catch (e) { }
+            },
+
+            async confirmDelete(user) {
+                if (!confirm(`Yakin ingin menghapus/menonaktifkan akun ${user.nama_lengkap} secara permanen?`)) return;
+                try {
+                    const res = await fetch(`/api/staff/${user._id}`, { method: 'DELETE' });
+                    if (res.ok) {
+                        alert((await res.json()).msg);
+                        this.fetchStaff();
+                        this.fetchSummary();
+                    } else {
+                        alert((await res.json()).error || "Gagal menghapus akun");
+                    }
+                } catch (e) { }
+            },
+
+            isOnline(lastLogin) {
+                if (!lastLogin) return false;
+                const diff = (new Date() - new Date(lastLogin)) / 1000 / 60; // in minutes
+                return diff < 15;
+            },
+
+            formatLastActive(dateStr) {
+                if (!dateStr) return "Belum pernah login";
+                const date = new Date(dateStr);
+                const diffMs = new Date() - date;
+                const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+                if (diffDays === 0) {
+                    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                    if (diffHours === 0) return "Baru saja";
+                    return `${diffHours} jam lalu`;
                 }
-            } catch(e) {}
-        },
+                if (diffDays > 7) return `Offline > 7 hari`;
+                return `${diffDays} hari lalu`;
+            },
 
-        async resetPassword(id) {
-            if(!confirm("Yakin ingin mereset password akun ini? User akan mendapatkan password acak baru.")) return;
-            try {
-                const res = await fetch(`/api/staff/${id}/reset-password`, {
-                    method: 'POST'
-                });
-                if(res.ok) {
-                    const data = await res.json();
-                    alert(`Password berhasil direset!\n\nPassword Baru (SIMPAN): ${data.temporary_password}\n\nBerikan password ini kepada user.`);
-                } else {
-                    alert((await res.json()).error || "Gagal reset password");
+            getStatusBadge(status) {
+                switch (status) {
+                    case 'active': return { class: 'text-emerald-700', dotClass: 'bg-emerald-500', text: 'Aktif' };
+                    case 'on_leave': return { class: 'text-orange-700', dotClass: 'bg-orange-500', text: 'Cuti / Izin' };
+                    case 'inactive': return { class: 'text-error', dotClass: 'bg-error', text: 'Nonaktif' };
+                    case 'suspended': return { class: 'text-error', dotClass: 'bg-error', text: 'Suspended' };
+                    default: return { class: 'text-on-surface-variant', dotClass: 'bg-outline', text: status || 'Unknown' };
                 }
-            } catch(e) {}
-        },
+            },
 
-        async openLogModal(user) {
-            try {
-                const res = await fetch(`/api/staff/${user._id}/activity-log?limit=20`);
-                if(res.ok) {
-                    this.activityLogs = (await res.json()).logs;
-                    this.showLogModal = true;
+            getRoleBadge(role) {
+                switch (role) {
+                    case 'manager': return { class: 'bg-blue-100 text-blue-700' };
+                    case 'kasir': return { class: 'bg-emerald-100 text-emerald-700' };
+                    case 'gudang': return { class: 'bg-orange-100 text-orange-700' };
+                    case 'kurir': return { class: 'bg-cyan-100 text-cyan-700' };
+                    case 'owner': return { class: 'bg-purple-100 text-purple-700' };
+                    default: return { class: 'bg-surface-variant text-on-surface-variant' };
                 }
-            } catch(e) {}
-        },
+            },
 
-        async confirmDelete(user) {
-            if(!confirm(`Yakin ingin menghapus/menonaktifkan akun ${user.nama_lengkap} secara permanen?`)) return;
-            try {
-                const res = await fetch(`/api/staff/${user._id}`, { method: 'DELETE' });
-                if(res.ok) {
-                    alert((await res.json()).msg);
-                    this.fetchStaff();
-                    this.fetchSummary();
-                } else {
-                    alert((await res.json()).error || "Gagal menghapus akun");
-                }
-            } catch(e) {}
-        },
-
-        isOnline(lastLogin) {
-            if(!lastLogin) return false;
-            const diff = (new Date() - new Date(lastLogin)) / 1000 / 60; // in minutes
-            return diff < 15;
-        },
-
-        formatLastActive(dateStr) {
-            if(!dateStr) return "Belum pernah login";
-            const date = new Date(dateStr);
-            const diffMs = new Date() - date;
-            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-            if (diffDays === 0) {
-                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-                if(diffHours === 0) return "Baru saja";
-                return `${diffHours} jam lalu`;
+            async logout() {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/login';
             }
-            if (diffDays > 7) return `Offline > 7 hari`;
-            return `${diffDays} hari lalu`;
-        },
-
-        getStatusBadge(status) {
-            switch(status) {
-                case 'active': return { class: 'text-emerald-700', dotClass: 'bg-emerald-500', text: 'Aktif' };
-                case 'on_leave': return { class: 'text-orange-700', dotClass: 'bg-orange-500', text: 'Cuti / Izin' };
-                case 'inactive': return { class: 'text-error', dotClass: 'bg-error', text: 'Nonaktif' };
-                case 'suspended': return { class: 'text-error', dotClass: 'bg-error', text: 'Suspended' };
-                default: return { class: 'text-on-surface-variant', dotClass: 'bg-outline', text: status || 'Unknown' };
-            }
-        },
-
-        getRoleBadge(role) {
-            switch(role) {
-                case 'manager': return { class: 'bg-blue-100 text-blue-700' };
-                case 'kasir': return { class: 'bg-emerald-100 text-emerald-700' };
-                case 'gudang': return { class: 'bg-orange-100 text-orange-700' };
-                case 'kurir': return { class: 'bg-cyan-100 text-cyan-700' };
-                case 'owner': return { class: 'bg-purple-100 text-purple-700' };
-                default: return { class: 'bg-surface-variant text-on-surface-variant' };
-            }
-        },
-
-        async logout() {
-            await fetch('/api/auth/logout', { method: 'POST' });
-            window.location.href = '/login';
         }
     }
-}
 </script>
 {% endblock %}

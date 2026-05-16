@@ -260,9 +260,16 @@ def dashboard_summary():
                 
         transactions_by_month = list(monthly_tx.values())
 
+        quick_stats = {
+            "pending_deliveries": db.deliveries.count_documents({"user": user, "status": "pending"}),
+            "active_warehouses": len(db.warehouse_zones.distinct("zone_code", {"user": user})),
+            "active_staff": db.users.count_documents({"role": {"$ne": "owner"}, "is_deleted": {"$ne": True}, "status": "active"})
+        }
+
         return jsonify({
             "stock_by_category": [{**doc, "_id": doc.pop("_id")} for doc in stock_by_category],
             "transactions_by_month": [{**doc, "_id": doc.pop("_id")} for doc in transactions_by_month],
+            "quick_stats": quick_stats,
             "generated_at": datetime.now(timezone.utc).isoformat()
         }), 200
 

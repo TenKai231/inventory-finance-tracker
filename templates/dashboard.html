@@ -37,11 +37,13 @@
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span class="font-label-md">Inventaris</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.warehouse_page') }}">
                 <span class="material-symbols-outlined">warehouse</span>
                 <span class="font-label-md">Gudang</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.delivery_page') }}">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span class="font-label-md">Pengiriman</span>
             </a>
@@ -55,7 +57,8 @@
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.staff_page') }}">
                 <span class="material-symbols-outlined">group</span>
                 <span class="font-label-md">Staff</span>
             </a>
@@ -117,9 +120,11 @@
                     </button>
                 </div>
                 <div class="h-8 w-[1px] bg-outline-variant"></div>
-                <div class="flex items-center space-x-2 cursor-pointer" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                <div class="flex items-center space-x-2 cursor-pointer"
+                    @click="window.location.href='{{ url_for('ui.settings_page') }}'">
                     <template x-if="userPhotoUrl">
-                        <img :src="userPhotoUrl" alt="Foto profil" class="w-8 h-8 rounded-full object-cover border border-outline-variant">
+                        <img :src="userPhotoUrl" alt="Foto profil"
+                            class="w-8 h-8 rounded-full object-cover border border-outline-variant">
                     </template>
                     <template x-if="!userPhotoUrl">
                         <div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center text-sm font-bold uppercase border border-outline-variant"
@@ -199,36 +204,47 @@
                     <div
                         class="bg-surface-container-lowest p-6 rounded-xl border border-outline-variant shadow-sm hover:shadow-md transition-shadow">
                         <div class="flex justify-between items-start mb-2">
-                            <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Nilai Aset</span>
+                            <span class="text-on-surface-variant font-label-md uppercase tracking-wider">Nilai
+                                Aset</span>
                             <div class="p-1 bg-primary-container rounded-lg">
                                 <span class="material-symbols-outlined text-on-primary-container">account_balance</span>
                             </div>
                         </div>
                         <div class="flex items-baseline space-x-2">
-                            <span class="font-h2 text-h2 text-primary" x-text="formatRupiah(metrics.totalAssetValue)"></span>
+                            <span class="font-h2 text-h2 text-primary"
+                                x-text="formatRupiah(metrics.totalAssetValue)"></span>
                         </div>
                         <p class="text-on-surface-variant text-[11px] mt-1">Total harga beli × stok</p>
                     </div>
 
                     <!-- Low Stock Alert -->
-                    <div
-                        class="p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between"
+                    <div class="p-6 rounded-xl border border-outline-variant shadow-sm flex flex-col justify-between"
                         :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'bg-red-50 border-error' : 'bg-surface-container-lowest'">
                         <div>
                             <div class="flex justify-between items-start mb-2">
                                 <span class="font-label-md uppercase tracking-wider"
-                                      :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">Peringatan Stok</span>
-                                <div class="p-1 rounded-lg" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'bg-error-container' : 'bg-surface-variant'">
-                                    <span class="material-symbols-outlined" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">warning</span>
+                                    :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">Peringatan
+                                    Stok</span>
+                                <div class="p-1 rounded-lg"
+                                    :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'bg-error-container' : 'bg-surface-variant'">
+                                    <span class="material-symbols-outlined"
+                                        :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'">warning</span>
                                 </div>
                             </div>
                             <div class="flex items-baseline space-x-2">
-                                <span class="font-h2 text-h2" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-primary'" x-text="metrics.lowStock + metrics.outOfStock"></span>
-                                <span class="text-[12px] font-bold px-1.5 py-0.5 rounded flex items-center" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error bg-error-container' : 'text-emerald-600 bg-emerald-50'">
-                                    <span x-text="metrics.outOfStock > 0 ? metrics.outOfStock + ' Habis' : 'Stok Aman'"></span>
+                                <span class="font-h2 text-h2"
+                                    :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-primary'"
+                                    x-text="metrics.lowStock + metrics.outOfStock"></span>
+                                <span class="text-[12px] font-bold px-1.5 py-0.5 rounded flex items-center"
+                                    :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error bg-error-container' : 'text-emerald-600 bg-emerald-50'">
+                                    <span
+                                        x-text="metrics.outOfStock > 0 ? metrics.outOfStock + ' Habis' : 'Stok Aman'"></span>
                                 </span>
                             </div>
-                            <p class="text-[11px] mt-1 opacity-80" :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'" x-text="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'Butuh perhatian segera' : 'Semua item memiliki stok cukup'"></p>
+                            <p class="text-[11px] mt-1 opacity-80"
+                                :class="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'text-error' : 'text-on-surface-variant'"
+                                x-text="metrics.lowStock > 0 || metrics.outOfStock > 0 ? 'Butuh perhatian segera' : 'Semua item memiliki stok cukup'">
+                            </p>
                         </div>
                     </div>
 
@@ -340,7 +356,7 @@
                                 <span class="material-symbols-outlined text-secondary">local_shipping</span>
                             </div>
                             <div>
-                                <p class="font-h3 text-h3">18</p>
+                                <p class="font-h3 text-h3" x-text="metrics.pendingDeliveries"></p>
                                 <p class="text-on-surface-variant font-label-md">Pengiriman Tertunda</p>
                             </div>
                         </div>
@@ -358,7 +374,7 @@
                                 <span class="material-symbols-outlined text-secondary">store</span>
                             </div>
                             <div>
-                                <p class="font-h3 text-h3">4</p>
+                                <p class="font-h3 text-h3" x-text="metrics.activeWarehouses"></p>
                                 <p class="text-on-surface-variant font-label-md">Gudang Aktif</p>
                             </div>
                         </div>
@@ -374,7 +390,7 @@
                                 <span class="material-symbols-outlined text-secondary">group</span>
                             </div>
                             <div>
-                                <p class="font-h3 text-h3">12</p>
+                                <p class="font-h3 text-h3" x-text="metrics.activeStaff"></p>
                                 <p class="text-on-surface-variant font-label-md">Staf Aktif</p>
                             </div>
                         </div>
@@ -402,7 +418,7 @@
             summary: { stock_by_category: [], transactions_by_month: [] },
 
             // 📊 Metrics Kalkulasi Real-time
-            metrics: { totalItems: 0, totalAssetValue: 0, lowStock: 0, outOfStock: 0, revenue: 0, expense: 0, profit: 0 },
+            metrics: { totalItems: 0, totalAssetValue: 0, lowStock: 0, outOfStock: 0, revenue: 0, expense: 0, profit: 0, pendingDeliveries: 0, activeWarehouses: 0, activeStaff: 0 },
 
             // 📈 Chart Data
             chart: { labels: [], masuk: [], keluar: [] },
@@ -462,13 +478,18 @@
                     this.userPhotoUrl = user.photo_url || '';
                     this.lastUpdated = new Date().toLocaleTimeString('id-ID');
 
-                    // 4. Render chart
-                    this.$nextTick(() => this.renderChart());
-
                 } catch (err) {
                     this.error = err.message || 'Terjadi kesalahan jaringan';
                 } finally {
                     this.loading = false;
+                    this.$nextTick(() => {
+                        if (!this.error) {
+                            this.renderChart();
+                            if (window._dashboardChart) {
+                                window._dashboardChart.resize();
+                            }
+                        }
+                    });
                 }
             },
 
@@ -477,15 +498,22 @@
                 this.metrics.totalAssetValue = this.items.reduce((sum, item) => sum + (item.stok * item.harga_beli), 0);
                 this.metrics.lowStock = this.items.filter(i => i.stok > 0 && i.stok < 10).length;
                 this.metrics.outOfStock = this.items.filter(i => i.stok === 0).length;
-                
+
                 // Menggunakan nilai aktual dari data riil transaksi di API backend
                 this.metrics.revenue = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.masuk_value || 0), 0);
                 this.metrics.expense = this.summary.transactions_by_month.reduce((sum, m) => sum + (m.keluar_value || 0), 0);
                 this.metrics.profit = this.metrics.revenue - this.metrics.expense;
+                
+                // Quick stats
+                if (this.summary.quick_stats) {
+                    this.metrics.pendingDeliveries = this.summary.quick_stats.pending_deliveries;
+                    this.metrics.activeWarehouses = this.summary.quick_stats.active_warehouses;
+                    this.metrics.activeStaff = this.summary.quick_stats.active_staff;
+                }
             },
 
-            formatRupiah(n) { 
-                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n); 
+            formatRupiah(n) {
+                return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(n);
             },
 
             renderChart() {
@@ -500,21 +528,21 @@
                 window._dashboardChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: this.chart.labels,
+                        labels: [...this.chart.labels],
                         datasets: [
                             {
                                 label: 'Barang Masuk',
-                                data: this.chart.masuk,
+                                data: [...this.chart.masuk],
                                 borderColor: '#6063ee',
                                 backgroundColor: 'rgba(96, 99, 238, 0.1)',
                                 tension: 0.4, fill: true
                             },
                             {
                                 label: 'Barang Keluar',
-                                data: this.chart.keluar,
-                                borderColor: '#c6c6cd',
-                                borderDash: [5, 5],
-                                tension: 0.4, fill: false
+                                data: [...this.chart.keluar],
+                                borderColor: '#e11d48',
+                                backgroundColor: 'rgba(225, 29, 72, 0.1)',
+                                tension: 0.4, fill: true
                             }
                         ]
                     },

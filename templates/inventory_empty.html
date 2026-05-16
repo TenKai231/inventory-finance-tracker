@@ -7,7 +7,8 @@
 <div class="flex h-screen overflow-hidden w-full">
 
     <!-- SideNavBar -->
-    <aside class="hidden md:flex flex-col h-screen w-64 bg-primary-container border-r border-outline-variant p-4 space-y-2 flex-shrink-0 fixed left-0 top-0 bottom-0 z-50">
+    <aside
+        class="hidden md:flex flex-col h-screen w-64 bg-primary-container border-r border-outline-variant p-4 space-y-2 flex-shrink-0 fixed left-0 top-0 bottom-0 z-50">
         <!-- Logo -->
         <div class="flex items-center space-x-2 px-2 mb-8">
             <div class="w-9 h-9 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
@@ -15,40 +16,48 @@
             </div>
             <div>
                 <h1 class="font-h3 text-h3 font-bold text-on-primary-container leading-none">InventoTrack</h1>
-                <p class="text-[11px] text-on-primary-container opacity-70 uppercase tracking-widest">Management Console</p>
+                <p class="text-[11px] text-on-primary-container opacity-70 uppercase tracking-widest">Management Console
+                </p>
             </div>
         </div>
 
         <!-- CTA -->
-        <button class="w-full bg-secondary text-on-primary rounded-lg py-2 font-label-md text-label-md flex items-center justify-center space-x-1 hover:bg-secondary-container transition-colors mb-4 shadow-sm">
+        <button
+            class="w-full bg-secondary text-on-primary rounded-lg py-2 font-label-md text-label-md flex items-center justify-center space-x-1 hover:bg-secondary-container transition-colors mb-4 shadow-sm">
             <span class="material-symbols-outlined text-[18px]">add</span>
             <span>Transaksi Baru</span>
         </button>
 
         <!-- Nav Links -->
         <nav class="flex-1 space-y-1 overflow-y-auto">
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="{{ url_for('ui.dashboard') }}">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="{{ url_for('ui.dashboard') }}">
                 <span class="material-symbols-outlined">dashboard</span>
                 <span>Dasbor</span>
             </a>
             <!-- Active: Inventory -->
-            <a class="flex items-center space-x-4 px-2 py-2 bg-secondary-container text-on-secondary-container rounded-lg font-semibold font-label-md" href="{{ url_for('ui.inventory') }}">
+            <a class="flex items-center space-x-4 px-2 py-2 bg-secondary-container text-on-secondary-container rounded-lg font-semibold font-label-md"
+                href="{{ url_for('ui.inventory') }}">
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">inventory_2</span>
                 <span>Inventaris</span>
             </a>
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="#">
                 <span class="material-symbols-outlined">receipt_long</span>
                 <span>Transaksi</span>
             </a>
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="#">
                 <span class="material-symbols-outlined">payments</span>
                 <span>Keuangan</span>
             </a>
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="#">
                 <span class="material-symbols-outlined">ios_share</span>
                 <span>Ekspor</span>
             </a>
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="#">
                 <span class="material-symbols-outlined">settings</span>
                 <span>Pengaturan</span>
             </a>
@@ -56,11 +65,13 @@
 
         <!-- Footer Links -->
         <div class="border-t border-outline-variant/20 pt-2 space-y-1">
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md" href="#">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 font-label-md"
+                href="#">
                 <span class="material-symbols-outlined">contact_support</span>
                 <span>Dukungan</span>
             </a>
-            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 font-label-md" href="{{ url_for('ui.login') }}">
+            <a class="flex items-center space-x-4 px-2 py-2 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant text-red-400 hover:text-red-500 transition-all duration-200 font-label-md"
+                href="{{ url_for('ui.login') }}">
                 <span class="material-symbols-outlined">logout</span>
                 <span>Keluar</span>
             </a>
@@ -71,15 +82,19 @@
     <div class="flex-1 flex flex-col min-w-0 bg-background md:ml-64">
 
         <!-- TopNavBar -->
-        <header class="w-full h-16 border-b border-outline-variant bg-surface sticky top-0 z-40 flex justify-between items-center px-6 flex-shrink-0">
+        <header
+            class="w-full h-16 border-b border-outline-variant bg-surface sticky top-0 z-40 flex justify-between items-center px-6 flex-shrink-0">
             <!-- Mobile title -->
             <div class="flex items-center md:hidden">
                 <span class="font-h2 text-h2 font-bold text-primary">InventoTrack</span>
             </div>
             <!-- Search -->
             <div class="hidden md:flex flex-1 max-w-md relative">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-md focus:outline-none focus:border-secondary transition-colors" placeholder="Cari inventaris..." type="text"/>
+                <span
+                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+                <input
+                    class="w-full pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-lg text-body-md focus:outline-none focus:border-secondary transition-colors"
+                    placeholder="Cari inventaris..." type="text" />
             </div>
             <!-- Actions -->
             <div class="flex items-center space-x-4 ml-auto">
@@ -89,8 +104,10 @@
                 <button class="text-on-surface-variant hover:text-primary transition-colors cursor-pointer">
                     <span class="material-symbols-outlined">help</span>
                 </button>
-                <div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex-shrink-0 cursor-pointer">
-                    <img alt="Foto profil pengguna" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpbak-NyGj7bLgFcJlAIN9B79C_nJeHgJx05V7-xvxD3F_01qIe4214GYqApWzId1Dr3ivn1EpT-R07D_OmG2cRUoMFrfs817AX6cly1oZyEB2E-l0xY4xcInf4BsC_Xpd788j7y1dy1LEhM_Q-V83w6uWTAMHrPIzw9ilNSMvZr2bD4lUvzWQLN2jVWCgYlUNeNkpJSgRTFVpyQ16-TdtJGfVWIFuBI0Nc9hnEDDWFqW0CovdVOTt2TzV407-2S87ErQ1zqETMgQ"/>
+                <div
+                    class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden border border-outline-variant flex-shrink-0 cursor-pointer">
+                    <img alt="Foto profil pengguna" class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpbak-NyGj7bLgFcJlAIN9B79C_nJeHgJx05V7-xvxD3F_01qIe4214GYqApWzId1Dr3ivn1EpT-R07D_OmG2cRUoMFrfs817AX6cly1oZyEB2E-l0xY4xcInf4BsC_Xpd788j7y1dy1LEhM_Q-V83w6uWTAMHrPIzw9ilNSMvZr2bD4lUvzWQLN2jVWCgYlUNeNkpJSgRTFVpyQ16-TdtJGfVWIFuBI0Nc9hnEDDWFqW0CovdVOTt2TzV407-2S87ErQ1zqETMgQ" />
                 </div>
             </div>
         </header>
@@ -101,16 +118,15 @@
 
                 <!-- Illustration -->
                 <div class="w-64 h-64 mb-6 flex items-center justify-center">
-                    <img 
-                        alt="Gudang kosong - belum ada data inventaris"
-                        class="w-full h-full object-contain opacity-90"
+                    <img alt="Gudang kosong - belum ada data inventaris" class="w-full h-full object-contain opacity-90"
                         src="{{ url_for('static', filename='images/empty_inventory.png') }}"
                         style="mask-image: linear-gradient(to bottom, black 60%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);"
-                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                    />
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
                     <!-- Fallback icon jika gambar gagal dimuat -->
-                    <div class="hidden w-40 h-40 items-center justify-center bg-surface-container rounded-full border-2 border-dashed border-outline-variant">
-                        <span class="material-symbols-outlined text-outline-variant" style="font-size: 72px;">inventory_2</span>
+                    <div
+                        class="hidden w-40 h-40 items-center justify-center bg-surface-container rounded-full border-2 border-dashed border-outline-variant">
+                        <span class="material-symbols-outlined text-outline-variant"
+                            style="font-size: 72px;">inventory_2</span>
                     </div>
                 </div>
 
@@ -121,16 +137,16 @@
                 </p>
 
                 <!-- CTA Button -->
-                <button 
+                <button
                     class="bg-secondary-container text-on-secondary-container hover:opacity-90 active:scale-95 transition-all px-10 py-4 rounded-lg font-label-md text-label-md flex items-center space-x-2 shadow-sm cursor-pointer"
-                    onclick="window.location.href='{{ url_for('ui.inventory') }}'"
-                >
+                    onclick="window.location.href='{{ url_for('ui.inventory') }}'">
                     <span class="material-symbols-outlined text-[20px]">add</span>
                     <span>Tambah Barang</span>
                 </button>
 
                 <!-- Secondary action -->
-                <a href="{{ url_for('ui.dashboard') }}" class="mt-4 text-body-md text-on-surface-variant hover:text-primary transition-colors underline underline-offset-4">
+                <a href="{{ url_for('ui.dashboard') }}"
+                    class="mt-4 text-body-md text-on-surface-variant hover:text-primary transition-colors underline underline-offset-4">
                     Kembali ke Dasbor
                 </a>
             </div>

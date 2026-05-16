@@ -47,11 +47,13 @@
                 <span class="material-symbols-outlined">inventory_2</span>
                 <span class="font-label-md">Inventaris</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.warehouse_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.warehouse_page') }}">
                 <span class="material-symbols-outlined">warehouse</span>
                 <span class="font-label-md">Gudang</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.delivery_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.delivery_page') }}">
                 <span class="material-symbols-outlined">local_shipping</span>
                 <span class="font-label-md">Pengiriman</span>
             </a>
@@ -65,7 +67,8 @@
                 <span class="material-symbols-outlined">payments</span>
                 <span class="font-label-md">Keuangan</span>
             </a>
-            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out" href="{{ url_for('ui.staff_page') }}">
+            <a class="flex items-center px-4 py-2 space-x-4 rounded-lg text-on-primary-container opacity-70 hover:opacity-100 hover:bg-surface-variant transition-all duration-200 ease-in-out"
+                href="{{ url_for('ui.staff_page') }}">
                 <span class="material-symbols-outlined">group</span>
                 <span class="font-label-md">Staff</span>
             </a>
@@ -114,12 +117,14 @@
                     class="relative w-10 h-10 flex items-center justify-center hover:bg-surface-variant rounded-full text-on-surface-variant transition">
                     <span class="material-symbols-outlined">notifications</span>
                 </button>
-                <div class="w-10 h-10 rounded-full flex items-center justify-center text-on-primary-container font-bold text-sm border border-outline-variant shadow-sm cursor-pointer hover:opacity-90 uppercase" @click="window.location.href='{{ url_for('ui.settings_page') }}'">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-on-primary-container font-bold text-sm border border-outline-variant shadow-sm cursor-pointer hover:opacity-90 uppercase"
+                    @click="window.location.href='{{ url_for('ui.settings_page') }}'">
                     <template x-if="profile.photoUrl">
                         <img :src="profile.photoUrl" class="w-10 h-10 rounded-full object-cover">
                     </template>
                     <template x-if="!profile.photoUrl">
-                        <span class="bg-primary-container w-10 h-10 rounded-full flex items-center justify-center" x-text="(profile.namaLengkap || profile.username || 'U').charAt(0)"></span>
+                        <span class="bg-primary-container w-10 h-10 rounded-full flex items-center justify-center"
+                            x-text="(profile.namaLengkap || profile.username || 'U').charAt(0)"></span>
                     </template>
                 </div>
             </div>

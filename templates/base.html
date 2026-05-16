@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="id" class="light">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}InventoTrack{% endblock %}</title>
 
     <!-- Google Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+
     <!-- Alpine.js (defer agar dieksekusi setelah halaman dimuat) -->
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
 
@@ -20,93 +23,95 @@
         agar konfigurasi tema (warna, font, dsb) terbaca dengan benar.
     -->
     <script id="tailwind-config">
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              "on-secondary-container": "#fffbff",
-              "on-secondary-fixed": "#07006c",
-              "secondary-fixed-dim": "#c0c1ff",
-              "secondary-container": "#6063ee",
-              "surface-variant": "#e4e2e4",
-              "primary-container": "#131b2e",
-              "inverse-primary": "#bec6e0",
-              "on-tertiary": "#ffffff",
-              "on-tertiary-container": "#98805d",
-              "primary-fixed": "#dae2fd",
-              "on-tertiary-fixed": "#271901",
-              "outline-variant": "#c6c6cd",
-              "on-tertiary-fixed-variant": "#574425",
-              "inverse-surface": "#303032",
-              "on-background": "#1b1b1d",
-              "on-primary-container": "#7c839b",
-              "secondary": "#6366F1",
-              "surface": "#fcf8fa",
-              "tertiary-fixed-dim": "#dec29a",
-              "error-container": "#ffdad6",
-              "tertiary": "#000000",
-              "on-secondary": "#ffffff",
-              "surface-dim": "#dcd9db",
-              "surface-container-highest": "#e4e2e4",
-              "primary": "#0F172A",
-              "surface-container-high": "#eae7e9",
-              "surface-container-low": "#f6f3f5",
-              "surface-container-lowest": "#ffffff",
-              "inverse-on-surface": "#f3f0f2",
-              "outline": "#E2E8F0",
-              "tertiary-container": "#271901",
-              "secondary-fixed": "#e1e0ff",
-              "on-primary-fixed": "#131b2e",
-              "on-primary-fixed-variant": "#3f465c",
-              "surface-bright": "#fcf8fa",
-              "error": "#ba1a1a",
-              "on-error-container": "#93000a",
-              "on-error": "#ffffff",
-              "tertiary-fixed": "#fcdeb5",
-              "primary-fixed-dim": "#bec6e0",
-              "surface-container": "#f0edef",
-              "surface-tint": "#565e74",
-              "on-surface-variant": "#64748B",
-              "on-primary": "#ffffff",
-              "on-secondary-fixed-variant": "#2f2ebe",
-              "on-surface": "#1b1b1d",
-              "background": "#F8FAFC"
-            },
-            fontFamily: {
-              sans: ["Inter", "sans-serif"],
-              "mono-data": ["monospace"]
-            },
-            fontSize: {
-              "h1": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
-              "h2": ["24px", {"lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600"}],
-              "h3": ["18px", {"lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600"}],
-              "body-lg": ["16px", {"lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400"}],
-              "body-md": ["14px", {"lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400"}],
-              "label-md": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600"}]
-            },
-            fontWeight: {
-              "h1": "700",
-              "h2": "600",
-              "h3": "600",
-              "label-md": "600",
-              "body-lg": "400",
-              "body-md": "400",
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary-container": "#fffbff",
+                        "on-secondary-fixed": "#07006c",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary-container": "#6063ee",
+                        "surface-variant": "#e4e2e4",
+                        "primary-container": "#131b2e",
+                        "inverse-primary": "#bec6e0",
+                        "on-tertiary": "#ffffff",
+                        "on-tertiary-container": "#98805d",
+                        "primary-fixed": "#dae2fd",
+                        "on-tertiary-fixed": "#271901",
+                        "outline-variant": "#c6c6cd",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "inverse-surface": "#303032",
+                        "on-background": "#1b1b1d",
+                        "on-primary-container": "#7c839b",
+                        "secondary": "#6366F1",
+                        "surface": "#fcf8fa",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "error-container": "#ffdad6",
+                        "tertiary": "#000000",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dcd9db",
+                        "surface-container-highest": "#e4e2e4",
+                        "primary": "#0F172A",
+                        "surface-container-high": "#eae7e9",
+                        "surface-container-low": "#f6f3f5",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#f3f0f2",
+                        "outline": "#E2E8F0",
+                        "tertiary-container": "#271901",
+                        "secondary-fixed": "#e1e0ff",
+                        "on-primary-fixed": "#131b2e",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "surface-bright": "#fcf8fa",
+                        "error": "#ba1a1a",
+                        "on-error-container": "#93000a",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed": "#fcdeb5",
+                        "primary-fixed-dim": "#bec6e0",
+                        "surface-container": "#f0edef",
+                        "surface-tint": "#565e74",
+                        "on-surface-variant": "#64748B",
+                        "on-primary": "#ffffff",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "on-surface": "#1b1b1d",
+                        "background": "#F8FAFC"
+                    },
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                        "mono-data": ["monospace"]
+                    },
+                    fontSize: {
+                        "h1": ["32px", { "lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "h2": ["24px", { "lineHeight": "1.3", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "h3": ["18px", { "lineHeight": "1.4", "letterSpacing": "0", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "1.6", "letterSpacing": "0", "fontWeight": "400" }],
+                        "body-md": ["14px", { "lineHeight": "1.5", "letterSpacing": "0", "fontWeight": "400" }],
+                        "label-md": ["12px", { "lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "600" }]
+                    },
+                    fontWeight: {
+                        "h1": "700",
+                        "h2": "600",
+                        "h3": "600",
+                        "label-md": "600",
+                        "body-lg": "400",
+                        "body-md": "400",
+                    }
+                }
             }
-          }
         }
-      }
     </script>
 
     <!-- Tailwind CSS CDN — dimuat SETELAH tailwind.config didefinisikan -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 
     <!-- Custom CSS — dimuat setelah Tailwind agar bisa override bila perlu -->
-    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
 
     <style>
         /* Sembunyikan elemen Alpine hingga inisialisasi selesai (cegah flash of unstyled content) */
-        [x-cloak] { display: none !important; }
+        [x-cloak] {
+            display: none !important;
+        }
 
         /* Pastikan Material Icons tidak pernah italic/bold dari font browser */
         .material-symbols-outlined {
@@ -117,73 +122,73 @@
             display: inline-flex;
             align-items: center;
         }
+
         body {
             min-height: max(884px, 100dvh);
         }
     </style>
 
     <script>
-    // Konfigurasi Alpine.js global
-    document.addEventListener('alpine:init', () => {
-        // P2: Global Toast Store
-        Alpine.store('toast', {
-            show: false,
-            message: '',
-            type: 'success', // 'success' atau 'error'
-            
-            trigger(message, type = 'success') {
-                this.message = message;
-                this.type = type;
-                this.show = true;
-                setTimeout(() => { this.show = false; }, 3000);
-            }
-        });
-    });
+        // Konfigurasi Alpine.js global
+        document.addEventListener('alpine:init', () => {
+            // P2: Global Toast Store
+            Alpine.store('toast', {
+                show: false,
+                message: '',
+                type: 'success', // 'success' atau 'error'
 
-    // Global logout function
-    window.logout = async function() {
-        try {
-            await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-        } catch (e) {
-            console.error(e);
-        }
-        localStorage.removeItem('access_token');
-        window.location.href = '/login';
-    };
-
-    // P1: Auto-refresh JWT Cookie setiap 12 menit (720000 ms)
-    setInterval(async () => {
-        try {
-            const res = await fetch('/api/auth/refresh', { 
-                method: 'POST',
-                credentials: 'include' 
+                trigger(message, type = 'success') {
+                    this.message = message;
+                    this.type = type;
+                    this.show = true;
+                    setTimeout(() => { this.show = false; }, 3000);
+                }
             });
-            if (!res.ok) {
-                console.warn('Gagal refresh session, user mungkin sudah logout.');
-            } else {
-                console.log('Session refreshed automatically.');
+        });
+
+        // Global logout function
+        window.logout = async function () {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+            } catch (e) {
+                console.error(e);
             }
-        } catch (err) {
-            console.error('Koneksi terputus saat mencoba refresh session.');
-        }
-    }, 12 * 60 * 1000);
+            localStorage.removeItem('access_token');
+            window.location.href = '/login';
+        };
+
+        // P1: Auto-refresh JWT Cookie setiap 12 menit (720000 ms)
+        setInterval(async () => {
+            try {
+                const res = await fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (!res.ok) {
+                    console.warn('Gagal refresh session, user mungkin sudah logout.');
+                } else {
+                    console.log('Session refreshed automatically.');
+                }
+            } catch (err) {
+                console.error('Koneksi terputus saat mencoba refresh session.');
+            }
+        }, 12 * 60 * 1000);
     </script>
 </head>
+
 <body class="bg-background font-sans antialiased text-on-background" x-data="{ userRole: 'member' }">
     <!-- P2: Global Toast UI -->
-    <div x-data
-         x-show="$store.toast.show"
-         x-transition:enter="transition ease-out duration-300"
-         x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-         x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
-         x-transition:leave="transition ease-in duration-200"
-         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
-         x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-         class="fixed bottom-4 right-4 z-[9999] p-4 rounded-xl shadow-lg border flex items-center space-x-3 max-w-sm"
-         :class="$store.toast.type === 'error' ? 'bg-error-container border-error text-on-error-container' : 'bg-emerald-50 border-emerald-200 text-emerald-800'">
-        
-        <span class="material-symbols-outlined text-2xl" 
-              x-text="$store.toast.type === 'error' ? 'error' : 'check_circle'">
+    <div x-data x-show="$store.toast.show" x-transition:enter="transition ease-out duration-300"
+        x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+        x-transition:leave="transition ease-in duration-200"
+        x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+        x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+        class="fixed bottom-4 right-4 z-[9999] p-4 rounded-xl shadow-lg border flex items-center space-x-3 max-w-sm"
+        :class="$store.toast.type === 'error' ? 'bg-error-container border-error text-on-error-container' : 'bg-emerald-50 border-emerald-200 text-emerald-800'">
+
+        <span class="material-symbols-outlined text-2xl"
+            x-text="$store.toast.type === 'error' ? 'error' : 'check_circle'">
         </span>
         <div class="font-label-md" x-text="$store.toast.message"></div>
         <button @click="$store.toast.show = false" class="opacity-70 hover:opacity-100 ml-auto">
@@ -194,4 +199,5 @@
     <!-- Area ini akan diisi oleh halaman spesifik -->
     {% block content %}{% endblock %}
 </body>
+
 </html>
